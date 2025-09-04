@@ -20,71 +20,104 @@
     class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen"
   >
   
-    <header class="bg-[var(--brand-purple)] text-[var(--brand-beige)] p-4">
-  <div class="flex items-center justify-between relative">
-    <!-- Logo on the left -->
-    <div class="flex-shrink-0">
-      <img src="/assets/logo1.svg" alt="Holidaze Logo" class="h-45 w-auto" />
-    </div>
+ <header
+  role="banner"
+  class="relative h-72 bg-cover bg-center"
+  style="background-image: url(./assets/leonardo-yip-rn-NLirHQPY-unsplash.jpg);"
+>
+  <div class="absolute inset-0 bg-[var(--brand-purple)]/50"></div>
+  
+  <div class="relative z-10 flex items-center justify-between px-6 py-4">
+    <!-- Logo -->
+    <img src="/assets/logo1.svg" alt="Holidaze Logo" class="h-40 w-auto" />
 
-    <!-- Navigation centered -->
-    <nav class="absolute left-1/2 transform -translate-x-1/2">
-      <ul class="flex space-x-8">
-        <li>
-          <a href="/auth/login/" class="hover:text-amber-400 transition">Sign In</a>
-        </li>
-        <li>
-          <a href="/auth/register/" class="hover:text-amber-400 transition">Register</a>
-        </li>
-        <li>
-          <a href="/profile/" class="hover:text-amber-400 transition">Profile</a>
-        </li>
+    <!-- Nav -->
+    <nav>
+      <ul class="flex space-x-8 text-[var(--brand-beige)] font-medium text-shadow">
+        <li><a href="/auth/login/" class="hover:text-[var(--brand-beige-hover)] transition">Sign In</a></li>
+        <li><a href="/auth/register/" class="hover:text-[var(--brand-beige-hover)] transition">Register</a></li>
+        <li><a href="/profile/" class="hover:text-[var(--brand-beige-hover)] transition">Profile</a></li>
       </ul>
     </nav>
+  </div>
+
+  <!-- Hero text -->
+  <div class="relative z-10 text-center text-[var(--brand-beige)] text-shadow">
+    <h1 class="text-4xl md:text-5xl font-bold drop-shadow-lg">Book. Stay. Relax.</h1>
+    <p class="mt-3 text-lg">Discover amazing venues with Holidaze</p>
   </div>
 </header>
 
 
 
-    <main class="w-full mx-auto mt-10 flex-grow px-6">
+<main class="w-full mx-auto mt-10 flex-grow px-6">
 
-    </main>
-  </body>
-   <footer
-      class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-teal-900 py-6 mt-10"
+  
+<section class="flex flex-col items-center mt-10">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search venues..."
+    class="w-full max-w-xl p-3 rounded-lg border border-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple)] focus:outline-none mb-6"
+  />
+
+  <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xl">
+    <label for="tagSelect" class="text-lg font-semibold">Filter by Tag:</label>
+    <select
+      id="tagSelect"
+      class="flex-1 p-3 rounded-lg border border-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple)]"
     >
-      <p>&copy; 2025 Bid For Forest. All rights reserved.</p>
-      <span class="hidden md:block">|</span>
-      <p>Developed by Jenny Johnsby</p>
-      <span class="hidden md:block">|</span>
-      <div class="flex space-x-4">
-        <a
-          href="https://facebook.com/bidforforest"
-          target="_blank"
-          class="hover:text-amber-400 transition"
-          >Facebook</a
-        >
-        <a
-          href="https://twitter.com/bidforforest"
-          target="_blank"
-          class="hover:text-amber-400 transition"
-          >Twitter</a
-        >
-        <a
-          href="https://instagram.com/bidforforest"
-          target="_blank"
-          class="hover:text-amber-400 transition"
-          >Instagram</a
-        >
+      <option value="">All Tags</option>
+      <option value="family">Family</option>
+      <option value="luxury">Luxury</option>
+      <option value="budget">Budget</option>
+      <option value="romantic">Romantic</option>
+    </select>
+  </div>
+</section>
+
+
+<section class="mt-12">
+  <h3 class="text-3xl font-semibold text-center mb-8">All Venues</h3>
+  <div
+    id="venueContainer"
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+  >
+    <!-- Example venue card (JS will render these) -->
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
+      <img src="/assets/demo.jpg" alt="Venue" class="h-48 w-full object-cover" />
+      <div class="p-4">
+        <h4 class="text-xl font-bold mb-2">Cozy Cabin</h4>
+        <p class="text-sm text-gray-600 mb-2">Oslo, Norway</p>
+        <p class="font-medium text-[var(--brand-purple)]">From $120/night</p>
       </div>
-      <span class="hidden md:block">|</span>
-      <p>
-        Contact us:
-        <a
-          href="mailto:support@bidforforest.com"
-          class="hover:text-amber-400 transition"
-          >support@bidforforest.com</a
-        >
-      </p>
-    </footer>
+    </div>
+  </div>
+</section>
+
+
+</main>
+
+   <footer
+  class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)]"
+>
+  <p>&copy; 2025 Holidaze. All rights reserved.</p>
+  <span class="hidden md:block">|</span>
+  <p>Developed by Jenny Johnsby</p>
+  <span class="hidden md:block">|</span>
+  <div class="flex space-x-6">
+    <a href="https://facebook.com/holidaze" target="_blank" class="hover:text-[var(--brand-beige-hover)]">Facebook</a>
+    <a href="https://twitter.com/holidaze" target="_blank" class="hover:text-[var(--brand-beige-hover)]">Twitter</a>
+    <a href="https://instagram.com/holidaze" target="_blank" class="hover:text-[var(--brand-beige-hover)]">Instagram</a>
+  </div>
+  <span class="hidden md:block">|</span>
+  <p>
+    Contact us:
+    <a href="mailto:support@holidaze.com" class="hover:text-[var(--brand-beige-hover)]">support@holidaze.com</a>
+  </p>
+</footer>
+
+ </body>
+
+
 </html>

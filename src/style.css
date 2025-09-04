@@ -2,7 +2,9 @@
 
 :root {
   --brand-purple: #6C3A4B;
+  --brand-purple-hover: #A45A73;
   --brand-beige: #F1DABF;
+  --brand-beige-hover: #FFF1E1;
   --font-alegreya: 'Alegreya Sans SC', sans-serif;
   --font-cormorant: 'Cormorant Garamond', serif;
   --font-montserrat: 'Montserrat Alternates', sans-serif;
@@ -11,4 +13,7 @@
 
 body {
   font-family: var(--font-museo);
+}
+.text-shadow {
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
 }
