@@ -1,6 +1,6 @@
 import { API_KEY } from "../constants";
 
-export async function fetchUserBookings() {
+export async function fetchUserVenues() {
   const userInLocalStorage = JSON.parse(localStorage.getItem("currentUser"));
   const usernameFromStorage = userInLocalStorage
     ? userInLocalStorage.name
@@ -9,10 +9,10 @@ export async function fetchUserBookings() {
 
   if (!usernameFromStorage || !token) {
     console.error("No username or token found in localStorage. Please log in.");
-    return [];
+    return { data: [], meta: {} };
   }
 
-  const url = `https://v2.api.noroff.dev/holidaze/profiles/${usernameFromStorage}/bookings`;
+  const url = `https://v2.api.noroff.dev/holidaze/profiles/${usernameFromStorage}/venues`;
 
   try {
     const response = await fetch(url, {
@@ -28,21 +28,21 @@ export async function fetchUserBookings() {
       if (response.status === 401) {
         console.error("Unauthorized access. Please log in again.");
       } else if (response.status === 404) {
-        console.error(`No bookings found for ${usernameFromStorage}.`);
+        console.error(`No venues found for ${usernameFromStorage}.`);
       } else {
         console.error(
-          `Failed to fetch bookings for ${usernameFromStorage}: ${response.statusText}`,
+          `Failed to fetch venues for ${usernameFromStorage}: ${response.statusText}`,
         );
       }
-      return [];
+      return { data: [], meta: {} };
     }
 
-    const { data } = await response.json();
-    console.log("Bookings fetched:", data);
+    const result = await response.json();
+    console.log("Venues fetched:", result.data);
 
-    return data;
+    return result; // { data: [...], meta: {...} }
   } catch (error) {
-    console.error("Error fetching bookings:", error);
-    return [];
+    console.error("Error fetching venues:", error);
+    return { data: [], meta: {} };
   }
 }

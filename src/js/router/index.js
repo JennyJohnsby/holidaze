@@ -1,14 +1,11 @@
 export default async function router(
   pathname = window.location.pathname.split("?")[0],
 ) {
-  console.log("Routing to:", pathname);
-
+  console.log(pathname);
   switch (pathname) {
     case "/":
       await import("./views/home.js");
       break;
-
-    // Auth routes
     case "/auth/":
       await import("./views/auth.js");
       break;
@@ -18,24 +15,15 @@ export default async function router(
     case "/auth/register/":
       await import("./views/register.js");
       break;
-
-    // Venue routes
     case "/venues/":
-      await import("./views/venues.js"); 
+      await import("./views/venues.js");
       break;
     case "/venues/create/":
       await import("./views/venueCreate.js");
       break;
-    case "/venues/edit/":
-      await import("./views/venueEdit.js");
-      break;
-
-    // Profile
     case "/profile/":
       await import("./views/profile.js");
       break;
-
-    // 404 fallback
     default:
       await import("./views/notFound.js");
   }
