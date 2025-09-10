@@ -1,6 +1,6 @@
-import { API_PROFILE, API_KEY } from "../constants";
+import { API_PROFILE_BOOKINGS, API_KEY } from "../constants";
 
-export async function readProfile() {
+export async function fetchUserBooking() {
   const userInLocalStorage = JSON.parse(localStorage.getItem("currentUser"));
   const usernameFromStorage = userInLocalStorage
     ? userInLocalStorage.name
@@ -9,10 +9,10 @@ export async function readProfile() {
 
   if (!usernameFromStorage || !token) {
     console.error("No username or token found in localStorage. Please log in.");
-    return null;
+    return [];
   }
 
-  const url = `${API_PROFILE}/${usernameFromStorage}`;
+  const url = `${API_PROFILE_BOOKINGS.replace("<name>", usernameFromStorage)}`;
 
   try {
     const response = await fetch(url, {
@@ -28,21 +28,21 @@ export async function readProfile() {
       if (response.status === 401) {
         console.error("Unauthorized access. Please log in again.");
       } else if (response.status === 404) {
-        console.error(`Profile for ${usernameFromStorage} not found.`);
+        console.error(`No bookings found for ${usernameFromStorage}.`);
       } else {
         console.error(
-          `Failed to fetch profile for ${usernameFromStorage}: ${response.statusText}`,
+          `Failed to fetch bookings for ${usernameFromStorage}: ${response.statusText}`,
         );
       }
-      return null;
+      return [];
     }
 
     const { data } = await response.json();
-    console.log("Profile data fetched:", data);
+    console.log("Bookings fetched:", data);
 
     return data;
   } catch (error) {
-    console.error("Error fetching profile:", error);
-    return null;
+    console.error("Error fetching bookings:", error);
+    return [];
   }
 }
