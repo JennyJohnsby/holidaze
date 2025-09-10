@@ -1,8 +1,8 @@
-import { onCreateVenue } from "../../ui/venues/create";
+import { onCreateBooking } from "../../ui/bookings/create";
 import { authGuard } from "../../utilities/authGuard";
 
 authGuard();
 
-const form = document.forms.createVenues;
+const form = document.forms.createBookings;
 
-form.addEventListener("submit", onCreateVenue);
+form.addEventListener("submit", onCreateBooking);
