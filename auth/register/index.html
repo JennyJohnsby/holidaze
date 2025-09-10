@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Holidaze | Register" />
+    <title>Holidaze | Register</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/logo3.svg" />
+    <script type="module" src="/src/app.js"></script>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body
+    class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen"
+  >
+    <!-- Header  -->
+    <header
+      role="banner"
+      class="relative h-90 bg-cover bg-center"
+      style="
+        background-image: url(/assets/luca-micheli-ruWkmt3nU58-unsplash.jpg);
+      "
+    >
+      <div class="absolute inset-0 bg-[var(--brand-purple)]/50"></div>
+
+      <div class="relative z-10 flex items-center justify-between px-8 py-4">
+        <!-- Logo -->
+        <a href="/" aria-label="Holidaze Home">
+          <img
+            src="/assets/logo1.svg"
+            alt="Holidaze Logo"
+            class="h-45 w-auto"
+            width="160"
+            height="160"
+          />
+        </a>
+
+        <!-- Nav -->
+        <nav aria-label="Primary navigation">
+          <ul
+            class="flex space-x-8 text-[var(--brand-beige)] font-medium text-xl"
+          >
+            <li>
+              <a
+                href="/auth/login/"
+                aria-current="page"
+                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
+                >Log In</a
+              >
+            </li>
+            <li>
+              <a
+                href="/auth/register/"
+                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
+                >Register</a
+              >
+            </li>
+            <li>
+              <a
+                href="/profile/"
+                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
+                >Profile</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Hero text -->
+      <div class="relative z-10 text-center text-[var(--brand-beige)]">
+        <h1
+          class="text-4xl md:text-5xl font-extrabold drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]"
+        >
+          Register
+        </h1>
+        <p
+          class="mt-3 text-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
+        >
+          Discover amazing venues with Holidaze
+        </p>
+      </div>
+    </header>
+
+    <main class="w-full max-w-xl mx-auto mt-10 flex-grow px-6">
+      <form
+        name="register"
+        id="registerForm"
+        class="bg-[var(--brand-purple)] p-8 rounded-2xl shadow-lg"
+      >
+        <fieldset
+          class="flex flex-col gap-6 border-[var(--brand-beige)] rounded-lg p-6"
+        >
+          <!-- Userame -->
+          <div>
+            <label
+              for="register-name"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+              >User Name</label
+            >
+            <input
+              type="text"
+              name="name"
+              id="register-name"
+              required
+              aria-label="User name"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              placeholder="Enter your username here!"
+            />
+          </div>
+          <!-- Bio -->
+          <div>
+            <label
+              for="register-bio"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+              >Bio</label
+            >
+            <textarea
+              name="bio"
+              id="register-bio"
+              required
+              aria-label="Bio"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              placeholder="Tell us about yourself!"
+            ></textarea>
+          </div>
+          <!-- Email -->
+          <div>
+            <label
+              for="register-email"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+              >Email</label
+            >
+            <input
+              type="email"
+              name="email"
+              autocomplete="email"
+              required
+              aria-label="Email address"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              id="register-email"
+              placeholder="Enter your email here!"
+            />
+          </div>
+          <!-- Avatar -->
+          <div>
+            <label
+              for="register-avatarurl"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+              >Avatar URL</label
+            >
+            <input
+              type="url"
+              name="avatarurl"
+              id="register-avatarurl"
+              required
+              aria-label="Avatar URL"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              placeholder="Enter your avatar image URL"
+            />
+          </div>
+          <!-- Avatar Alt Text -->
+          <div>
+            <label
+              for="register-avataralt"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+              >Avatar Alt Text</label
+            >
+            <input
+              type="text"
+              name="avataralt"
+              id="register-avataralt"
+              required
+              aria-label="Avatar Alt Text"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              placeholder="Enter alt text for your avatar"
+            />
+          </div>
+          <!-- Banner -->
+          <div>
+            <label
+              for="register-bannerurl"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+              >Banner URL</label
+            >
+            <input
+              type="url"
+              name="bannerurl"
+              id="register-bannerurl"
+              required
+              aria-label="Banner URL"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              placeholder="Enter the banner image URL"
+            />
+          </div>
+          <!-- Banner Alt Text -->
+          <div>
+            <label
+              for="register-banneralt"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+              >Banner Alt Text</label
+            >
+            <input
+              type="text"
+              name="banneralt"
+              id="register-banneralt"
+              required
+              aria-label="Banner Alt Text"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              placeholder="Enter alt text for your banner"
+            />
+          </div>
+          <!-- Password -->
+          <div>
+            <label
+              for="register-password"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+              >Password</label
+            >
+            <input
+              type="password"
+              name="password"
+              required
+              aria-label="Password"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              id="register-password"
+              placeholder="Enter your password here!"
+            />
+          </div>
+          <!-- Button -->
+          <button
+            type="submit"
+            class="bg-[var(--brand-beige)] hover:bg-opacity-90 text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40"
+          >
+            Register
+          </button>
+          <!-- Log In link -->
+          <p class="text-center text-[var(--brand-beige)] mt-4">
+            Already have an account?
+            <a
+              href="/auth/login/"
+              class="text-[var(--brand-beige)] hover:underline"
+              >Log In here!</a
+            >
+          </p>
+        </fieldset>
+      </form>
+    </main>
+    <!-- Footer  -->
+    <footer
+      class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)]"
+    >
+      <p>&copy; 2025 Holidaze. All rights reserved.</p>
+      <span class="hidden md:block">|</span>
+      <p>Developed by Jenny Johnsby</p>
+      <span class="hidden md:block">|</span>
+      <div class="flex space-x-6">
+        <a
+          href="https://facebook.com/holidaze"
+          target="_blank"
+          class="hover:text-[var(--brand-beige-hover)]"
+          >Facebook</a
+        >
+        <a
+          href="https://twitter.com/holidaze"
+          target="_blank"
+          class="hover:text-[var(--brand-beige-hover)]"
+          >Twitter</a
+        >
+        <a
+          href="https://instagram.com/holidaze"
+          target="_blank"
+          class="hover:text-[var(--brand-beige-hover)]"
+          >Instagram</a
+        >
+      </div>
+      <span class="hidden md:block">|</span>
+      <p>
+        Contact us:
+        <a
+          href="mailto:support@holidaze.com"
+          class="hover:text-[var(--brand-beige-hover)]"
+          >support@holidaze.com</a
+        >
+      </p>
+    </footer>
+  </body>
+</html>
