@@ -1,4 +1,4 @@
-import { API_KEY } from "../constants";
+import { API_KEY } from "../constants.js";
 import { displayBanner } from "../../utilities/banners";
 
 const deleteBookingFromAPI = async (id, accessToken) => {

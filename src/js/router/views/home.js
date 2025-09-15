@@ -1,3 +1,27 @@
+/**
+ * Debounce utility for smoother search experience
+ */
+function debounce(fn, delay = 300) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+}
+
+/**
+ * Render stars based on rating
+ */
+function renderStars(rating = 0) {
+  if (!rating) return "No rating";
+  const fullStars = "★".repeat(Math.floor(rating));
+  const emptyStars = "☆".repeat(5 - Math.floor(rating));
+  return `<span class="text-yellow-400">${fullStars}${emptyStars}</span>`;
+}
+
+/**
+ * Setup search functionality
+ */
 function setupSearch(venues) {
   const searchInput = document.getElementById("searchInput");
   if (!searchInput) {
@@ -5,37 +29,49 @@ function setupSearch(venues) {
     return;
   }
 
-  searchInput.addEventListener("input", (event) => {
-    const query = event.target.value.toLowerCase().trim();
+  searchInput.addEventListener(
+    "input",
+    debounce((event) => {
+      const query = event.target.value.toLowerCase().trim();
 
-    if (!Array.isArray(venues) || venues.length === 0) {
-      console.error("No venues available for search");
-      return;
-    }
+      if (!Array.isArray(venues) || venues.length === 0) {
+        console.error("No venues available for search");
+        return;
+      }
 
-    if (query === "") {
-      renderVenues(venues);
-      return;
-    }
+      if (query === "") {
+        renderVenues(venues);
+        return;
+      }
 
-    const filteredVenues = venues.filter((venue) => {
-      const name = venue.name?.toLowerCase() || "";
-      const description = venue.description?.toLowerCase() || "";
-      return name.includes(query) || description.includes(query);
-    });
+      const filteredVenues = venues.filter((venue) => {
+        const name = venue.name?.toLowerCase() || "";
+        const description = venue.description?.toLowerCase() || "";
+        return name.includes(query) || description.includes(query);
+      });
 
-    if (filteredVenues.length === 0) {
-      document.getElementById("venueContainer").innerHTML =
-        `<p class="text-center text-gray-500">No venues found for "${query}"</p>`;
-      return;
-    }
+      const venueContainer = document.getElementById("venueContainer");
 
-    renderVenues(filteredVenues);
-  });
+      if (filteredVenues.length === 0) {
+        venueContainer.innerHTML = `
+          <div role="status" aria-live="polite" class="text-center text-gray-500">
+            No venues found for "${query}"
+          </div>`;
+        return;
+      }
+
+      renderVenues(filteredVenues);
+    }, 300)
+  );
 }
 
-
-export async function fetchAndDisplayVenues(includeOwner = false, includeBookings = false) {
+/**
+ * Fetch and display venues from API
+ */
+export async function fetchAndDisplayVenues(
+  includeOwner = false,
+  includeBookings = false
+) {
   const urlBase = "https://v2.api.noroff.dev/holidaze/venues";
   const venueContainer = document.getElementById("venueContainer");
 
@@ -44,12 +80,15 @@ export async function fetchAndDisplayVenues(includeOwner = false, includeBooking
     return;
   }
 
-  venueContainer.innerHTML = "<p>Loading venues...</p>";
+  // Loading spinner
+  venueContainer.innerHTML = `
+    <div class="flex justify-center py-10">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--brand-purple)]"></div>
+    </div>
+  `;
 
   try {
     let url = urlBase;
-
-   
     const params = new URLSearchParams();
     if (includeOwner) params.append("_owner", "true");
     if (includeBookings) params.append("_bookings", "true");
@@ -64,23 +103,37 @@ export async function fetchAndDisplayVenues(includeOwner = false, includeBooking
     }
 
     const data = await response.json();
-    const venues = data.data;
+    let venues = data.data;
 
-    if (venues.length === 0) {
+    if (!venues || venues.length === 0) {
       venueContainer.innerHTML = "<p>No venues available.</p>";
       return;
     }
+
+    // ✅ Always sort venues A → Z by name (case-insensitive)
+    venues = venues.sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+    );
 
     renderVenues(venues);
     setupSearch(venues);
   } catch (error) {
     console.error("Error fetching venues:", error);
-    venueContainer.innerHTML =
-      "<p>Failed to load venues. Please try again later.</p>";
+    venueContainer.innerHTML = `
+      <div class="text-center">
+        <p class="mb-4">Failed to load venues. Please try again later.</p>
+        <button class="px-4 py-2 bg-[var(--brand-purple)] text-[var(--brand-beige)] rounded-lg"
+          onclick="fetchAndDisplayVenues()">
+          Retry
+        </button>
+      </div>
+    `;
   }
 }
 
-
+/**
+ * Render venues in the DOM
+ */
 function renderVenues(venues) {
   const venueContainer = document.getElementById("venueContainer");
   venueContainer.innerHTML = "";
@@ -106,10 +159,20 @@ function renderVenues(venues) {
       <div class="relative h-56 overflow-hidden group">
         ${
           venue.media?.[0]?.url
-            ? `<img src="${venue.media[0].url}" alt="${
-                venue.media[0].alt || "Venue image"
-              }" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />`
-            : `<img src="/images/avatar-placeholder.png" alt="Placeholder image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />`
+            ? `<img 
+                src="${venue.media[0].url}" 
+                alt="${venue.media[0].alt || "Venue image"}" 
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                style="aspect-ratio:16/9"
+              />`
+            : `<img 
+                src="/images/avatar-placeholder.png" 
+                alt="Placeholder image" 
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                loading="lazy"
+                style="aspect-ratio:16/9"
+              />`
         }
         <div class="absolute inset-0 bg-gradient-to-t from-[var(--brand-purple)]/70 via-transparent"></div>
       </div>
@@ -127,26 +190,43 @@ function renderVenues(venues) {
         </p>
         <div class="mt-auto">
           <p class="text-xs text-gray-300">Max guests: ${venue.maxGuests}</p>
-          <p class="text-xs text-gray-300 mb-2">Rating: ${venue.rating ?? "N/A"}</p>
+          <p class="text-xs text-gray-300 mb-2">
+            Rating: ${renderStars(venue.rating)} (${venue.rating ?? "N/A"})
+          </p>
           <div class="flex flex-wrap gap-2">
-            ${venue.meta?.wifi ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">📶 WiFi</span>` : ""}
-            ${venue.meta?.parking ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🚗 Parking</span>` : ""}
-            ${venue.meta?.breakfast ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🥐 Breakfast</span>` : ""}
-            ${venue.meta?.pets ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🐾 Pets</span>` : ""}
+            ${
+              venue.meta?.wifi
+                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">📶 WiFi</span>`
+                : ""
+            }
+            ${
+              venue.meta?.parking
+                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🚗 Parking</span>`
+                : ""
+            }
+            ${
+              venue.meta?.breakfast
+                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🥐 Breakfast</span>`
+                : ""
+            }
+            ${
+              venue.meta?.pets
+                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🐾 Pets</span>`
+                : ""
+            }
           </div>
         </div>
       </div>
     `;
 
-    // Navigate to single venue page
+    // Navigate to single venue page safely
     venueElement.addEventListener("click", () => {
-      window.location.href = `/venues/?id=${venue.id}`;
+      window.location.href = `/venues/?id=${encodeURIComponent(venue.id)}`;
     });
 
     venueContainer.appendChild(venueElement);
   });
 }
 
-
-
-fetchAndDisplayVenues(true, false); 
+// Initial fetch
+fetchAndDisplayVenues(true, false);

@@ -1,6 +1,6 @@
-import { registerUser } from "../../api/auth/register";
-import { displayBanner } from "../../utilities/banners";
-import { authGuard } from "../../utilities/authGuard";
+import { registerUser } from "../../api/auth/register.js";
+import { displayBanner } from "../../utilities/banners.js";
+import { authGuard } from "../../utilities/authGuard.js";
 
 authGuard({ redirectIfAuthenticated: true });
 
@@ -10,6 +10,7 @@ export async function onRegister(event) {
   const form = event.target;
   const formData = new FormData(form);
 
+  // Build user object from form
   const userData = {
     name: formData.get("name"),
     email: formData.get("email"),
@@ -34,24 +35,50 @@ export async function onRegister(event) {
     };
   }
 
+  // Client-side validation
+  if (!userData.email || !userData.password) {
+    displayBanner("Email and password are required.", "error");
+    return;
+  }
+  if (userData.password.length < 8) {
+    displayBanner("Password must be at least 8 characters.", "error");
+    return;
+  }
+
+  // Handle loading state
+  const submitButton = form.querySelector("button[type='submit']");
+  const originalText = submitButton.textContent;
+  submitButton.disabled = true;
+  submitButton.textContent = "Registering...";
+
   try {
-    const response = await registerUser(userData);
-    console.log("Registration successful:", response);
+    // Call API
+    const { user } = await registerUser(userData);
 
-    displayBanner(
-      "Registration successful! Redirecting to auctions",
-      "success",
-    );
+    // Success feedback
+    displayBanner(`Welcome, ${user.name}! Registration successful.`, "success");
 
+    // Redirect after short delay
     setTimeout(() => {
       window.location.pathname = "/";
-    }, 3000);
+    }, 2000);
   } catch (error) {
-    console.error("Error during registration:", error);
+    console.error("[Register UI] Registration failed:", error);
 
-    displayBanner(
-      error.message || "An error occurred during registration.",
-      "error",
-    );
+    // Pick best error message
+    let message = "An error occurred during registration. Please try again.";
+    if (error.message) {
+      message = error.message;
+    }
+    if (error.details && error.details.length > 0) {
+      // Append first API validation detail if available
+      message += ` (${error.details[0].message})`;
+    }
+
+    displayBanner(message, "error");
+
+    // Reset button so user can retry
+    submitButton.disabled = false;
+    submitButton.textContent = originalText;
   }
 }

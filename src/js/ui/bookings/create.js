@@ -1,69 +1,27 @@
-import { createBooking } from "../../api/bookings/create.js";
-import { displayBanner } from "../../utilities/banners.js";
+import { API_BOOKINGS } from "../constants.js";
 
-export async function onCreateBooking(event) {
-  event.preventDefault();
+export async function createBooking(bookingData) {
+  const token = localStorage.getItem("accessToken");
 
-  const form = event.target;
-
-  // Booking details
-  const dateFrom = form.dateFrom.value;
-  const dateTo = form.dateTo.value;
-  const guests = Number(form.guests.value);
-  const venueId = form.venueId.value.trim();
-
-  // Validation
-  if (!dateFrom) {
-    displayBanner("Start date is required", "error");
-    return;
+  if (!token) {
+    throw new Error("You must be logged in to make a booking.");
   }
 
-  if (!dateTo) {
-    displayBanner("End date is required", "error");
-    return;
+  const response = await fetch(API_BOOKINGS, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(bookingData),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    const errorMsg = result.errors?.[0]?.message || "Booking failed.";
+    throw new Error(errorMsg);
   }
 
-  if (!guests || guests <= 0) {
-    displayBanner("Number of guests must be greater than 0", "error");
-    return;
-  }
-
-  if (!venueId) {
-    displayBanner("Venue ID is required", "error");
-    return;
-  }
-
-  const bookingData = {
-    dateFrom: new Date(dateFrom).toISOString(),
-    dateTo: new Date(dateTo).toISOString(),
-    guests,
-    venueId,
-  };
-
-  try {
-    const response = await createBooking(bookingData);
-    displayBanner(
-      `Booking created successfully for ${response.data.guests} guests!`,
-      "success"
-    );
-
-    setTimeout(() => {
-      window.location.href = "/profile/";
-    }, 3000);
-  } catch (error) {
-    console.error("Failed to create booking:", error);
-    displayBanner(`Failed to create booking: ${error.message}`, "error");
-  }
-
-  form.reset();
+  return result;
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const createBookingForm = document.getElementById("createBooking");
-
-  if (createBookingForm) {
-    createBookingForm.addEventListener("submit", onCreateBooking);
-  } else {
-    console.error("Create booking form could not be found in the DOM");
-  }
-});

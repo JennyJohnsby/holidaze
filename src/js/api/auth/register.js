@@ -1,5 +1,5 @@
-import { API_AUTH_REGISTER } from "../constants";
-import { onRegister } from "../../ui/auth/register";
+import { API_AUTH_REGISTER } from "../constants.js";
+import { onRegister } from "../../ui/auth/register.js";
 import { authGuard } from "../../utilities/authGuard.js";
 
 export async function registerUser(data) {

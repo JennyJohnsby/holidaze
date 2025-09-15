@@ -1,62 +1,31 @@
-export async function createBooking({ dateFrom, dateTo, guests, venueId }) {
-  const url = "https://v2.api.noroff.dev/holidaze/bookings";
-  const accessToken = localStorage.getItem("accessToken");
+async function createBooking(bookingData) {
+  const user = JSON.parse(localStorage.getItem("user"));
 
-
-  if (!accessToken) {
-    throw new Error("No token found. Please log in.");
+  if (!user || !user.accessToken) {
+    alert("You must be logged in to book a venue.");
+    return;
   }
-
-  if (!dateFrom) {
-    throw new Error("Booking start date (dateFrom) is required.");
-  }
-
-  if (!dateTo) {
-    throw new Error("Booking end date (dateTo) is required.");
-  }
-
-  if (!guests || isNaN(guests) || guests <= 0) {
-    throw new Error("A valid number of guests is required.");
-  }
-
-  if (!venueId) {
-    throw new Error("Venue ID is required for booking.");
-  }
-
-  const bookingData = {
-    dateFrom: new Date(dateFrom).toISOString(),
-    dateTo: new Date(dateTo).toISOString(),
-    guests: Number(guests),
-    venueId: venueId,
-  };
-
-  console.log("Booking Data:", bookingData);
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch("https://api.noroff.dev/api/v1/holidaze/bookings", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-        "X-Noroff-API-Key": "a2f8ed82-91e0-4a89-8fb8-c1e6ff355869",
+        Authorization: `Bearer ${user.accessToken}`,
       },
       body: JSON.stringify(bookingData),
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-      const errorDetails = await response.json();
-      console.error("API Error Details:", errorDetails);
-      throw new Error(
-        `API Error: ${errorDetails.message || response.statusText}`
-      );
+      throw new Error(result.errors?.[0]?.message || "Booking failed.");
     }
 
-    return await response.json();
+    alert("Booking successful!");
+    console.log("Booking result:", result);
   } catch (error) {
-    console.error("Failed to create booking:", error.message);
-    if (error.stack) {
-      console.error("Error Stack:", error.stack);
-    }
-    throw error;
+    console.error("Booking error:", error);
+    alert(`Booking failed: ${error.message}`);
   }
 }

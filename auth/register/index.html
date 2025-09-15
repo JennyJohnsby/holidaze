@@ -11,282 +11,291 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@300;400;700;900&family=Cormorant+Garamond:wght@300;400;500;700&family=Montserrat+Alternates:wght@300;400;500;700;900&family=MuseoModerno:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
   </head>
 
-  <body
-    class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen"
-  >
-    <!-- Header  -->
+  <body class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen">
+    <!-- Skip Link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only absolute left-2 top-2 bg-white p-2 rounded text-[var(--brand-purple)]"
+    >
+      Skip to main content
+    </a>
+
+    <!-- Header -->
     <header
       role="banner"
       class="relative h-90 bg-cover bg-center"
-      style="
-        background-image: url(/assets/luca-micheli-ruWkmt3nU58-unsplash.jpg);
-      "
+      style="background-image: url(/assets/luca-micheli-ruWkmt3nU58-unsplash.jpg)"
     >
-      <div class="absolute inset-0 bg-[var(--brand-purple)]/50"></div>
+      <div class="absolute inset-0 bg-[var(--brand-purple)]/60"></div>
 
       <div class="relative z-10 flex items-center justify-between px-8 py-4">
         <!-- Logo -->
-        <a href="/" aria-label="Holidaze Home">
-          <img
-            src="/assets/logo1.svg"
-            alt="Holidaze Logo"
-            class="h-45 w-auto"
-            width="160"
-            height="160"
-          />
+        <a href="/" aria-label="Holidaze Home" class="flex-shrink-0">
+          <img src="/assets/logo1.svg" alt="Holidaze Logo" class="h-40 w-auto" />
         </a>
 
         <!-- Nav -->
         <nav aria-label="Primary navigation">
-          <ul
-            class="flex space-x-8 text-[var(--brand-beige)] font-medium text-xl"
-          >
+          <ul class="flex space-x-8 text-[var(--brand-beige)] font-medium text-xl">
             <li>
               <a
                 href="/auth/login/"
-                aria-current="page"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
-                >Log In</a
+                class="px-4 py-2 rounded-lg font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
               >
+                Log In
+              </a>
             </li>
             <li>
               <a
                 href="/auth/register/"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
-                >Register</a
+                aria-current="page"
+                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-purple)]"
               >
+                Register
+              </a>
             </li>
             <li>
               <a
                 href="/profile/"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
-                >Profile</a
+                class="px-4 py-2 rounded-lg font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
               >
+                Profile
+              </a>
             </li>
           </ul>
         </nav>
       </div>
 
       <!-- Hero text -->
-      <div class="relative z-10 text-center text-[var(--brand-beige)]">
-        <h1
-          class="text-4xl md:text-5xl font-extrabold drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]"
-        >
-          Register
-        </h1>
-        <p
-          class="mt-3 text-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
-        >
+      <div class="relative z-10 text-center text-[var(--brand-beige)] px-6">
+        <h1 class="text-4xl md:text-5xl font-extrabold drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]">Register</h1>
+        <p class="mt-3 text-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
           Discover amazing venues with Holidaze
         </p>
       </div>
     </header>
 
-    <main class="w-full max-w-xl mx-auto mt-10 flex-grow px-6">
+    <!-- Main -->
+    <main id="main-content" class="w-full max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8 flex-grow">
       <form
         name="register"
-        id="registerForm"
-        class="bg-[var(--brand-purple)] p-8 rounded-2xl shadow-lg"
+        id="register-form"
+        class="bg-gradient-to-br from-[var(--brand-purple)] to-[#3b1c52] p-8 rounded-2xl shadow-lg"
       >
-        <fieldset
-          class="flex flex-col gap-6 border-[var(--brand-beige)] rounded-lg p-6"
-        >
-          <!-- Userame -->
+        <!-- Account Info -->
+        <fieldset class="flex flex-col gap-6 rounded-lg p-6 border border-[var(--brand-beige)]">
+          <legend class="text-[var(--brand-beige)] font-semibold uppercase text-sm tracking-wide px-2 mb-2">
+            Account Information
+          </legend>
+
+          <!-- Username -->
           <div>
-            <label
-              for="register-name"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >User Name</label
-            >
+            <label for="register-name" class="block text-base font-medium text-[var(--brand-beige)]">Username</label>
             <input
               type="text"
               name="name"
               id="register-name"
               required
-              aria-label="User name"
+              autofocus
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              placeholder="Enter your username here!"
+              placeholder="Enter your username"
             />
           </div>
-          <!-- Bio -->
-          <div>
-            <label
-              for="register-bio"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Bio</label
-            >
-            <textarea
-              name="bio"
-              id="register-bio"
-              required
-              aria-label="Bio"
-              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              placeholder="Tell us about yourself!"
-            ></textarea>
-          </div>
+
           <!-- Email -->
           <div>
-            <label
-              for="register-email"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Email</label
-            >
+            <label for="register-email" class="block text-base font-medium text-[var(--brand-beige)]">Email</label>
             <input
               type="email"
               name="email"
+              id="register-email"
               autocomplete="email"
               required
-              aria-label="Email address"
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              id="register-email"
-              placeholder="Enter your email here!"
+              placeholder="Enter your email"
             />
           </div>
+
+          <!-- Password -->
+          <div>
+            <label for="register-password" class="block text-base font-medium text-[var(--brand-beige)]">Password</label>
+            <input
+              type="password"
+              name="password"
+              id="register-password"
+              autocomplete="new-password"
+              required
+              minlength="8"
+              aria-describedby="password-hint"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              placeholder="Enter your password"
+            />
+            <small id="password-hint" class="block mt-1 text-[var(--brand-beige)] text-xs">
+              Must be at least 8 characters long.
+            </small>
+          </div>
+        </fieldset>
+
+        <!-- Profile Info -->
+        <fieldset class="flex flex-col gap-6 rounded-lg p-6 border border-[var(--brand-beige)]">
+          <legend class="text-[var(--brand-beige)] font-semibold uppercase text-sm tracking-wide px-2 mb-2">
+            Profile Information
+          </legend>
+
+          <!-- Bio -->
+          <div>
+            <label for="register-bio" class="block text-base font-medium text-[var(--brand-beige)]">Bio</label>
+            <textarea
+              name="bio"
+              id="register-bio"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              placeholder="Tell us about yourself"
+            ></textarea>
+          </div>
+        </fieldset>
+
+        <!-- Media -->
+        <fieldset class="flex flex-col gap-6 rounded-lg p-6 border border-[var(--brand-beige)]">
+          <legend class="text-[var(--brand-beige)] font-semibold uppercase text-sm tracking-wide px-2 mb-2">Media</legend>
+
           <!-- Avatar -->
           <div>
-            <label
-              for="register-avatarurl"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Avatar URL</label
-            >
+            <label for="register-avatarUrl" class="block text-base font-medium text-[var(--brand-beige)]">Avatar URL</label>
             <input
               type="url"
-              name="avatarurl"
-              id="register-avatarurl"
-              required
-              aria-label="Avatar URL"
+              name="avatarUrl"
+              id="register-avatarUrl"
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
               placeholder="Enter your avatar image URL"
             />
           </div>
-          <!-- Avatar Alt Text -->
+
           <div>
-            <label
-              for="register-avataralt"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Avatar Alt Text</label
-            >
+            <label for="register-avatarAlt" class="block text-base font-medium text-[var(--brand-beige)]">Avatar Alt Text</label>
             <input
               type="text"
-              name="avataralt"
-              id="register-avataralt"
-              required
-              aria-label="Avatar Alt Text"
+              name="avatarAlt"
+              id="register-avatarAlt"
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
               placeholder="Enter alt text for your avatar"
             />
           </div>
+
           <!-- Banner -->
           <div>
-            <label
-              for="register-bannerurl"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Banner URL</label
-            >
+            <label for="register-bannerUrl" class="block text-base font-medium text-[var(--brand-beige)]">Banner URL</label>
             <input
               type="url"
-              name="bannerurl"
-              id="register-bannerurl"
-              required
-              aria-label="Banner URL"
+              name="bannerUrl"
+              id="register-bannerUrl"
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              placeholder="Enter the banner image URL"
+              placeholder="Enter your banner image URL"
             />
           </div>
-          <!-- Banner Alt Text -->
+
           <div>
-            <label
-              for="register-banneralt"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Banner Alt Text</label
-            >
+            <label for="register-bannerAlt" class="block text-base font-medium text-[var(--brand-beige)]">Banner Alt Text</label>
             <input
               type="text"
-              name="banneralt"
-              id="register-banneralt"
-              required
-              aria-label="Banner Alt Text"
+              name="bannerAlt"
+              id="register-bannerAlt"
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
               placeholder="Enter alt text for your banner"
             />
           </div>
-          <!-- Password -->
-          <div>
-            <label
-              for="register-password"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Password</label
-            >
-            <input
-              type="password"
-              name="password"
-              required
-              aria-label="Password"
-              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              id="register-password"
-              placeholder="Enter your password here!"
-            />
-          </div>
-          <!-- Button -->
-          <button
-            type="submit"
-            class="bg-[var(--brand-beige)] hover:bg-opacity-90 text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40"
-          >
-            Register
-          </button>
-          <!-- Log In link -->
-          <p class="text-center text-[var(--brand-beige)] mt-4">
-            Already have an account?
-            <a
-              href="/auth/login/"
-              class="text-[var(--brand-beige)] hover:underline"
-              >Log In here!</a
-            >
-          </p>
         </fieldset>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="w-full mt-6 bg-[var(--brand-beige)] hover:bg-opacity-90 text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40"
+        >
+          Create Account
+        </button>
+
+        <!-- Feedback Area -->
+        <div
+          id="form-message"
+          role="alert"
+          aria-live="polite"
+          class="mt-4 text-center text-sm text-[var(--brand-beige)]"
+        ></div>
+
+        <!-- Log In link -->
+        <p class="text-center text-[var(--brand-beige)] mt-4">
+          Already have an account?
+          <a href="/auth/login/" class="text-[var(--brand-beige)] hover:underline focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]">
+            Log In here!
+          </a>
+        </p>
       </form>
     </main>
-    <!-- Footer  -->
-    <footer
-      class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)]"
-    >
+
+    <!-- Footer -->
+    <footer class="flex flex-wrap justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)] px-6">
       <p>&copy; 2025 Holidaze. All rights reserved.</p>
-      <span class="hidden md:block">|</span>
-      <p>Developed by Jenny Johnsby</p>
-      <span class="hidden md:block">|</span>
-      <div class="flex space-x-6">
+      <span>|</span>
+      <p>
+        Developed by
         <a
-          href="https://facebook.com/holidaze"
-          target="_blank"
-          class="hover:text-[var(--brand-beige-hover)]"
-          >Facebook</a
+          href="https://your-portfolio.com"
+          class="underline hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
         >
-        <a
-          href="https://twitter.com/holidaze"
-          target="_blank"
-          class="hover:text-[var(--brand-beige-hover)]"
-          >Twitter</a
-        >
-        <a
-          href="https://instagram.com/holidaze"
-          target="_blank"
-          class="hover:text-[var(--brand-beige-hover)]"
-          >Instagram</a
-        >
-      </div>
-      <span class="hidden md:block">|</span>
+          Jenny Johnsby
+        </a>
+      </p>
+      <span>|</span>
+      <nav aria-label="Social media">
+        <ul class="flex space-x-6">
+          <li>
+            <a
+              href="https://facebook.com/holidaze"
+              target="_blank"
+              rel="noopener"
+              aria-label="Visit Holidaze on Facebook"
+              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+            >
+              Facebook
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://twitter.com/holidaze"
+              target="_blank"
+              rel="noopener"
+              aria-label="Visit Holidaze on Twitter"
+              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+            >
+              Twitter
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://instagram.com/holidaze"
+              target="_blank"
+              rel="noopener"
+              aria-label="Visit Holidaze on Instagram"
+              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+            >
+              Instagram
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <span>|</span>
       <p>
         Contact us:
         <a
           href="mailto:support@holidaze.com"
-          class="hover:text-[var(--brand-beige-hover)]"
-          >support@holidaze.com</a
+          class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
         >
+          support@holidaze.com
+        </a>
       </p>
     </footer>
   </body>

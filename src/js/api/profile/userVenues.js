@@ -1,4 +1,4 @@
-import { API_KEY } from "../constants";
+import { API_KEY } from "../constants.js";
 
 export async function fetchUserVenues() {
   const userInLocalStorage = JSON.parse(localStorage.getItem("currentUser"));

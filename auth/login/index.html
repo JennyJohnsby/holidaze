@@ -8,103 +8,97 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/air-freight.png" />
     <script type="module" src="/src/app.js"></script>
     <link rel="stylesheet" href="/src/style.css" />
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@300;400;700;900&family=Cormorant+Garamond:wght@300;400;500;700&family=Montserrat+Alternates:wght@300;400;500;700;900&family=MuseoModerno:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
   </head>
 
-  <body
-    class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen"
-  >
-    <!-- Header  -->
+  <body class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen">
+    <!-- Skip Link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only absolute left-2 top-2 bg-white p-2 rounded text-[var(--brand-purple)]"
+    >
+      Skip to main content
+    </a>
+
+    <!-- Header -->
     <header
       role="banner"
       class="relative h-90 bg-cover bg-center"
-      style="
-        background-image: url(/assets/anders-jilden-AkUR27wtaxs-unsplash.jpg);
-      "
+      style="background-image: url(/assets/anders-jilden-AkUR27wtaxs-unsplash.jpg)"
     >
-      <div class="absolute inset-0 bg-[var(--brand-purple)]/50"></div>
+      <div class="absolute inset-0 bg-[var(--brand-purple)]/60"></div>
 
       <div class="relative z-10 flex items-center justify-between px-8 py-4">
         <!-- Logo -->
-        <a href="/" aria-label="Holidaze Home">
+        <a href="/" aria-label="Holidaze Home" class="flex-shrink-0">
           <img
             src="/assets/logo1.svg"
             alt="Holidaze Logo"
-            class="h-45 w-auto"
-            width="160"
-            height="160"
+            class="h-40 w-auto"
           />
         </a>
 
         <!-- Nav -->
         <nav aria-label="Primary navigation">
-          <ul
-            class="flex space-x-8 text-[var(--brand-beige)] font-medium text-xl"
-          >
+          <ul class="flex space-x-8 text-[var(--brand-beige)] font-medium text-xl">
             <li>
               <a
                 href="/auth/login/"
                 aria-current="page"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
-                >Log In</a
+                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-purple)]"
               >
+                Log In
+              </a>
             </li>
             <li>
               <a
                 href="/auth/register/"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
-                >Register</a
+                class="px-4 py-2 rounded-lg font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
               >
+                Register
+              </a>
             </li>
             <li>
               <a
                 href="/profile/"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
-                >Profile</a
+                class="px-4 py-2 rounded-lg font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
               >
+                Profile
+              </a>
             </li>
           </ul>
         </nav>
       </div>
 
       <!-- Hero text -->
-      <div class="relative z-10 text-center text-[var(--brand-beige)]">
-        <h1
-          class="text-4xl md:text-5xl font-extrabold drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]"
-        >
+      <div class="relative z-10 text-center text-[var(--brand-beige)] px-6">
+        <h1 class="text-4xl md:text-5xl font-extrabold drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]">
           Log In
         </h1>
-        <p
-          class="mt-3 text-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
-        >
+        <p class="mt-3 text-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
           Discover amazing venues with Holidaze
         </p>
       </div>
     </header>
 
     <!-- Main -->
-    <main class="w-full max-w-xl mx-auto mt-10 flex-grow px-6">
+    <main id="main-content" class="w-full max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8 flex-grow">
       <form
         name="login"
         id="login-form"
-        class="bg-[var(--brand-purple)] p-8 rounded-2xl shadow-lg"
+        class="bg-gradient-to-br from-[var(--brand-purple)] to-[#3b1c52] p-8 rounded-2xl shadow-lg"
       >
-        <fieldset
-          class="flex flex-col gap-6 border-[var(--brand-beige)] rounded-lg p-6"
-        >
+        <fieldset class="flex flex-col gap-6 rounded-lg p-6 border border-[var(--brand-beige)]">
           <!-- Email -->
           <div>
-            <label
-              for="login-email"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Email</label
-            >
+            <label for="login-email" class="block text-base font-medium text-[var(--brand-beige)]">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -118,20 +112,23 @@
 
           <!-- Password -->
           <div>
-            <label
-              for="login-password"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Password</label
-            >
+            <label for="login-password" class="block text-base font-medium text-[var(--brand-beige)]">
+              Password
+            </label>
             <input
               type="password"
               name="password"
               id="login-password"
               autocomplete="current-password"
               required
+              minlength="8"
+              aria-describedby="password-hint"
               placeholder="Enter your password"
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
             />
+            <small id="password-hint" class="block mt-1 text-[var(--brand-beige)] text-xs">
+              Must be at least 8 characters long.
+            </small>
           </div>
 
           <!-- Button -->
@@ -142,55 +139,80 @@
             Log In
           </button>
 
+          <!-- Feedback area -->
+          <div id="form-message" role="alert" class="mt-4 text-center text-sm text-[var(--brand-beige)]"></div>
+
           <!-- Register link -->
           <p class="text-center text-[var(--brand-beige)] mt-4">
             Not registered yet?
-            <a
-              href="/auth/register/"
-              class="text-[var(--brand-beige)] hover:underline"
-              >Register here!</a
-            >
+            <a href="/auth/register/" class="text-[var(--brand-beige)] hover:underline focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]">
+              Register here!
+            </a>
           </p>
         </fieldset>
       </form>
     </main>
 
-    <!-- Footer  -->
-    <footer
-      class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)]"
-    >
+    <!-- Footer -->
+    <footer class="flex flex-wrap justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)] px-6">
       <p>&copy; 2025 Holidaze. All rights reserved.</p>
-      <span class="hidden md:block">|</span>
-      <p>Developed by Jenny Johnsby</p>
-      <span class="hidden md:block">|</span>
-      <div class="flex space-x-6">
+      <span>|</span>
+      <p>
+        Developed by
         <a
-          href="https://facebook.com/holidaze"
-          target="_blank"
-          class="hover:text-[var(--brand-beige-hover)]"
-          >Facebook</a
+          href="https://your-portfolio.com"
+          class="underline hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
         >
-        <a
-          href="https://twitter.com/holidaze"
-          target="_blank"
-          class="hover:text-[var(--brand-beige-hover)]"
-          >Twitter</a
-        >
-        <a
-          href="https://instagram.com/holidaze"
-          target="_blank"
-          class="hover:text-[var(--brand-beige-hover)]"
-          >Instagram</a
-        >
-      </div>
-      <span class="hidden md:block">|</span>
+          Jenny Johnsby
+        </a>
+      </p>
+      <span>|</span>
+      <nav aria-label="Social media">
+        <ul class="flex space-x-6">
+          <li>
+            <a
+              href="https://facebook.com/holidaze"
+              target="_blank"
+              rel="noopener"
+              aria-label="Visit Holidaze on Facebook"
+              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+            >
+              Facebook
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://twitter.com/holidaze"
+              target="_blank"
+              rel="noopener"
+              aria-label="Visit Holidaze on Twitter"
+              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+            >
+              Twitter
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://instagram.com/holidaze"
+              target="_blank"
+              rel="noopener"
+              aria-label="Visit Holidaze on Instagram"
+              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+            >
+              Instagram
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <span>|</span>
       <p>
         Contact us:
         <a
           href="mailto:support@holidaze.com"
-          class="hover:text-[var(--brand-beige-hover)]"
-          >support@holidaze.com</a
+          class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
         >
+          support@holidaze.com
+        </a>
       </p>
     </footer>
   </body>

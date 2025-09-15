@@ -1,6 +1,39 @@
 import { readVenue } from "../../api/venues/read.js";
 import { deleteVenue } from "../../api/venues/delete.js";
 
+// Create Booking
+async function createBooking(bookingData) {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user || !user.accessToken) {
+    alert("You must be logged in to book a venue.");
+    return;
+  }
+
+  try {
+    const response = await fetch("https://api.noroff.dev/api/v1/holidaze/bookings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.accessToken}`,
+      },
+      body: JSON.stringify(bookingData),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.errors?.[0]?.message || "Booking failed.");
+    }
+
+    alert("Booking successful!");
+    console.log("Booking result:", result);
+  } catch (error) {
+    console.error("Booking error:", error);
+    alert(`Booking failed: ${error.message}`);
+  }
+}
+
 async function fetchAndDisplayVenue() {
   const venueId = new URLSearchParams(window.location.search).get("id");
   const venueContainer = document.getElementById("venueDetailContainer");
@@ -20,6 +53,9 @@ function renderSingleVenue(venue) {
   const venueContainer = document.getElementById("venueDetailContainer");
   if (!venueContainer) return;
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isOwner = user?.name?.toLowerCase() === venue?.owner?.name?.toLowerCase();
+
   venueContainer.innerHTML = `
     <div class="max-w-5xl mx-auto bg-[var(--brand-purple)] rounded-2xl shadow-xl overflow-hidden mt-16">
       
@@ -32,7 +68,6 @@ function renderSingleVenue(venue) {
 
       <!-- Details -->
       <div class="p-8 space-y-6">
-        <!-- Name & Description -->
         <div>
           <h1 class="text-4xl font-extrabold text-[var(--brand-beige)] mb-3">${venue.name || "Unnamed Venue"}</h1>
           <p class="text-[var(--brand-beige)] text-lg">${venue.description || "No description available."}</p>
@@ -76,15 +111,70 @@ function renderSingleVenue(venue) {
             ${venue.location?.address || ""}, ${venue.location?.city || ""}, ${venue.location?.zip || ""}, ${venue.location?.country || ""}
           </p>
         </div>
+
+        <!-- Owner Controls OR Booking -->
+        ${
+          user
+            ? isOwner
+              ? `
+                <div class="mt-6 flex gap-4">
+                  <a href="/edit-venue/?id=${venue.id}" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300">Edit Venue</a>
+                  <button id="delete-venue-button" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500">Delete Venue</button>
+                </div>`
+              : `
+                <form id="booking-form" class="mt-8 bg-[var(--brand-beige)] p-6 rounded-xl space-y-4">
+                  <h2 class="text-xl font-bold text-[var(--brand-purple)]">Book this venue</h2>
+                  <label class="block">
+                    <span class="text-sm font-medium text-[var(--brand-purple)]">Check-in</span>
+                    <input type="date" name="checkIn" class="mt-1 w-full p-2 rounded border border-gray-300" required />
+                  </label>
+                  <label class="block">
+                    <span class="text-sm font-medium text-[var(--brand-purple)]">Check-out</span>
+                    <input type="date" name="checkOut" class="mt-1 w-full p-2 rounded border border-gray-300" required />
+                  </label>
+                  <label class="block">
+                    <span class="text-sm font-medium text-[var(--brand-purple)]">Guests</span>
+                    <input type="number" name="guests" min="1" max="${venue.maxGuests}" class="mt-1 w-full p-2 rounded border border-gray-300" required />
+                  </label>
+                  <button type="submit" class="w-full bg-[var(--brand-purple)] text-[var(--brand-beige)] px-4 py-2 rounded hover:bg-[var(--brand-purple-hover)]">
+                    Book Now
+                  </button>
+                </form>`
+            : `<p class="text-[var(--brand-beige)] text-center mt-6">You must <a href="/auth/login/" class="underline">log in</a> to book this venue.</p>`
+        }
+
+      </div>
+    </div>
   `;
 
+  // Deletion logic
   const deleteButton = document.getElementById("delete-venue-button");
   if (deleteButton) {
-    deleteButton.addEventListener("click", () => {
-      deleteVenue(venue.id);
+    deleteButton.addEventListener("click", async () => {
+      if (confirm("Are you sure you want to delete this venue?")) {
+        await deleteVenue(venue.id);
+        window.location.href = "/profile/";
+      }
+    });
+  }
+
+  // Booking logic
+  const bookingForm = document.getElementById("booking-form");
+  if (bookingForm) {
+    bookingForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(bookingForm);
+      const bookingData = {
+        dateFrom: new Date(formData.get("checkIn")).toISOString(),
+        dateTo: new Date(formData.get("checkOut")).toISOString(),
+        guests: parseInt(formData.get("guests")),
+        venueId: venue.id,
+      };
+
+      await createBooking(bookingData);
     });
   }
 }
-
 
 fetchAndDisplayVenue();

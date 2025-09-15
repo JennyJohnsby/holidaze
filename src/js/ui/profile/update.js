@@ -13,52 +13,52 @@ export async function onUpdateProfile(event) {
   const bannerUrl = formData.get("bannerUrl")?.trim();
   const bannerAlt = formData.get("bannerAlt")?.trim();
 
-  const avatar = avatarUrl ? { url: avatarUrl, alt: avatarAlt || "" } : null;
-  const banner = bannerUrl ? { url: bannerUrl, alt: bannerAlt || "" } : null;
-
-  const profileData = { bio, avatar, banner };
+  // Build payload
+  const profileData = {};
+  if (bio) profileData.bio = bio;
+  if (avatarUrl) profileData.avatar = { url: avatarUrl, alt: avatarAlt || "" };
+  if (bannerUrl) profileData.banner = { url: bannerUrl, alt: bannerAlt || "" };
 
   try {
-    const updatedProfile = await updateProfile(profileData);
-    console.log("Profile updated successfully:", updatedProfile);
+    const { data, error } = await updateProfile(profileData);
 
+    if (error) {
+      displayBanner(error, "error");
+      return;
+    }
+
+    console.info("[Profile UI] Profile updated:", data);
     displayBanner("Profile updated successfully!", "success");
 
-    const avatarElement = document.querySelector(".profile-avatar");
+    // Update DOM
+    const avatarElement = document.querySelector("#profile-view .profile-avatar");
     if (avatarElement) {
-      avatarElement.src =
-        updatedProfile.avatar?.url || "public/images/avatar-placeholder.png";
-      avatarElement.alt = updatedProfile.avatar?.alt || "User Avatar";
+      avatarElement.src = data.avatar?.url || "/images/avatar-placeholder.png";
+      avatarElement.alt = data.avatar?.alt ?? "User Avatar";
     }
 
-    const bannerElement = document.querySelector(".profile-banner-image");
+    const bannerElement = document.querySelector("#profile-view .profile-banner-image");
     if (bannerElement) {
-      bannerElement.src =
-        updatedProfile.banner?.url || "public/images/banner-placeholder.jpg";
-      bannerElement.alt = updatedProfile.banner?.alt || "User Banner";
+      bannerElement.src = data.banner?.url || "/images/banner-placeholder.jpg";
+      bannerElement.alt = data.banner?.alt ?? "User Banner";
     }
 
-    const bioElement = document.querySelector(".profile-bio");
+    const bioElement = document.querySelector("#profile-view .profile-bio");
     if (bioElement) {
-      bioElement.textContent = updatedProfile.bio || "No bio available";
+      bioElement.textContent = data.bio || "No bio available";
     }
 
-    const creditsElement = document.querySelector(".profile-credits");
+    const creditsElement = document.querySelector("#profile-view .profile-credits");
     if (creditsElement) {
-      creditsElement.textContent = `Total Credit: ${updatedProfile.credits || 0}`;
+      creditsElement.textContent = `Total Credit: ${data.credits ?? 0}`;
     }
 
-    const profileTypeElement = document.querySelector(".profile-type");
+    const profileTypeElement = document.querySelector("#profile-view .profile-type");
     if (profileTypeElement) {
-      profileTypeElement.textContent =
-        updatedProfile.venueManager !== undefined
-          ? updatedProfile.venueManager
-            ? "Venue Manager"
-            : "Regular User"
-          : "User";
+      profileTypeElement.textContent = data.venueManager ? "Venue Manager" : "Regular User";
     }
   } catch (error) {
-    console.error("Error updating profile:", error);
+    console.error("[Profile UI] Error updating profile:", error);
     displayBanner(error.message || "An unexpected error occurred.", "error");
   }
 }

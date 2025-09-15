@@ -1,4 +1,4 @@
-import { API_PROFILE, API_KEY } from "../constants";
+import { API_PROFILE, API_KEY } from "../constants.js";
 
 export async function readProfile() {
   const userInLocalStorage = JSON.parse(localStorage.getItem("currentUser"));
