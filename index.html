@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Holidaze | Home"/>
+    <meta name="description" content="Holidaze | Home" />
+    <meta
+      name="keywords"
+      content="vacation rentals, travel, accommodation, booking, Holidaze, venues"
+    />
     <title>Holidaze | Home</title>
     <link
       rel="icon"
@@ -17,11 +21,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100..900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat+Alternates:wght@100..900&family=MuseoModerno:wght@100..900&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Open Graph for social sharing -->
     <meta property="og:title" content="Holidaze | Book. Stay. Relax." />
     <meta
       property="og:description"
@@ -30,8 +33,6 @@
     <meta property="og:image" content="/assets/preview.jpg" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://holidaze.com" />
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Holidaze | Book. Stay. Relax." />
     <meta
@@ -44,16 +45,13 @@
   <body
     class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen"
   >
-    <!-- Header -->
     <header
       role="banner"
       class="relative h-90 bg-cover bg-center"
-      style="background-image: url(/assets/ian-dooley-DuBNA1QMpPA-unsplash.jpg)"
+      style="background-image: url(/assets/eugene-zh-FW0RI-lfX4Q-unsplash.jpg)"
     >
       <div class="absolute inset-0 bg-[var(--brand-purple)]/50"></div>
-
       <div class="relative z-10 flex items-center justify-between px-8 py-4">
-        <!-- Logo -->
         <a href="/" aria-label="Holidaze Home" class="flex-shrink-0">
           <img
             src="/assets/logo1.svg"
@@ -63,8 +61,6 @@
             height="160"
           />
         </a>
-
-        <!-- Nav -->
         <nav aria-label="Primary navigation">
           <ul
             class="flex space-x-8 text-[var(--brand-beige)] font-medium text-xl"
@@ -72,21 +68,21 @@
             <li>
               <a
                 href="/auth/login/"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
+                class="px-4 py-2 rounded-lg font-semibold hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
                 >Log In</a
               >
             </li>
             <li>
               <a
                 href="/auth/register/"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
+                class="px-4 py-2 rounded-lg font-semibold hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
                 >Register</a
               >
             </li>
             <li>
               <a
                 href="/profile/"
-                class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
+                class="px-4 py-2 rounded-lg font-semibold hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg"
                 >Profile</a
               >
             </li>
@@ -94,8 +90,7 @@
         </nav>
       </div>
 
-      <!-- Hero text -->
-      <div class="relative z-10 text-center text-[var(--brand-beige)]">
+      <div class="relative z-10 text-center text-[var(--brand-beige)] mt-8">
         <h1
           class="text-4xl md:text-5xl font-extrabold drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]"
         >
@@ -109,9 +104,35 @@
       </div>
     </header>
 
-    <!-- Main -->
     <main id="main-content" class="w-full mx-auto mt-10 flex-grow px-6">
-      <!-- Search + Filter -->
+      <section
+        class="max-w-4xl mx-auto mb-12 text-center px-4"
+        aria-labelledby="welcome-heading"
+      >
+        <h2
+          id="welcome-heading"
+          class="text-4xl font-bold mb-4 text-[var(--brand-purple)]"
+        >
+          Welcome to Holidaze
+        </h2>
+        <p class="text-lg mb-6">
+          Holidaze is your one-stop platform for discovering unique venues
+          across the globe. Whether you’re looking for a cozy cabin in the
+          mountains or a modern loft in the city, we’ve got you covered.
+        </p>
+        <p class="text-lg">
+          Simply browse available venues, apply filters to find your perfect
+          match, and book directly. All listings are verified, and you can view
+          detailed amenities, prices, and reviews before booking.
+        </p>
+        <a
+          href="#venueContainer"
+          class="mt-6 inline-block px-6 py-3 bg-[var(--brand-purple)] text-[var(--brand-beige)] rounded-lg font-semibold shadow-md hover:bg-[var(--brand-purple-hover)] transition"
+        >
+          Browse Venues
+        </a>
+      </section>
+
       <section
         class="flex flex-col items-center mt-10"
         aria-label="Search and filter venues"
@@ -124,26 +145,52 @@
           class="w-full max-w-xl p-3 rounded-lg border border-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple)] focus:outline-none mb-6"
         />
 
-        <div
-          class="flex flex-col sm:flex-row gap-4 w-full max-w-xl items-center"
+        <details class="w-full max-w-xl sm:block mb-6">
+          <summary class="text-lg font-semibold cursor-pointer mb-2">
+            Filter Options
+          </summary>
+          <div>
+            <h3 class="font-semibold mb-2">Filter by Amenities:</h3>
+            <div class="flex flex-wrap gap-4 mb-4">
+              <label
+                ><input type="checkbox" class="filter-tag" value="wifi" />
+                WiFi</label
+              >
+              <label
+                ><input type="checkbox" class="filter-tag" value="parking" />
+                Parking</label
+              >
+              <label
+                ><input type="checkbox" class="filter-tag" value="breakfast" />
+                Breakfast</label
+              >
+              <label
+                ><input type="checkbox" class="filter-tag" value="pets" />
+                Pets</label
+              >
+            </div>
+
+            <h3 class="font-semibold mb-2">Filter by Price:</h3>
+            <div class="flex gap-4">
+              <label
+                >Max Price:
+                <input
+                  type="number"
+                  id="maxPrice"
+                  class="border px-2 py-1 rounded w-24"
+              /></label>
+            </div>
+          </div>
+        </details>
+
+        <button
+          id="clearFilters"
+          class="mt-2 px-4 py-2 bg-[var(--brand-purple)] text-[var(--brand-beige)] rounded-lg hover:bg-[var(--brand-purple-hover)] transition"
         >
-          <label for="tagSelect" class="text-lg font-semibold"
-            >Filter by Tag:</label
-          >
-          <select
-            id="tagSelect"
-            class="flex-1 p-3 rounded-lg border border-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple)]"
-          >
-            <option value="">All Tags</option>
-            <option value="family">Family</option>
-            <option value="luxury">Luxury</option>
-            <option value="budget">Budget</option>
-            <option value="romantic">Romantic</option>
-          </select>
-        </div>
+          Clear Filters
+        </button>
       </section>
 
-      <!-- Venues -->
       <section class="mt-12" aria-labelledby="venues-heading">
         <h2 id="venues-heading" class="text-3xl font-semibold text-center mb-8">
           All Venues
@@ -155,7 +202,6 @@
       </section>
     </main>
 
-    <!-- Footer -->
     <footer
       class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)]"
     >
@@ -163,8 +209,7 @@
       <span class="hidden md:block">|</span>
       <p>Developed by Jenny Johnsby</p>
       <span class="hidden md:block">|</span>
-
-      <nav aria-label="Social media">
+      <nav aria-label="Footer social links">
         <ul class="flex space-x-6">
           <li>
             <a
@@ -195,7 +240,6 @@
           </li>
         </ul>
       </nav>
-
       <span class="hidden md:block">|</span>
       <p>
         Contact us:

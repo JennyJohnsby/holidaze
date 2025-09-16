@@ -1,6 +1,5 @@
-/**
- * Debounce utility for smoother search experience
- */
+let allVenues = [];
+
 function debounce(fn, delay = 300) {
   let timeout;
   return (...args) => {
@@ -9,9 +8,6 @@ function debounce(fn, delay = 300) {
   };
 }
 
-/**
- * Render stars based on rating
- */
 function renderStars(rating = 0) {
   if (!rating) return "No rating";
   const fullStars = "★".repeat(Math.floor(rating));
@@ -19,126 +15,102 @@ function renderStars(rating = 0) {
   return `<span class="text-yellow-400">${fullStars}${emptyStars}</span>`;
 }
 
-/**
- * Setup search functionality
- */
-function setupSearch(venues) {
-  const searchInput = document.getElementById("searchInput");
-  if (!searchInput) {
-    console.error("Search input not found in DOM");
-    return;
-  }
+function getFilteredVenues(venues) {
+  const query = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
+  const checkedTags = Array.from(document.querySelectorAll(".filter-tag:checked")).map(cb => cb.value);
+  const maxPrice = parseFloat(document.getElementById("maxPrice")?.value || Infinity);
 
-  searchInput.addEventListener(
-    "input",
-    debounce((event) => {
-      const query = event.target.value.toLowerCase().trim();
-
-      if (!Array.isArray(venues) || venues.length === 0) {
-        console.error("No venues available for search");
-        return;
-      }
-
-      if (query === "") {
-        renderVenues(venues);
-        return;
-      }
-
-      const filteredVenues = venues.filter((venue) => {
-        const name = venue.name?.toLowerCase() || "";
-        const description = venue.description?.toLowerCase() || "";
-        return name.includes(query) || description.includes(query);
-      });
-
-      const venueContainer = document.getElementById("venueContainer");
-
-      if (filteredVenues.length === 0) {
-        venueContainer.innerHTML = `
-          <div role="status" aria-live="polite" class="text-center text-gray-500">
-            No venues found for "${query}"
-          </div>`;
-        return;
-      }
-
-      renderVenues(filteredVenues);
-    }, 300)
-  );
+  return venues.filter((venue) => {
+    const name = venue.name?.toLowerCase() || "";
+    const description = venue.description?.toLowerCase() || "";
+    const matchesSearch = name.includes(query) || description.includes(query);
+    const matchesCheckedTags = checkedTags.every(tag => venue.meta?.[tag]);
+    const matchesPrice = venue.price <= maxPrice;
+    return matchesSearch && matchesCheckedTags && matchesPrice;
+  });
 }
 
-/**
- * Fetch and display venues from API
- */
-export async function fetchAndDisplayVenues(
-  includeOwner = false,
-  includeBookings = false
-) {
+function setupSearch() {
+  const searchInput = document.getElementById("searchInput");
+  if (!searchInput) return;
+  searchInput.addEventListener("input", debounce(() => {
+    renderVenues(getFilteredVenues(allVenues), 5);
+  }, 300));
+}
+
+function setupFilters() {
+  const maxPrice = document.getElementById("maxPrice");
+  const checkboxes = document.querySelectorAll(".filter-tag");
+  if (maxPrice) {
+    maxPrice.addEventListener("input", () => {
+      renderVenues(getFilteredVenues(allVenues), 5);
+    });
+  }
+  checkboxes.forEach((input) => {
+    input.addEventListener("change", () => {
+      renderVenues(getFilteredVenues(allVenues), 5);
+    });
+  });
+  const clearButton = document.getElementById("clearFilters");
+  if (clearButton) {
+    clearButton.addEventListener("click", () => {
+      if (maxPrice) maxPrice.value = "";
+      checkboxes.forEach((cb) => (cb.checked = false));
+      document.getElementById("searchInput").value = "";
+      renderVenues(getFilteredVenues(allVenues), 5);
+    });
+  }
+}
+
+export async function fetchAndDisplayVenues(includeOwner = false, includeBookings = false) {
   const urlBase = "https://v2.api.noroff.dev/holidaze/venues";
   const venueContainer = document.getElementById("venueContainer");
-
-  if (!venueContainer) {
-    console.error("Venue container not found in the DOM");
-    return;
-  }
-
-  // Loading spinner
+  if (!venueContainer) return;
   venueContainer.innerHTML = `
     <div class="flex justify-center py-10">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--brand-purple)]"></div>
     </div>
   `;
-
   try {
     let url = urlBase;
     const params = new URLSearchParams();
     if (includeOwner) params.append("_owner", "true");
     if (includeBookings) params.append("_bookings", "true");
-
-    if (params.toString()) {
-      url += `?${params.toString()}`;
-    }
-
+    if (params.toString()) url += `?${params.toString()}`;
     const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("Failed to fetch venues.");
-    }
-
+    if (!response.ok) throw new Error("Failed to fetch venues.");
     const data = await response.json();
     let venues = data.data;
-
     if (!venues || venues.length === 0) {
       venueContainer.innerHTML = "<p>No venues available.</p>";
       return;
     }
-
-    // ✅ Always sort venues A → Z by name (case-insensitive)
-    venues = venues.sort((a, b) =>
-      a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-    );
-
-    renderVenues(venues);
-    setupSearch(venues);
+    venues = venues.filter((v) => !!v.created).sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+    allVenues = venues;
+    renderVenues(getFilteredVenues(allVenues), 5);
+    setupSearch();
+    setupFilters();
   } catch (error) {
     console.error("Error fetching venues:", error);
     venueContainer.innerHTML = `
       <div class="text-center">
         <p class="mb-4">Failed to load venues. Please try again later.</p>
-        <button class="px-4 py-2 bg-[var(--brand-purple)] text-[var(--brand-beige)] rounded-lg"
-          onclick="fetchAndDisplayVenues()">
+        <button id="retryButton" class="px-4 py-2 bg-[var(--brand-purple)] text-[var(--brand-beige)] rounded-lg">
           Retry
         </button>
       </div>
     `;
+    document.getElementById("retryButton")?.addEventListener("click", () => fetchAndDisplayVenues());
   }
 }
 
-/**
- * Render venues in the DOM
- */
-function renderVenues(venues) {
+function renderVenues(venues, limit = 5) {
   const venueContainer = document.getElementById("venueContainer");
+  const existingBtn = document.getElementById("showMoreBtn");
+  if (existingBtn) existingBtn.remove();
   venueContainer.innerHTML = "";
-
-  venues.forEach((venue) => {
+  const venuesToShow = venues.slice(0, limit);
+  venuesToShow.forEach((venue) => {
     const venueElement = document.createElement("div");
     venueElement.classList.add(
       "venue",
@@ -154,7 +126,6 @@ function renderVenues(venues) {
       "flex",
       "flex-col"
     );
-
     venueElement.innerHTML = `
       <div class="relative h-56 overflow-hidden group">
         ${
@@ -194,39 +165,30 @@ function renderVenues(venues) {
             Rating: ${renderStars(venue.rating)} (${venue.rating ?? "N/A"})
           </p>
           <div class="flex flex-wrap gap-2">
-            ${
-              venue.meta?.wifi
-                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">📶 WiFi</span>`
-                : ""
-            }
-            ${
-              venue.meta?.parking
-                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🚗 Parking</span>`
-                : ""
-            }
-            ${
-              venue.meta?.breakfast
-                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🥐 Breakfast</span>`
-                : ""
-            }
-            ${
-              venue.meta?.pets
-                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🐾 Pets</span>`
-                : ""
-            }
+            ${venue.meta?.wifi ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">📶 WiFi</span>` : ""}
+            ${venue.meta?.parking ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🚗 Parking</span>` : ""}
+            ${venue.meta?.breakfast ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🥐 Breakfast</span>` : ""}
+            ${venue.meta?.pets ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🐾 Pets</span>` : ""}
           </div>
         </div>
       </div>
     `;
-
-    // Navigate to single venue page safely
     venueElement.addEventListener("click", () => {
       window.location.href = `/venues/?id=${encodeURIComponent(venue.id)}`;
     });
-
     venueContainer.appendChild(venueElement);
   });
+  if (venues.length > limit) {
+    const btn = document.createElement("button");
+    btn.id = "showMoreBtn";
+    btn.textContent = "Show All Venues";
+    btn.className =
+      "block mt-6 mx-auto px-6 py-2 bg-[var(--brand-purple)] text-[var(--brand-beige)] rounded-lg hover:bg-[var(--brand-purple-hover)] transition";
+    btn.addEventListener("click", () => {
+      renderVenues(getFilteredVenues(allVenues), allVenues.length);
+    });
+    venueContainer.parentElement.appendChild(btn);
+  }
 }
 
-// Initial fetch
 fetchAndDisplayVenues(true, false);

@@ -6,18 +6,15 @@ export async function onCreateVenue(event) {
 
   const form = event.target;
 
-  // Basic info
   const name = form.name.value.trim();
   const description = form.description.value.trim();
   const price = Number(form.price.value);
   const maxGuests = Number(form.maxGuests.value);
   const rating = Number(form.rating.value) || 0;
 
-  // Media
   const mediaUrl = form.mediaUrl.value.trim();
   const mediaAlt = form.mediaAlt.value.trim();
 
-  // Meta
   const meta = {
     wifi: form.wifi.checked,
     parking: form.parking.checked,
@@ -25,7 +22,6 @@ export async function onCreateVenue(event) {
     pets: form.pets.checked,
   };
 
-  // Location
   const location = {
     address: form.address.value.trim() || null,
     city: form.city.value.trim() || null,
@@ -36,7 +32,6 @@ export async function onCreateVenue(event) {
     lng: Number(form.lng.value) || 0,
   };
 
-  // Validation
   if (!name) {
     displayBanner("Venue name is required", "error");
     return;
@@ -70,28 +65,12 @@ export async function onCreateVenue(event) {
 
   try {
     const response = await createVenue(venueData);
-    displayBanner(
-      `Venue created successfully: ${response.data.name}`,
-      "success"
-    );
+    displayBanner(`Venue created successfully: ${response.data.name}`, "success");
 
     setTimeout(() => {
       window.location.href = "/profile/";
     }, 3000);
   } catch (error) {
-    console.error("Failed to create venue:", error);
     displayBanner(`Failed to create venue: ${error.message}`, "error");
   }
-
-  form.reset();
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const createVenueForm = document.getElementById("createVenue");
-
-  if (createVenueForm) {
-    createVenueForm.addEventListener("submit", onCreateVenue);
-  } else {
-    console.error("Create venue form could not be found in the DOM");
-  }
-});

@@ -3,6 +3,8 @@ import { authGuard } from "../../utilities/authGuard";
 
 authGuard();
 
-const form = document.forms.createVenues;
+const form = document.getElementById("createVenue");
 
-form.addEventListener("submit", onCreateVenue);
+if (form) {
+  form.addEventListener("submit", onCreateVenue);
+}

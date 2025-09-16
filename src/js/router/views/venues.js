@@ -1,7 +1,6 @@
 import { readVenue } from "../../api/venues/read.js";
 import { deleteVenue } from "../../api/venues/delete.js";
 
-// Create Booking
 async function createBooking(bookingData) {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -54,26 +53,28 @@ function renderSingleVenue(venue) {
   if (!venueContainer) return;
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const isOwner = user?.name?.toLowerCase() === venue?.owner?.name?.toLowerCase();
+  const isLoggedIn = !!user?.accessToken;
+  const userName = user?.name?.trim().toLowerCase();
+  const ownerName = venue?.owner?.name?.trim().toLowerCase();
+  const isOwner = userName && ownerName && userName === ownerName;
+
+  console.log("Logged in as:", user?.name);
+  console.log("Venue owner:", venue?.owner?.name);
+  console.log("isOwner:", isOwner);
+  console.log("isLoggedIn:", isLoggedIn);
 
   venueContainer.innerHTML = `
     <div class="max-w-5xl mx-auto bg-[var(--brand-purple)] rounded-2xl shadow-xl overflow-hidden mt-16">
-      
-      <!-- Image -->
       <div class="relative h-96">
         ${venue.media?.[0]?.url 
           ? `<img src="${venue.media[0].url}" alt="${venue.media[0].alt || "Venue image"}" class="w-full h-full object-cover" />` 
           : `<div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-lg font-medium">No Image Available</div>`}
       </div>
-
-      <!-- Details -->
       <div class="p-8 space-y-6">
         <div>
           <h1 class="text-4xl font-extrabold text-[var(--brand-beige)] mb-3">${venue.name || "Unnamed Venue"}</h1>
           <p class="text-[var(--brand-beige)] text-lg">${venue.description || "No description available."}</p>
         </div>
-
-        <!-- Stats -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[var(--brand-beige)] p-4 rounded-xl shadow-inner">
           <div class="text-center">
             <p class="text-[var(--brand-purple-hover)] font-bold">Price</p>
@@ -92,8 +93,6 @@ function renderSingleVenue(venue) {
             <p class="text-[var(--brand-purple)] font-semibold text-lg">${new Date(venue.created).toLocaleDateString()}</p>
           </div>
         </div>
-
-        <!-- Amenities -->
         <div>
           <h2 class="text-2xl font-semibold text-[var(--brand-beige)] mb-2">Amenities</h2>
           <ul class="flex flex-wrap gap-2">
@@ -103,8 +102,6 @@ function renderSingleVenue(venue) {
             ${venue.meta?.pets ? `<li class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Pets Allowed</li>` : ""}
           </ul>
         </div>
-
-        <!-- Location -->
         <div>
           <h2 class="text-2xl font-semibold text-[var(--brand-beige)] mb-2">Location</h2>
           <p class="text-[var(--brand-beige)]">
@@ -112,34 +109,33 @@ function renderSingleVenue(venue) {
           </p>
         </div>
 
-        <!-- Owner Controls OR Booking -->
         ${
-          user
+          isLoggedIn
             ? isOwner
               ? `
-                <div class="mt-6 flex gap-4">
-                  <a href="/edit-venue/?id=${venue.id}" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300">Edit Venue</a>
-                  <button id="delete-venue-button" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500">Delete Venue</button>
-                </div>`
+              <div class="mt-6 flex gap-4">
+                <a href="/edit-venue/?id=${venue.id}" class="bg-yellow-400 text-black px-4 py-2 rounded hover:bg-yellow-300">Edit Venue</a>
+                <button id="delete-venue-button" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500">Delete Venue</button>
+              </div>`
               : `
-                <form id="booking-form" class="mt-8 bg-[var(--brand-beige)] p-6 rounded-xl space-y-4">
-                  <h2 class="text-xl font-bold text-[var(--brand-purple)]">Book this venue</h2>
-                  <label class="block">
-                    <span class="text-sm font-medium text-[var(--brand-purple)]">Check-in</span>
-                    <input type="date" name="checkIn" class="mt-1 w-full p-2 rounded border border-gray-300" required />
-                  </label>
-                  <label class="block">
-                    <span class="text-sm font-medium text-[var(--brand-purple)]">Check-out</span>
-                    <input type="date" name="checkOut" class="mt-1 w-full p-2 rounded border border-gray-300" required />
-                  </label>
-                  <label class="block">
-                    <span class="text-sm font-medium text-[var(--brand-purple)]">Guests</span>
-                    <input type="number" name="guests" min="1" max="${venue.maxGuests}" class="mt-1 w-full p-2 rounded border border-gray-300" required />
-                  </label>
-                  <button type="submit" class="w-full bg-[var(--brand-purple)] text-[var(--brand-beige)] px-4 py-2 rounded hover:bg-[var(--brand-purple-hover)]">
-                    Book Now
-                  </button>
-                </form>`
+              <form id="booking-form" class="mt-8 bg-[var(--brand-beige)] p-6 rounded-xl space-y-4">
+                <h2 class="text-xl font-bold text-[var(--brand-purple)]">Book this venue</h2>
+                <label class="block">
+                  <span class="text-sm font-medium text-[var(--brand-purple)]">Check-in</span>
+                  <input type="date" name="checkIn" class="mt-1 w-full p-2 rounded border border-gray-300" required />
+                </label>
+                <label class="block">
+                  <span class="text-sm font-medium text-[var(--brand-purple)]">Check-out</span>
+                  <input type="date" name="checkOut" class="mt-1 w-full p-2 rounded border border-gray-300" required />
+                </label>
+                <label class="block">
+                  <span class="text-sm font-medium text-[var(--brand-purple)]">Guests</span>
+                  <input type="number" name="guests" min="1" max="${venue.maxGuests}" class="mt-1 w-full p-2 rounded border border-gray-300" required />
+                </label>
+                <button type="submit" class="w-full bg-[var(--brand-purple)] text-[var(--brand-beige)] px-4 py-2 rounded hover:bg-[var(--brand-purple-hover)]">
+                  Book Now
+                </button>
+              </form>`
             : `<p class="text-[var(--brand-beige)] text-center mt-6">You must <a href="/auth/login/" class="underline">log in</a> to book this venue.</p>`
         }
 
@@ -147,7 +143,6 @@ function renderSingleVenue(venue) {
     </div>
   `;
 
-  // Deletion logic
   const deleteButton = document.getElementById("delete-venue-button");
   if (deleteButton) {
     deleteButton.addEventListener("click", async () => {
@@ -158,7 +153,6 @@ function renderSingleVenue(venue) {
     });
   }
 
-  // Booking logic
   const bookingForm = document.getElementById("booking-form");
   if (bookingForm) {
     bookingForm.addEventListener("submit", async (e) => {

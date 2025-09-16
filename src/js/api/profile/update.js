@@ -9,7 +9,7 @@ export async function updateProfile({ bio, avatar, banner, avatarFile }) {
     throw new Error("No username or token found in localStorage.");
   }
 
-  const url = `https://v2.api.noroff.dev/auction/profiles/${username}`;
+  const url = `https://v2.api.noroff.dev/holidaze/profiles/${username}`;
 
   if (!bio && !avatar && !banner && !avatarFile) {
     throw new Error(

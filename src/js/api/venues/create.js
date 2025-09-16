@@ -1,3 +1,5 @@
+import { API_CREATE_VENUES, API_KEY } from "../../api/constants.js";
+
 export async function createVenue({
   name,
   description,
@@ -8,8 +10,14 @@ export async function createVenue({
   meta = {},
   location = {},
 }) {
-  const url = "https://v2.api.noroff.dev/holidaze/venues";
-  const accessToken = localStorage.getItem("accessToken");
+  const url = API_CREATE_VENUES;
+
+  let accessToken;
+  try {
+    accessToken = localStorage.getItem("authToken");
+  } catch {
+    throw new Error("Unable to access token storage.");
+  }
 
   if (!accessToken) {
     throw new Error("No token found. Please log in.");
@@ -31,12 +39,13 @@ export async function createVenue({
     throw new Error("A valid maxGuests value is required.");
   }
 
-  const safeMedia = Array.isArray(media) ? media : [];
-  const safeDescription = description.trim();
+  const safeMedia = Array.isArray(media)
+    ? media.filter(item => item?.url)
+    : [];
 
   const venueData = {
     name,
-    description: safeDescription,
+    description: description.trim(),
     media: safeMedia,
     price: Number(price),
     maxGuests: Number(maxGuests),
@@ -58,33 +67,29 @@ export async function createVenue({
     },
   };
 
-  console.log("Venue Data:", venueData);
-
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
-        "X-Noroff-API-Key": "a2f8ed82-91e0-4a89-8fb8-c1e6ff355869",
+        "X-Noroff-API-Key": API_KEY,
       },
       body: JSON.stringify(venueData),
     });
 
     if (!response.ok) {
       const errorDetails = await response.json();
-      console.error("API Error Details:", errorDetails);
-      throw new Error(
-        `API Error: ${errorDetails.message || response.statusText}`,
-      );
+      throw new Error(errorDetails.message || response.statusText);
     }
 
-    return await response.json();
+    const result = await response.json();
+    return {
+      success: true,
+      data: result.data,
+      message: "Venue created successfully.",
+    };
   } catch (error) {
-    console.error("Failed to create venue:", error.message);
-    if (error.stack) {
-      console.error("Error Stack:", error.stack);
-    }
-    throw error;
+    throw new Error(error.message || "Failed to create venue.");
   }
 }

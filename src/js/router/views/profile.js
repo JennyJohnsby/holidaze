@@ -31,11 +31,27 @@ function renderProfile(profile) {
   const profileDiv = document.getElementById("profile");
   if (!profileDiv) return;
 
+  const venueSection = profile.venueManager
+    ? `
+      <div id="user-venues" class="mt-16">
+        <h2 class="text-2xl font-bold text-center text-[var(--brand-purple)] mb-4">Your Venues</h2>
+        <div id="venues-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6 p-5 border rounded-lg text-[var(--brand-purple)]"></div>
+      </div>
+    `
+    : "";
+
+  const createVenueButton = profile.venueManager
+    ? `<button id="create-venue-button"
+         class="bg-[var(--brand-purple)] text-[var(--brand-beige)] px-6 py-3 rounded-full font-semibold shadow hover:bg-[var(--brand-purple-hover)] transition">
+         + Create Venue
+       </button>`
+    : "";
+
   profileDiv.innerHTML = `
     <div id="profile-view" class="max-w-7xl mx-auto bg-[var(--brand-beige)] p-10 shadow-2xl rounded-2xl mt-10">
       <div class="relative">
-        <img src="${profile.banner?.url || "/images/banner-placeholder.jpg"}" 
-             alt="${profile.banner?.alt || "User banner"}" 
+        <img src="${profile.banner?.url || "/images/banner-placeholder.jpg"}"
+             alt="${profile.banner?.alt || "User banner"}"
              class="w-full h-64 object-cover rounded-lg" />
         <div class="absolute top-4 left-4 text-[var(--brand-beige)] bg-[var(--brand-purple)] bg-opacity-60 px-4 py-2 rounded">
           <h1 class="text-3xl font-bold">${profile.name || "User Name"}</h1>
@@ -43,15 +59,14 @@ function renderProfile(profile) {
       </div>
 
       <div class="flex flex-col md:flex-row gap-10 items-center md:items-start mt-10">
-        <img src="${profile.avatar?.url || "/images/avatar-placeholder.png"}" 
-             alt="${profile.avatar?.alt || "User avatar"}" 
+        <img src="${profile.avatar?.url || "/images/avatar-placeholder.png"}"
+             alt="${profile.avatar?.alt || "User avatar"}"
              class="w-40 h-40 object-cover rounded-full border-4 border-[var(--brand-purple)] shadow-md" />
 
         <div class="text-center md:text-left space-y-4">
           <p class="text-xl font-semibold text-[var(--brand-purple)]">${profile.email || "Not provided"}</p>
           <p class="text-[var(--brand-purple)]">${profile.bio || "No bio available"}</p>
           <div class="flex flex-wrap justify-center md:justify-start gap-6 text-sm text-[var(--brand-purple)]">
-            <p><strong>Venues:</strong> ${profile._count?.venues ?? 0}</p>
             <p><strong>Bookings:</strong> ${profile._count?.bookings ?? 0}</p>
             <p><strong>Role:</strong> ${profile.venueManager ? "Venue Manager" : "Regular User"}</p>
           </div>
@@ -59,10 +74,7 @@ function renderProfile(profile) {
       </div>
 
       <div class="flex flex-wrap justify-center gap-6 mt-10">
-        <button id="create-venue-button"
-          class="bg-[var(--brand-purple)] text-[var(--brand-beige)] px-6 py-3 rounded-full font-semibold shadow hover:bg-[var(--brand-purple-hover)] transition">
-          + Create Venue
-        </button>
+        ${createVenueButton}
         <button id="edit-profile-button"
           class="bg-[var(--brand-purple)] text-[var(--brand-beige)] px-6 py-3 rounded-full font-semibold shadow hover:bg-[var(--brand-purple-hover)] transition">
           ✎ Edit Profile
@@ -107,10 +119,7 @@ function renderProfile(profile) {
         </form>
       </div>
 
-      <div id="user-venues" class="mt-16">
-        <h2 class="text-2xl font-bold text-center text-[var(--brand-purple)] mb-4">Your Venues</h2>
-        <div id="venues-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6 p-5 border rounded-lg text-[var(--brand-purple)]"></div>
-      </div>
+      ${venueSection}
 
       <div id="user-bookings" class="mt-16">
         <h2 class="text-2xl font-bold text-center text-[var(--brand-purple)] mb-4">Your Bookings</h2>
@@ -119,20 +128,23 @@ function renderProfile(profile) {
     </div>
   `;
 
-  setupEventListeners();
-  displayVenues(profile.venues || []);
+  setupEventListeners(profile.venueManager);
+  if (profile.venueManager) displayVenues(profile.venues || []);
   displayBookings(profile.bookings || []);
 }
 
-function setupEventListeners() {
+function setupEventListeners(isVenueManager) {
   document.getElementById("logout-button")?.addEventListener("click", onLogout);
   document.getElementById("edit-profile-button")?.addEventListener("click", () => {
     document.getElementById("profile-update-form")?.classList.toggle("hidden");
   });
   document.getElementById("update-profile-form")?.addEventListener("submit", onUpdateProfile);
-  document.getElementById("create-venue-button")?.addEventListener("click", () => {
-    window.location.href = "/venues/create/";
-  });
+
+  if (isVenueManager) {
+    document.getElementById("create-venue-button")?.addEventListener("click", () => {
+      window.location.href = "/venues/create/";
+    });
+  }
 }
 
 function displayVenues(venues = []) {
@@ -145,17 +157,17 @@ function displayVenues(venues = []) {
       : venues
           .map(
             ({ id, name, description, media, price }) => `
-          <div class="bg-white border rounded-lg shadow-lg overflow-hidden hover:scale-105 cursor-pointer flex flex-col"
-               onclick="window.location.href='/venues/?id=${id}'">
-            <img src="${media?.[0]?.url || "/images/venue-placeholder.jpg"}" 
-                 alt="${name || "Venue"}" 
-                 class="w-full h-48 object-cover">
-            <div class="p-4 text-center">
-              <h3 class="text-xl font-semibold text-gray-800">${name || "No name"}</h3>
-              <p class="mt-2 text-gray-600 text-sm">${description || "No description available"}</p>
-              <p class="mt-2 text-gray-800 font-bold">$${price} per night</p>
-            </div>
-          </div>`
+              <div class="bg-white border rounded-lg shadow-lg overflow-hidden hover:scale-105 cursor-pointer flex flex-col"
+                   onclick="window.location.href='/venues/?id=${id}'">
+                <img src="${media?.[0]?.url || "/images/venue-placeholder.jpg"}"
+                     alt="${name || "Venue"}"
+                     class="w-full h-48 object-cover">
+                <div class="p-4 text-center">
+                  <h3 class="text-xl font-semibold text-gray-800">${name || "No name"}</h3>
+                  <p class="mt-2 text-gray-600 text-sm">${description || "No description available"}</p>
+                  <p class="mt-2 text-gray-800 font-bold">$${price} per night</p>
+                </div>
+              </div>`
           )
           .join("");
 }
@@ -170,16 +182,16 @@ function displayBookings(bookings = []) {
       : bookings
           .map(
             ({ dateFrom, dateTo, guests, venue }) => `
-          <div class="bg-white border rounded-lg shadow-lg overflow-hidden p-4">
-            <img src="${venue?.media?.[0]?.url || "/images/venue-placeholder.jpg"}" 
-                 alt="${venue?.name || "Venue"}" 
-                 class="w-full h-40 object-cover rounded-lg mb-4">
-            <h3 class="text-lg font-semibold">${venue?.name || "No venue name"}</h3>
-            <p class="text-gray-600 text-sm">${venue?.description || "No description available"}</p>
-            <p class="text-gray-800 text-sm mt-2">Guests: ${guests}</p>
-            <p class="text-gray-800 text-sm">From: ${new Date(dateFrom).toLocaleDateString()}</p>
-            <p class="text-gray-800 text-sm">To: ${new Date(dateTo).toLocaleDateString()}</p>
-          </div>`
+              <div class="bg-white border rounded-lg shadow-lg overflow-hidden p-4">
+                <img src="${venue?.media?.[0]?.url || "/images/venue-placeholder.jpg"}"
+                     alt="${venue?.name || "Venue"}"
+                     class="w-full h-40 object-cover rounded-lg mb-4">
+                <h3 class="text-lg font-semibold">${venue?.name || "No venue name"}</h3>
+                <p class="text-gray-600 text-sm">${venue?.description || "No description available"}</p>
+                <p class="text-gray-800 text-sm mt-2">Guests: ${guests}</p>
+                <p class="text-gray-800 text-sm">From: ${new Date(dateFrom).toLocaleDateString()}</p>
+                <p class="text-gray-800 text-sm">To: ${new Date(dateTo).toLocaleDateString()}</p>
+              </div>`
           )
           .join("");
 }
