@@ -13,9 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 export function onLogout() {
   console.log("onLogout function called");
 
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("currentUser");
-  localStorage.removeItem("authToken");
+  localStorage.removeItem("user");
 
   displayBanner("You have been successfully logged out.", "success");
 

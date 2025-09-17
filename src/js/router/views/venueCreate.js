@@ -5,6 +5,8 @@ authGuard();
 
 const form = document.getElementById("createVenue");
 
-if (form) {
-  form.addEventListener("submit", onCreateVenue);
+if (!form) {
+  console.warn("Create Venue form not found on this page.");
 }
+
+form?.addEventListener("submit", onCreateVenue);

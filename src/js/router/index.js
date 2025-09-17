@@ -21,6 +21,9 @@ export default async function router(
     case "/venues/create/":
       await import("./views/venueCreate.js");
       break;
+    case "/venues/edit/":
+      await import("./views/venueEdit.js");
+      break;
     case "/profile/":
       await import("./views/profile.js");
       break;

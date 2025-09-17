@@ -7,21 +7,16 @@ export async function updateVenue(
   }
 
   const url = `https://v2.api.noroff.dev/holidaze/venues/${id}`;
-
-  console.log("Updating Venue:", { id, name, description, media, price, maxGuests, rating, meta, location });
-
   const accessToken =
-    localStorage.getItem("accessToken") || localStorage.getItem("authToken");
+    localStorage.getItem("accessToken") ?? localStorage.getItem("authToken");
 
   if (!accessToken) {
-    console.error("No token found. Redirecting to login.");
     setTimeout(() => {
-      window.location.href = "/login";
+      window.location.href = "/auth/login/";
     }, 2000);
     throw new Error("No token found. Please log in.");
   }
 
-  // All fields are optional per API, so we only include ones passed in
   const venueData = {};
 
   if (name) venueData.name = name.trim();
@@ -52,8 +47,6 @@ export async function updateVenue(
     };
   }
 
-  console.log("Final Venue Data to Send:", venueData);
-
   try {
     const response = await fetch(url, {
       method: "PUT",
@@ -67,15 +60,12 @@ export async function updateVenue(
 
     if (!response.ok) {
       const errorDetails = await response.json();
-      console.error("API Error:", errorDetails);
       throw new Error(`Error: ${errorDetails.message || response.statusText}`);
     }
 
     const updatedVenue = await response.json();
-    console.log("Updated Venue Response:", updatedVenue);
     return updatedVenue;
   } catch (error) {
-    console.error("Failed to update venue:", error);
     throw error;
   }
 }

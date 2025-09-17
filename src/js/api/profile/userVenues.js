@@ -1,7 +1,7 @@
 import { API_KEY } from "../constants.js";
 
 export async function fetchUserVenues() {
-  const userInLocalStorage = JSON.parse(localStorage.getItem("currentUser"));
+  const userInLocalStorage = JSON.parse(localStorage.getItem("user"));
   const usernameFromStorage = userInLocalStorage
     ? userInLocalStorage.name
     : null;
@@ -31,7 +31,7 @@ export async function fetchUserVenues() {
         console.error(`No venues found for ${usernameFromStorage}.`);
       } else {
         console.error(
-          `Failed to fetch venues for ${usernameFromStorage}: ${response.statusText}`,
+          `Failed to fetch venues for ${usernameFromStorage}: ${response.statusText}`
         );
       }
       return { data: [], meta: {} };
@@ -40,7 +40,7 @@ export async function fetchUserVenues() {
     const result = await response.json();
     console.log("Venues fetched:", result.data);
 
-    return result; // { data: [...], meta: {...} }
+    return result;
   } catch (error) {
     console.error("Error fetching venues:", error);
     return { data: [], meta: {} };

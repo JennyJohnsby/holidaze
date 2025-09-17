@@ -3,6 +3,7 @@ import { onLogout } from "../../ui/auth/logout.js";
 import { displayBanner } from "../../utilities/banners.js";
 import { readProfile } from "../../api/profile/read.js";
 import { onUpdateProfile } from "../../ui/profile/update.js";
+import { fetchUserVenues } from "../../api/profile/userVenues.js";
 
 authGuard();
 
@@ -129,7 +130,16 @@ function renderProfile(profile) {
   `;
 
   setupEventListeners(profile.venueManager);
-  if (profile.venueManager) displayVenues(profile.venues || []);
+
+  if (profile.venueManager) {
+    fetchUserVenues()
+      .then(({ data }) => displayVenues(data || []))
+      .catch((error) => {
+        console.error("Failed to load venues:", error);
+        displayBanner("Could not load your venues.", "error");
+      });
+  }
+
   displayBookings(profile.bookings || []);
 }
 
@@ -157,15 +167,15 @@ function displayVenues(venues = []) {
       : venues
           .map(
             ({ id, name, description, media, price }) => `
-              <div class="bg-white border rounded-lg shadow-lg overflow-hidden hover:scale-105 cursor-pointer flex flex-col"
+              <div class="bg-[var(--brand-purple)] border rounded-lg shadow-lg overflow-hidden hover:scale-105 cursor-pointer flex flex-col"
                    onclick="window.location.href='/venues/?id=${id}'">
                 <img src="${media?.[0]?.url || "/images/venue-placeholder.jpg"}"
                      alt="${name || "Venue"}"
                      class="w-full h-48 object-cover">
                 <div class="p-4 text-center">
-                  <h3 class="text-xl font-semibold text-gray-800">${name || "No name"}</h3>
-                  <p class="mt-2 text-gray-600 text-sm">${description || "No description available"}</p>
-                  <p class="mt-2 text-gray-800 font-bold">$${price} per night</p>
+                  <h3 class="text-xl font-semibold text-[var(--brand-beige)]">${name || "No name"}</h3>
+                  <p class="mt-2 text-[var(--brand-beige)] text-sm">${description || "No description available"}</p>
+                  <p class="mt-2 text-[var(--brand-beige)] font-bold">$${price} per night</p>
                 </div>
               </div>`
           )

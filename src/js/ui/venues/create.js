@@ -6,30 +6,33 @@ export async function onCreateVenue(event) {
 
   const form = event.target;
 
-  const name = form.name.value.trim();
-  const description = form.description.value.trim();
-  const price = Number(form.price.value);
-  const maxGuests = Number(form.maxGuests.value);
-  const rating = Number(form.rating.value) || 0;
+  const name = form.name?.value.trim() || "";
+  const description = form.description?.value.trim() || "";
+  const price = Number(form.price?.value);
+  const maxGuests = Number(form.maxGuests?.value);
+  const rating = Number(form.rating?.value) || 0;
 
-  const mediaUrl = form.mediaUrl.value.trim();
-  const mediaAlt = form.mediaAlt.value.trim();
+  const mediaUrl = form.mediaUrl?.value.trim() || "";
+  const mediaAlt = form.mediaAlt?.value.trim() || "";
 
   const meta = {
-    wifi: form.wifi.checked,
-    parking: form.parking.checked,
-    breakfast: form.breakfast.checked,
-    pets: form.pets.checked,
+    wifi: form.wifi?.checked || false,
+    parking: form.parking?.checked || false,
+    breakfast: form.breakfast?.checked || false,
+    pets: form.pets?.checked || false,
   };
 
+  const lat = form.lat?.value.trim() || "";
+  const lng = form.lng?.value.trim() || "";
+
   const location = {
-    address: form.address.value.trim() || null,
-    city: form.city.value.trim() || null,
-    zip: form.zip.value.trim() || null,
-    country: form.country.value.trim() || null,
-    continent: form.continent.value.trim() || null,
-    lat: Number(form.lat.value) || 0,
-    lng: Number(form.lng.value) || 0,
+    address: form.address?.value.trim() || null,
+    city: form.city?.value.trim() || null,
+    zip: form.zip?.value.trim() || null,
+    country: form.country?.value.trim() || null,
+    continent: form.continent?.value.trim() || null,
+    lat: lat ? Number(lat) : null,
+    lng: lng ? Number(lng) : null,
   };
 
   if (!name) {
@@ -66,7 +69,6 @@ export async function onCreateVenue(event) {
   try {
     const response = await createVenue(venueData);
     displayBanner(`Venue created successfully: ${response.data.name}`, "success");
-
     setTimeout(() => {
       window.location.href = "/profile/";
     }, 3000);

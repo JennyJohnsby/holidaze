@@ -40,7 +40,7 @@ export async function createVenue({
   }
 
   const safeMedia = Array.isArray(media)
-    ? media.filter(item => item?.url)
+    ? media.filter((item) => item?.url)
     : [];
 
   const venueData = {
@@ -62,8 +62,8 @@ export async function createVenue({
       zip: location.zip ?? null,
       country: location.country ?? null,
       continent: location.continent ?? null,
-      lat: location.lat ?? 0,
-      lng: location.lng ?? 0,
+      lat: typeof location.lat === "number" ? location.lat : null,
+      lng: typeof location.lng === "number" ? location.lng : null,
     },
   };
 
@@ -87,9 +87,13 @@ export async function createVenue({
     return {
       success: true,
       data: result.data,
+      status: response.status,
       message: "Venue created successfully.",
     };
   } catch (error) {
+    if (error.name === "TypeError") {
+      throw new Error("Network error. Please check your connection.");
+    }
     throw new Error(error.message || "Failed to create venue.");
   }
 }

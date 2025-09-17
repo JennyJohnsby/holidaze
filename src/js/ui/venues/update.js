@@ -35,7 +35,6 @@ export async function onUpdateVenue(event) {
     lng: formData.get("lng") ? Number(formData.get("lng")) : undefined,
   };
 
-  // Prepare payload with only defined values
   const updatedVenue = {};
   if (name) updatedVenue.name = name;
   if (description) updatedVenue.description = description;
@@ -49,31 +48,18 @@ export async function onUpdateVenue(event) {
   try {
     const response = await updateVenue(venueId, updatedVenue);
     console.log("Venue updated successfully:", response);
-
     displayBanner("Venue updated successfully!", "success");
   } catch (error) {
     console.error("Error updating venue:", error);
 
     if (error.message.includes("400")) {
-      displayBanner(
-        "The information provided is incomplete or invalid. Please check and try again.",
-        "error",
-      );
+      displayBanner("The information provided is incomplete or invalid. Please check and try again.", "error");
     } else if (error.message.includes("401")) {
-      displayBanner(
-        "You must be logged in to make changes to this venue.",
-        "error",
-      );
+      displayBanner("You must be logged in to make changes to this venue.", "error");
     } else if (error.message.includes("404")) {
-      displayBanner(
-        "This venue does not exist or has been removed.",
-        "error",
-      );
+      displayBanner("This venue does not exist or has been removed.", "error");
     } else if (error.message.includes("500")) {
-      displayBanner(
-        "There was an issue with the server. Please try again later.",
-        "error",
-      );
+      displayBanner("There was an issue with the server. Please try again later.", "error");
     } else {
       displayBanner("An unexpected error occurred. Please try again.", "error");
     }

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Holidaze | Create a Venue" />
+    <title>Holidaze | Create a Venue</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/air-freight.png" />
+    <script type="module" src="/src/app.js"></script>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <meta property="og:title" content="Holidaze | Book. Stay. Relax." />
+    <meta property="og:description" content="Discover amazing venues with Holidaze." />
+    <meta property="og:image" content="/assets/preview.jpg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://holidaze.com" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Holidaze | Book. Stay. Relax." />
+    <meta name="twitter:description" content="Discover amazing venues with Holidaze." />
+    <meta name="twitter:image" content="/assets/preview.jpg" />
+  </head>
+<body class="bg-[var(--brand-beige)] text-[var(--brand-purple)] min-h-screen">
+    <header
+      role="banner"
+      class="relative h-90 bg-cover bg-center"
+      style="background-image: url(/assets/ruth-troughton-NWsqAW54bGc-unsplash.jpg)"
+    >
+      <div class="absolute inset-0 bg-[var(--brand-purple)]/50"></div>
+      <div class="relative z-10 flex items-center justify-between px-8 py-4">
+        <a href="/" aria-label="Holidaze Home" class="flex-shrink-0">
+          <img src="/assets/logo1.svg" alt="Holidaze Logo" class="h-45 w-auto" width="160" height="160" />
+        </a>
+        <nav aria-label="Primary navigation">
+          <ul class="flex space-x-8 text-[var(--brand-beige)] font-medium text-xl">
+            <li>
+              <a href="/auth/login/" class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg">Log In</a>
+            </li>
+            <li>
+              <a href="/auth/register/" class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg">Register</a>
+            </li>
+            <li>
+              <a href="/profile/" class="px-4 py-2 rounded-lg text-[var(--brand-beige)] font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg">Profile</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+  <main class="max-w-4xl mx-auto p-8 mt-10">
+    <h1 class="text-3xl font-bold mb-6 text-center">Edit Venue</h1>
+
+    <form name="editVenue" class="space-y-6 bg-[var(--brand-beige-hover)] p-6 rounded-xl shadow-xl">
+      <input type="hidden" name="id" />
+
+      <div>
+        <label for="name" class="block font-semibold">Venue Name</label>
+        <input type="text" name="name" id="name" class="w-full border p-3 rounded" required />
+      </div>
+
+      <div>
+        <label for="description" class="block font-semibold">Description</label>
+        <textarea name="description" id="description" rows="4" class="w-full border p-3 rounded" required></textarea>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label for="mediaUrl" class="block font-semibold">Image URL</label>
+          <input type="url" name="mediaUrl" id="mediaUrl" class="w-full border p-3 rounded" />
+        </div>
+
+        <div>
+          <label for="mediaAlt" class="block font-semibold">Image Alt Text</label>
+          <input type="text" name="mediaAlt" id="mediaAlt" class="w-full border p-3 rounded" />
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label for="price" class="block font-semibold">Price</label>
+          <input type="number" name="price" id="price" class="w-full border p-3 rounded" required />
+        </div>
+
+        <div>
+          <label for="maxGuests" class="block font-semibold">Max Guests</label>
+          <input type="number" name="maxGuests" id="maxGuests" class="w-full border p-3 rounded" required />
+        </div>
+
+        <div>
+          <label for="rating" class="block font-semibold">Rating</label>
+          <input type="number" name="rating" id="rating" class="w-full border p-3 rounded" min="0" max="5" step="0.1" />
+        </div>
+      </div>
+
+      <fieldset class="space-y-2">
+        <legend class="font-semibold">Amenities</legend>
+        <label><input type="checkbox" name="wifi" /> WiFi</label><br />
+        <label><input type="checkbox" name="parking" /> Parking</label><br />
+        <label><input type="checkbox" name="breakfast" /> Breakfast</label><br />
+        <label><input type="checkbox" name="pets" /> Pets Allowed</label>
+      </fieldset>
+
+      <fieldset class="space-y-4 mt-6">
+        <legend class="font-semibold mb-2">Location</legend>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label for="address" class="block">Address</label>
+            <input type="text" name="address" id="address" class="w-full border p-3 rounded" />
+          </div>
+          <div>
+            <label for="city" class="block">City</label>
+            <input type="text" name="city" id="city" class="w-full border p-3 rounded" />
+          </div>
+          <div>
+            <label for="zip" class="block">Zip Code</label>
+            <input type="text" name="zip" id="zip" class="w-full border p-3 rounded" />
+          </div>
+          <div>
+            <label for="country" class="block">Country</label>
+            <input type="text" name="country" id="country" class="w-full border p-3 rounded" />
+          </div>
+          <div>
+            <label for="continent" class="block">Continent</label>
+            <input type="text" name="continent" id="continent" class="w-full border p-3 rounded" />
+          </div>
+          <div>
+            <label for="lat" class="block">Latitude</label>
+            <input type="number" name="lat" id="lat" step="any" class="w-full border p-3 rounded" />
+          </div>
+          <div>
+            <label for="lng" class="block">Longitude</label>
+            <input type="number" name="lng" id="lng" step="any" class="w-full border p-3 rounded" />
+          </div>
+        </div>
+      </fieldset>
+
+      <button type="submit"
+        class="w-full bg-[var(--brand-purple)] text-[var(--brand-beige)] px-6 py-3 rounded-full font-semibold shadow hover:bg-[var(--brand-purple-hover)] transition">
+         Save Changes
+      </button>
+    </form>
+  </main>
+  <footer class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)]">
+      <p>&copy; 2025 Holidaze. All rights reserved.</p>
+      <span class="hidden md:block">|</span>
+      <p>Developed by Jenny Johnsby</p>
+      <span class="hidden md:block">|</span>
+      <nav aria-label="Social media">
+        <ul class="flex space-x-6">
+          <li><a href="https://facebook.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)]">Facebook</a></li>
+          <li><a href="https://twitter.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)]">Twitter</a></li>
+          <li><a href="https://instagram.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)]">Instagram</a></li>
+        </ul>
+      </nav>
+      <span class="hidden md:block">|</span>
+      <p>
+        Contact us: <a href="mailto:support@holidaze.com" class="hover:text-[var(--brand-beige-hover)]">support@holidaze.com</a>
+      </p>
+    </footer>
+</body>
+</html>

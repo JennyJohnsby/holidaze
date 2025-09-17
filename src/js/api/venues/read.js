@@ -3,7 +3,7 @@ export async function readVenue(id) {
     throw new Error("Venue ID is required.");
   }
 
-  const url = `https://v2.api.noroff.dev/holidaze/venues/${id}`;
+  const url = `https://v2.api.noroff.dev/holidaze/venues/${id}?_owner=true&_bookings=true`;
 
   try {
     const response = await fetch(url, {
@@ -16,7 +16,7 @@ export async function readVenue(id) {
       const errorDetails = await response.json().catch(() => ({}));
       throw new Error(
         errorDetails.message ||
-          `Failed to fetch venue (Status: ${response.status})`,
+        `Failed to fetch venue (Status: ${response.status})`,
       );
     }
 

@@ -1,5 +1,5 @@
-import { readVenue } from "../../api/venues/read";
-import { updateVenue } from "../../api/venues/update";
+import { readVenue } from "../../api/venues/read.js";
+import { updateVenue } from "../../api/venues/update.js";
 import { displayBanner } from "../../utilities/banners.js";
 import { authGuard } from "../../utilities/authGuard.js";
 
@@ -16,13 +16,10 @@ if (!id) {
 
 const form = document.forms.editVenue;
 if (!form) {
-  console.error("Edit venue form not found.");
-  displayBanner("Error: Form not found.", "error");
+  displayBanner("Error: Edit form not found.", "error");
   throw new Error("Form not found.");
 }
 
-// Form fields
-const idInput = form.elements["id"];
 const nameInput = form.elements["name"];
 const descriptionInput = form.elements["description"];
 const mediaUrlInput = form.elements["mediaUrl"];
@@ -30,14 +27,10 @@ const mediaAltInput = form.elements["mediaAlt"];
 const priceInput = form.elements["price"];
 const maxGuestsInput = form.elements["maxGuests"];
 const ratingInput = form.elements["rating"];
-
-// Meta checkboxes
 const wifiInput = form.elements["wifi"];
 const parkingInput = form.elements["parking"];
 const breakfastInput = form.elements["breakfast"];
 const petsInput = form.elements["pets"];
-
-// Location fields
 const addressInput = form.elements["address"];
 const cityInput = form.elements["city"];
 const zipInput = form.elements["zip"];
@@ -49,25 +42,27 @@ const lngInput = form.elements["lng"];
 async function prefillEditForm() {
   try {
     const venue = await readVenue(id);
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    const currentUserName = currentUser?.name?.trim().toLowerCase();
+    const venueOwnerName = venue?.owner?.name?.trim().toLowerCase();
 
-    if (!venue) {
-      throw new Error("Venue data not found.");
+    if (currentUserName !== venueOwnerName) {
+      displayBanner("You're not authorized to edit this venue.", "error");
+      setTimeout(() => (window.location.href = "/"), 2000);
+      return;
     }
 
-    idInput.value = venue.id || "";
     nameInput.value = venue.name || "";
     descriptionInput.value = venue.description || "";
     priceInput.value = venue.price ?? "";
     maxGuestsInput.value = venue.maxGuests ?? "";
     ratingInput.value = venue.rating ?? "";
 
-    // Meta
     wifiInput.checked = venue.meta?.wifi || false;
     parkingInput.checked = venue.meta?.parking || false;
     breakfastInput.checked = venue.meta?.breakfast || false;
     petsInput.checked = venue.meta?.pets || false;
 
-    // Location
     addressInput.value = venue.location?.address || "";
     cityInput.value = venue.location?.city || "";
     zipInput.value = venue.location?.zip || "";
@@ -76,7 +71,6 @@ async function prefillEditForm() {
     latInput.value = venue.location?.lat ?? "";
     lngInput.value = venue.location?.lng ?? "";
 
-    // Media
     if (venue.media?.length > 0) {
       mediaUrlInput.value = venue.media[0].url || "";
       mediaAltInput.value = venue.media[0].alt || "";
@@ -93,7 +87,9 @@ async function prefillEditForm() {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const accessToken = localStorage.getItem("accessToken");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = user?.accessToken;
+
   if (!accessToken) {
     displayBanner("You must be logged in to update a venue.", "error");
     setTimeout(() => (window.location.href = "/"), 2000);
@@ -129,14 +125,10 @@ form.addEventListener("submit", async (event) => {
   try {
     await updateVenue(id, updatedVenue);
     displayBanner("Venue updated successfully!", "success");
-
     setTimeout(() => (window.location.href = "/profile/"), 2000);
   } catch (error) {
     console.error("Error updating venue:", error);
-    displayBanner(
-      "Failed to update venue. Please check your input.",
-      "error",
-    );
+    displayBanner("Failed to update venue. Please check your input.", "error");
   }
 });
 

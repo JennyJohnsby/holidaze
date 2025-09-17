@@ -44,8 +44,8 @@ export async function onLogin(event) {
         accessToken: token,
       };
       localStorage.setItem("user", JSON.stringify(fullUser));
+      localStorage.setItem("authToken", token);
       displayBanner(`Welcome back, ${response.name}!`, "success");
-
       setTimeout(() => {
         window.location.pathname = "/";
       }, 3000);
@@ -56,7 +56,7 @@ export async function onLogin(event) {
     console.error("Login failed:", error);
     displayBanner(
       error.message || "Invalid login credentials. Please try again.",
-      "error",
+      "error"
     );
   }
 }
