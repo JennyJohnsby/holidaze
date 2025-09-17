@@ -54,12 +54,14 @@ function renderSingleVenue(venue) {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const isLoggedIn = !!user?.accessToken;
-  const userName = user?.name?.trim().toLowerCase();
+  const userName = user?.name?.trim().toLowerCase() || user?.data?.name?.trim().toLowerCase();
   const ownerName = venue?.owner?.name?.trim().toLowerCase();
   const isOwner = userName && ownerName && userName === ownerName;
 
-  console.log("Logged in as:", user?.name);
-  console.log("Venue owner:", venue?.owner?.name);
+  console.log("User object:", user);
+  console.log("Venue object:", venue);
+  console.log("Logged in as:", userName ?? "undefined");
+  console.log("Venue owner:", ownerName ?? "undefined");
   console.log("isOwner:", isOwner);
   console.log("isLoggedIn:", isLoggedIn);
 
@@ -138,7 +140,6 @@ function renderSingleVenue(venue) {
               </form>`
             : `<p class="text-[var(--brand-beige)] text-center mt-6">You must <a href="/auth/login/" class="underline">log in</a> to book this venue.</p>`
         }
-
       </div>
     </div>
   `;

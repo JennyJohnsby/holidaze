@@ -21,8 +21,7 @@ export async function onLogin(event) {
   const passwordInput = document.getElementById("login-password");
 
   if (!isValidInput(emailInput, "Please enter a valid email address.")) return;
-  if (!isValidInput(passwordInput, "Password must be at least 8 characters."))
-    return;
+  if (!isValidInput(passwordInput, "Password must be at least 8 characters.")) return;
 
   const email = emailInput.value;
   const password = passwordInput.value;
@@ -40,9 +39,11 @@ export async function onLogin(event) {
     };
 
     if (token) {
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("currentUser", JSON.stringify(user));
-
+      const fullUser = {
+        ...user,
+        accessToken: token,
+      };
+      localStorage.setItem("user", JSON.stringify(fullUser));
       displayBanner(`Welcome back, ${response.name}!`, "success");
 
       setTimeout(() => {

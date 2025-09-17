@@ -1,18 +1,16 @@
 import { API_PROFILE, API_KEY } from "../constants.js";
 
 export async function readProfile() {
-  const userInLocalStorage = JSON.parse(localStorage.getItem("currentUser"));
-  const usernameFromStorage = userInLocalStorage
-    ? userInLocalStorage.name
-    : null;
-  const token = localStorage.getItem("authToken");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const username = user?.name;
+  const token = user?.accessToken;
 
-  if (!usernameFromStorage || !token) {
+  if (!username || !token) {
     console.error("No username or token found in localStorage. Please log in.");
     return null;
   }
 
-  const url = `${API_PROFILE}/${usernameFromStorage}`;
+  const url = `${API_PROFILE}/${username}`;
 
   try {
     const response = await fetch(url, {
@@ -28,11 +26,9 @@ export async function readProfile() {
       if (response.status === 401) {
         console.error("Unauthorized access. Please log in again.");
       } else if (response.status === 404) {
-        console.error(`Profile for ${usernameFromStorage} not found.`);
+        console.error(`Profile for ${username} not found.`);
       } else {
-        console.error(
-          `Failed to fetch profile for ${usernameFromStorage}: ${response.statusText}`,
-        );
+        console.error(`Failed to fetch profile for ${username}: ${response.statusText}`);
       }
       return null;
     }
