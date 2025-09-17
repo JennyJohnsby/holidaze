@@ -1,3 +1,7 @@
+import React from "react";
 import router from "./js/router";
 
-router(window.location.pathname);
+export default function App() {
+
+  return router(window.location.pathname);
+}
