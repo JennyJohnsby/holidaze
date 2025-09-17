@@ -1,9 +1,7 @@
-function App() {
-  return (
-    <div>
-      <h1>Hello from Holidaze</h1>
-    </div>
-  )
-}
+// @ts-expect-error: No type declarations for JS router module
+import router from "./js/router";
 
-export default App
+
+export default function App() {
+  return router(window.location.pathname);
+}
