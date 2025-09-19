@@ -1,69 +1,101 @@
-# React + TypeScript + Vite
+# Holidaze - Accommodation Booking App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Holidaze** is a modern front-end web application for booking accommodations, built as part of the EP2 Exam Project. It features user-facing functionality for browsing and booking venues, and admin-facing tools for venue management.
 
-Currently, two official plugins are available:
+## 📦 Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Live Demo](#live-demo)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Available Scripts](#available-scripts)
+- [Design & Planning](#design--planning)
+- [User Roles](#user-roles)
+- [Validation Tools](#validation-tools)
+- [License](#license)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📌 About the Project
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Holidaze allows users to browse available venues, make bookings, and manage listings based on user roles (Customer or Venue Manager). The design is fully responsive and optimized for accessibility and performance.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+This application was developed using the official Holidaze API and follows modern best practices in React development and UI/UX design.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ✨ Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### All Users
+- View all venues
+- Search for venues
+- View venue details including availability calendar
+- Register and log in as either a Customer or Venue Manager
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Customers
+- Make bookings
+- View upcoming bookings
+- Edit profile and avatar
+
+### Venue Managers
+- Create, edit, and delete venues
+- View bookings for their venues
+- Edit profile and avatar
+
+---
+
+## 🌐 Live Demo
+
+👉 [Visit the Live Site](https://jenjoh.netlify.app/)
+
+---
+
+## 🛠 Tech Stack
+
+- **React** (v18+)
+- **TypeScript** / JavaScript
+- **Tailwind CSS** / Bootstrap / Styled Components
+- **Vite / Create React App**
+- **Vercel** / Netlify (for hosting)
+- **Figma** (for design)
+- **Trello** or GitHub Projects (for planning)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- npm or yarn
+
+### Installation
+
+```bash
+git clone https://github.com/JennyJohnsby/holidaze.git
+cd holidaze
+npm install
+npm run dev
+
+🧩 Design & Planning
+
+Figma Style Guide
+
+Figma Prototype
+
+Kanban Board
+
+| Role          | Permissions                  |
+| ------------- | ---------------------------- |
+| Visitor       | Browse venues, register      |
+| Customer      | Book venues, manage profile  |
+| Venue Manager | Manage venues, view bookings |
+
+✅ Validation Tools
+
+HTML Validator (W3C)
+
+Lighthouse (Performance, SEO, Accessibility)
+
+WAVE (Accessibility Audit)
