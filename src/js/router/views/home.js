@@ -1,149 +1,153 @@
-let allVenues = [];
+let allVenues = []
+let visibleCount = 9
 
 function debounce(fn, delay = 300) {
-  let timeout;
+  let timeout
   return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
-  };
+    clearTimeout(timeout)
+    timeout = setTimeout(() => fn(...args), delay)
+  }
 }
 
 function renderStars(rating = 0) {
-  if (!rating) return "No rating";
-  const fullStars = "★".repeat(Math.floor(rating));
-  const emptyStars = "☆".repeat(5 - Math.floor(rating));
-  return `<span class="text-yellow-400">${fullStars}${emptyStars}</span>`;
+  if (!rating) return "No rating"
+  const fullStars = "★".repeat(Math.floor(rating))
+  const emptyStars = "☆".repeat(5 - Math.floor(rating))
+  return `<span class="text-yellow-400">${fullStars}${emptyStars}</span>`
 }
 
 function getFilteredVenues(venues) {
-  const query = document.getElementById("searchInput")?.value.toLowerCase().trim() || "";
-  const checkedTags = Array.from(document.querySelectorAll(".filter-tag:checked")).map(cb => cb.value);
-  const maxPrice = parseFloat(document.getElementById("maxPrice")?.value || Infinity);
+  const query = document.getElementById("searchInput")?.value.toLowerCase().trim() || ""
+  const checkedTags = Array.from(document.querySelectorAll(".filter-tag:checked")).map(cb => cb.value)
+  const maxPrice = parseFloat(document.getElementById("maxPrice")?.value || Infinity)
 
   return venues.filter((venue) => {
-    const name = venue.name?.toLowerCase() || "";
-    const description = venue.description?.toLowerCase() || "";
-    const matchesSearch = name.includes(query) || description.includes(query);
-    const matchesCheckedTags = checkedTags.every(tag => venue.meta?.[tag]);
-    const matchesPrice = venue.price <= maxPrice;
-    return matchesSearch && matchesCheckedTags && matchesPrice;
-  });
+    const name = venue.name?.toLowerCase() || ""
+    const description = venue.description?.toLowerCase() || ""
+    const matchesSearch = name.includes(query) || description.includes(query)
+    const matchesCheckedTags = checkedTags.every(tag => venue.meta?.[tag])
+    const matchesPrice = venue.price <= maxPrice
+    return matchesSearch && matchesCheckedTags && matchesPrice
+  })
 }
 
 function setupSearch() {
-  const searchInput = document.getElementById("searchInput");
-  if (!searchInput) return;
+  const searchInput = document.getElementById("searchInput")
+  if (!searchInput) return
+
   searchInput.addEventListener("input", debounce(() => {
-    renderVenues(getFilteredVenues(allVenues), 5);
-  }, 300));
+    const filtered = getFilteredVenues(allVenues)
+    renderVenues(filtered)
+  }, 300))
 }
 
 function setupFilters() {
-  const maxPrice = document.getElementById("maxPrice");
-  const checkboxes = document.querySelectorAll(".filter-tag");
+  const maxPrice = document.getElementById("maxPrice")
+  const checkboxes = document.querySelectorAll(".filter-tag")
+
   if (maxPrice) {
     maxPrice.addEventListener("input", () => {
-      renderVenues(getFilteredVenues(allVenues), 5);
-    });
+      const filtered = getFilteredVenues(allVenues)
+      renderVenues(filtered)
+    })
   }
+
   checkboxes.forEach((input) => {
     input.addEventListener("change", () => {
-      renderVenues(getFilteredVenues(allVenues), 5);
-    });
-  });
-  const clearButton = document.getElementById("clearFilters");
+      const filtered = getFilteredVenues(allVenues)
+      renderVenues(filtered)
+    })
+  })
+
+  const clearButton = document.getElementById("clearFilters")
   if (clearButton) {
     clearButton.addEventListener("click", () => {
-      if (maxPrice) maxPrice.value = "";
-      checkboxes.forEach((cb) => (cb.checked = false));
-      document.getElementById("searchInput").value = "";
-      renderVenues(getFilteredVenues(allVenues), 5);
-    });
+      if (maxPrice) maxPrice.value = ""
+      checkboxes.forEach((cb) => (cb.checked = false))
+      document.getElementById("searchInput").value = ""
+      const filtered = getFilteredVenues(allVenues)
+      renderVenues(filtered)
+    })
   }
 }
 
 export async function fetchAndDisplayVenues(includeOwner = false, includeBookings = false) {
-  const urlBase = "https://v2.api.noroff.dev/holidaze/venues";
-  const venueContainer = document.getElementById("venueContainer");
-  if (!venueContainer) return;
-  venueContainer.innerHTML = `
-    <div class="flex justify-center py-10">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--brand-purple)]"></div>
-    </div>
-  `;
+  const venueContainer = document.getElementById("venueContainer")
+  if (!venueContainer) return
+
+  venueContainer.innerHTML = `<div class="text-center py-10"><p>Loading venues...</p></div>`
+
   try {
-    let url = urlBase;
-    const params = new URLSearchParams();
-    if (includeOwner) params.append("_owner", "true");
-    if (includeBookings) params.append("_bookings", "true");
-    if (params.toString()) url += `?${params.toString()}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch venues.");
-    const data = await response.json();
-    let venues = data.data;
-    if (!venues || venues.length === 0) {
-      venueContainer.innerHTML = "<p>No venues available.</p>";
-      return;
+    allVenues = []
+    let page = 1
+    const limit = 100
+    let moreData = true
+
+    while (moreData) {
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        page: page.toString(),
+      })
+      if (includeOwner) params.append("_owner", "true")
+      if (includeBookings) params.append("_bookings", "true")
+
+      const response = await fetch(`https://v2.api.noroff.dev/holidaze/venues?${params}`)
+      if (!response.ok) throw new Error(`Failed to fetch venues. ${response.status}`)
+
+      const json = await response.json()
+      const venues = json.data || []
+
+      allVenues = allVenues.concat(venues)
+      page++
+      moreData = venues.length === limit
     }
-    venues = venues.filter((v) => !!v.created).sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
-    allVenues = venues;
-    renderVenues(getFilteredVenues(allVenues), 5);
-    setupSearch();
-    setupFilters();
+
+    if (allVenues.length === 0) {
+      venueContainer.innerHTML = "<p>No venues available.</p>"
+      return
+    }
+
+    allVenues.sort((a, b) => a.name.localeCompare(b.name))
+
+    renderVenues(getFilteredVenues(allVenues))
+    setupSearch()
+    setupFilters()
   } catch (error) {
-    console.error("Error fetching venues:", error);
-    venueContainer.innerHTML = `
-      <div class="text-center">
-        <p class="mb-4">Failed to load venues. Please try again later.</p>
-        <button id="retryButton" class="px-4 py-2 bg-[var(--brand-purple)] text-[var(--brand-beige)] rounded-lg">
-          Retry
-        </button>
-      </div>
-    `;
-    document.getElementById("retryButton")?.addEventListener("click", () => fetchAndDisplayVenues());
+    console.error("Error fetching venues:", error)
+    venueContainer.innerHTML = `<div class="text-center"><p>Failed to load venues. Please try again later.</p></div>`
   }
 }
 
-function renderVenues(venues, limit = 5) {
-  const venueContainer = document.getElementById("venueContainer");
-  const existingBtn = document.getElementById("showMoreBtn");
-  if (existingBtn) existingBtn.remove();
-  venueContainer.innerHTML = "";
-  const venuesToShow = venues.slice(0, limit);
-  venuesToShow.forEach((venue) => {
-    const venueElement = document.createElement("div");
+function renderVenues(venues, reset = true) {
+  const venueContainer = document.getElementById("venueContainer")
+  const loadMoreBtn = document.getElementById("loadMoreBtn")
+
+  if (reset) {
+    venueContainer.innerHTML = ""
+    visibleCount = 9
+  }
+
+  const slice = venues.slice(0, visibleCount)
+
+  if (slice.length === 0) {
+    venueContainer.innerHTML = `<p class="text-center text-xl">No venues match your filters.</p>`
+    if (loadMoreBtn) loadMoreBtn.classList.add("hidden")
+    return
+  }
+
+  slice.forEach((venue) => {
+    const venueElement = document.createElement("div")
     venueElement.classList.add(
-      "venue",
-      "bg-[var(--brand-purple)]",
-      "rounded-2xl",
-      "shadow-lg",
-      "overflow-hidden",
-      "cursor-pointer",
-      "transition",
-      "hover:shadow-2xl",
-      "hover:scale-[1.02]",
-      "duration-300",
-      "flex",
-      "flex-col"
-    );
+      "venue", "bg-[var(--brand-purple)]", "rounded-2xl", "shadow-lg",
+      "overflow-hidden", "cursor-pointer", "transition", "hover:shadow-2xl",
+      "hover:scale-[1.02]", "duration-300", "flex", "flex-col"
+    )
+
     venueElement.innerHTML = `
       <div class="relative h-56 overflow-hidden group">
-        ${
-          venue.media?.[0]?.url
-            ? `<img 
-                src="${venue.media[0].url}" 
-                alt="${venue.media[0].alt || "Venue image"}" 
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                loading="lazy"
-                style="aspect-ratio:16/9"
-              />`
-            : `<img 
-                src="/images/avatar-placeholder.png" 
-                alt="Placeholder image" 
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                loading="lazy"
-                style="aspect-ratio:16/9"
-              />`
+        ${venue.media?.[0]?.url
+          ? `<img src="${venue.media[0].url}" alt="${venue.media[0].alt || "Venue image"}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" style="aspect-ratio:16/9" />`
+          : `<img src="/images/avatar-placeholder.png" alt="Placeholder image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" style="aspect-ratio:16/9" />`
         }
         <div class="absolute inset-0 bg-gradient-to-t from-[var(--brand-purple)]/70 via-transparent"></div>
       </div>
@@ -161,9 +165,7 @@ function renderVenues(venues, limit = 5) {
         </p>
         <div class="mt-auto">
           <p class="text-xs text-gray-300">Max guests: ${venue.maxGuests}</p>
-          <p class="text-xs text-gray-300 mb-2">
-            Rating: ${renderStars(venue.rating)} (${venue.rating ?? "N/A"})
-          </p>
+          <p class="text-xs text-gray-300 mb-2">Rating: ${renderStars(venue.rating)} (${venue.rating ?? "N/A"})</p>
           <div class="flex flex-wrap gap-2">
             ${venue.meta?.wifi ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">📶 WiFi</span>` : ""}
             ${venue.meta?.parking ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🚗 Parking</span>` : ""}
@@ -172,23 +174,30 @@ function renderVenues(venues, limit = 5) {
           </div>
         </div>
       </div>
-    `;
+    `
+
     venueElement.addEventListener("click", () => {
-      window.location.href = `/venues/?id=${encodeURIComponent(venue.id)}`;
-    });
-    venueContainer.appendChild(venueElement);
-  });
-  if (venues.length > limit) {
-    const btn = document.createElement("button");
-    btn.id = "showMoreBtn";
-    btn.textContent = "Show All Venues";
-    btn.className =
-      "block mt-6 mx-auto px-6 py-2 bg-[var(--brand-purple)] text-[var(--brand-beige)] rounded-lg hover:bg-[var(--brand-purple-hover)] transition";
-    btn.addEventListener("click", () => {
-      renderVenues(getFilteredVenues(allVenues), allVenues.length);
-    });
-    venueContainer.parentElement.appendChild(btn);
+      window.location.href = `/venues/?id=${encodeURIComponent(venue.id)}`
+    })
+
+    venueContainer.appendChild(venueElement)
+  })
+
+  if (loadMoreBtn) {
+    if (venues.length > visibleCount) {
+      loadMoreBtn.classList.remove("hidden")
+    } else {
+      loadMoreBtn.classList.add("hidden")
+    }
   }
 }
 
-fetchAndDisplayVenues(true, false);
+const loadMoreBtn = document.getElementById("loadMoreBtn")
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener("click", () => {
+    visibleCount += 9
+    renderVenues(getFilteredVenues(allVenues), false)
+  })
+}
+
+fetchAndDisplayVenues(true, false)
