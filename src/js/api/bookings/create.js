@@ -1,31 +1,31 @@
-async function createBooking(bookingData) {
+import { API_BOOKINGS, API_KEY } from "../constants.js";
+
+export async function createBooking({ dateFrom, dateTo, guests, venueId }) {
   const user = JSON.parse(localStorage.getItem("user"));
+  const token = user?.accessToken;
 
-  if (!user || !user.accessToken) {
-    alert("You must be logged in to book a venue.");
-    return;
+  if (!token) throw new Error("You must be logged in to create a booking");
+
+  const response = await fetch(API_BOOKINGS, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "X-Noroff-API-Key": API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      dateFrom,
+      dateTo,
+      guests,
+      venueId,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.errors?.[0]?.message || `Booking failed (${response.status})`);
   }
 
-  try {
-    const response = await fetch("https://api.noroff.dev/api/v1/holidaze/bookings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.accessToken}`,
-      },
-      body: JSON.stringify(bookingData),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.errors?.[0]?.message || "Booking failed.");
-    }
-
-    alert("Booking successful!");
-    console.log("Booking result:", result);
-  } catch (error) {
-    console.error("Booking error:", error);
-    alert(`Booking failed: ${error.message}`);
-  }
+  const { data } = await response.json();
+  return data;
 }

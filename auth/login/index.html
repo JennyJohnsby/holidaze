@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Holidaze | Login" />
     <title>Holidaze | Login</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/air-freight.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/air-freight.png"
+    />
     <script type="module" src="/src/app.js"></script>
     <link rel="stylesheet" href="/src/style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,50 +20,41 @@
       rel="stylesheet"
     />
   </head>
-
-  <body class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen">
-    <!-- Skip Link -->
-    <a
-      href="#main-content"
-      class="sr-only focus:not-sr-only absolute left-2 top-2 bg-white p-2 rounded text-[var(--brand-purple)]"
-    >
-      Skip to main content
-    </a>
-
-    <!-- Header -->
+  <body
+    class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-base sm:text-lg flex flex-col min-h-screen"
+  >
     <header
-      role="banner"
-      class="relative h-90 bg-cover bg-center"
-      style="background-image: url(/assets/anders-jilden-AkUR27wtaxs-unsplash.jpg)"
+      class="relative bg-cover bg-center bg-[url('/assets/adam-thomas-uyQ5dXQq4sE-unsplash-min.jpg')]"
     >
-      <div class="absolute inset-0 bg-[var(--brand-purple)]/60"></div>
-
-      <div class="relative z-10 flex items-center justify-between px-8 py-4">
-        <!-- Logo -->
-        <a href="/" aria-label="Holidaze Home" class="flex-shrink-0">
+      <div class="absolute inset-0 bg-[var(--brand-purple)]/50"></div>
+      <div
+        class="relative z-10 flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 py-4"
+      >
+        <a href="/" class="mb-4 sm:mb-0">
           <img
             src="/assets/logo1.svg"
             alt="Holidaze Logo"
-            class="h-40 w-auto"
+            class="h-[100px] sm:h-[140px] md:h-[160px] w-auto"
+            width="160"
+            height="160"
           />
         </a>
-
-        <!-- Nav -->
-        <nav aria-label="Primary navigation">
-          <ul class="flex space-x-8 text-[var(--brand-beige)] font-medium text-xl">
+        <nav>
+          <ul
+            class="flex flex-wrap gap-4 sm:gap-8 text-[var(--brand-purple)] font-medium text-base sm:text-lg md:text-xl"
+          >
             <li>
               <a
-                href="/auth/login/"
-                aria-current="page"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-purple)]"
+                href="/"
+                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
               >
-                Log In
+                Venues
               </a>
             </li>
             <li>
               <a
                 href="/auth/register/"
-                class="px-4 py-2 rounded-lg font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
               >
                 Register
               </a>
@@ -66,7 +62,7 @@
             <li>
               <a
                 href="/profile/"
-                class="px-4 py-2 rounded-lg font-semibold transition duration-300 ease-in-out hover:bg-[var(--brand-beige)] hover:text-[var(--brand-purple)] hover:shadow-lg focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
               >
                 Profile
               </a>
@@ -74,29 +70,35 @@
           </ul>
         </nav>
       </div>
-
-      <!-- Hero text -->
-      <div class="relative z-10 text-center text-[var(--brand-beige)] px-6">
-        <h1 class="text-4xl md:text-5xl font-extrabold drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]">
-          Log In
+      <div
+        class="relative z-10 text-center text-[var(--brand-beige)] mt-6 sm:mt-8 px-4"
+      >
+        <h1
+          class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)]"
+        >
+          Stay closer, travel farther
         </h1>
-        <p class="mt-3 text-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
+        <p
+          class="mt-3 text-lg sm:text-xl md:text-2xl font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
+        >
           Discover amazing venues with Holidaze
         </p>
       </div>
     </header>
-
-    <!-- Main -->
-    <main id="main-content" class="w-full max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8 flex-grow">
+    <main id="main-content" class="w-200 mx-auto mt-10 flex-grow px-4 sm:px-6">
       <form
         name="login"
         id="login-form"
         class="bg-gradient-to-br from-[var(--brand-purple)] to-[#3b1c52] p-8 rounded-2xl shadow-lg"
       >
-        <fieldset class="flex flex-col gap-6 rounded-lg p-6 border border-[var(--brand-beige)]">
-          <!-- Email -->
+        <fieldset
+          class="flex flex-col gap-6 rounded-lg p-6 border border-[var(--brand-beige)]"
+        >
           <div>
-            <label for="login-email" class="block text-base font-medium text-[var(--brand-beige)]">
+            <label
+              for="login-email"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+            >
               Email
             </label>
             <input
@@ -110,9 +112,11 @@
             />
           </div>
 
-          <!-- Password -->
           <div>
-            <label for="login-password" class="block text-base font-medium text-[var(--brand-beige)]">
+            <label
+              for="login-password"
+              class="block text-base font-medium text-[var(--brand-beige)]"
+            >
               Password
             </label>
             <input
@@ -126,94 +130,87 @@
               placeholder="Enter your password"
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
             />
-            <small id="password-hint" class="block mt-1 text-[var(--brand-beige)] text-xs">
+            <small
+              id="password-hint"
+              class="block mt-1 text-[var(--brand-beige)] text-xs"
+            >
               Must be at least 8 characters long.
             </small>
           </div>
 
-          <!-- Button -->
           <button
             type="submit"
-            class="bg-[var(--brand-beige)] hover:bg-opacity-90 text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40"
+            class="bg-[var(--brand-beige)] hover:bg-[var(--brand-beige-hover)] text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40"
           >
             Log In
           </button>
 
-          <!-- Feedback area -->
-          <div id="form-message" role="alert" class="mt-4 text-center text-sm text-[var(--brand-beige)]"></div>
+          <div
+            id="form-message"
+            role="alert"
+            class="mt-4 text-center text-sm text-[var(--brand-beige)]"
+          ></div>
 
-          <!-- Register link -->
           <p class="text-center text-[var(--brand-beige)] mt-4">
             Not registered yet?
-            <a href="/auth/register/" class="text-[var(--brand-beige)] hover:underline focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]">
+            <a
+              href="/auth/register/"
+              class="text-[var(--brand-beige)] hover:underline focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+            >
               Register here!
             </a>
           </p>
         </fieldset>
       </form>
     </main>
-
-    <!-- Footer -->
-    <footer class="flex flex-wrap justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 mt-16 text-[var(--brand-beige)] px-6">
+    <footer
+      class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 px-4 mt-16 text-[var(--brand-beige)] text-sm sm:text-base"
+    >
       <p>&copy; 2025 Holidaze. All rights reserved.</p>
-      <span>|</span>
-      <p>
-        Developed by
-        <a
-          href="https://your-portfolio.com"
-          class="underline hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
-        >
-          Jenny Johnsby
-        </a>
-      </p>
-      <span>|</span>
+      <span class="hidden md:block">|</span>
+      <p>Developed by Jenny Johnsby</p>
+      <span class="hidden md:block">|</span>
       <nav aria-label="Social media">
-        <ul class="flex space-x-6">
+        <ul class="flex flex-wrap justify-center gap-4 sm:space-x-6">
           <li>
             <a
               href="https://facebook.com/holidaze"
               target="_blank"
               rel="noopener"
-              aria-label="Visit Holidaze on Facebook"
-              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+              class="hover:text-[var(--brand-beige-hover)]"
+              >Facebook</a
             >
-              Facebook
-            </a>
           </li>
           <li>
             <a
               href="https://twitter.com/holidaze"
               target="_blank"
               rel="noopener"
-              aria-label="Visit Holidaze on Twitter"
-              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+              class="hover:text-[var(--brand-beige-hover)]"
+              >Twitter</a
             >
-              Twitter
-            </a>
           </li>
           <li>
             <a
               href="https://instagram.com/holidaze"
               target="_blank"
               rel="noopener"
-              aria-label="Visit Holidaze on Instagram"
-              class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+              class="hover:text-[var(--brand-beige-hover)]"
+              >Instagram</a
             >
-              Instagram
-            </a>
           </li>
         </ul>
       </nav>
-      <span>|</span>
-      <p>
+      <span class="hidden md:block">|</span>
+      <address class="not-italic">
         Contact us:
         <a
           href="mailto:support@holidaze.com"
-          class="hover:text-[var(--brand-beige-hover)] focus:outline focus:ring-2 focus:ring-[var(--brand-beige)]"
+          class="hover:text-[var(--brand-beige-hover)]"
         >
           support@holidaze.com
         </a>
-      </p>
+      </address>
     </footer>
   </body>
 </html>

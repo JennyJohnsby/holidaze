@@ -16,7 +16,8 @@ export async function showProfile() {
   try {
     const profile = await readProfile();
     if (!profile) {
-      profileDiv.innerHTML = "<p class='text-center'>Unable to load your profile. Please log in again.</p>";
+      profileDiv.innerHTML =
+        "<p class='text-center'>Unable to load your profile. Please log in again.</p>";
       return;
     }
 
@@ -24,7 +25,8 @@ export async function showProfile() {
     renderProfile(profile);
   } catch (error) {
     console.error("[Profile View] Error fetching profile:", error);
-    profileDiv.innerHTML = "<p class='text-center'>Unable to load your profile. Please try again later.</p>";
+    profileDiv.innerHTML =
+      "<p class='text-center'>Unable to load your profile. Please try again later.</p>";
   }
 }
 
@@ -65,11 +67,17 @@ function renderProfile(profile) {
              class="w-40 h-40 object-cover rounded-full border-4 border-[var(--brand-purple)] shadow-md" />
 
         <div class="text-center md:text-left space-y-4">
-          <p class="text-xl font-semibold text-[var(--brand-purple)]">${profile.email || "Not provided"}</p>
-          <p class="text-[var(--brand-purple)]">${profile.bio || "No bio available"}</p>
+          <p class="text-xl font-semibold text-[var(--brand-purple)]">${
+            profile.email || "Not provided"
+          }</p>
+          <p class="text-[var(--brand-purple)]">${
+            profile.bio || "No bio available"
+          }</p>
           <div class="flex flex-wrap justify-center md:justify-start gap-6 text-sm text-[var(--brand-purple)]">
             <p><strong>Bookings:</strong> ${profile._count?.bookings ?? 0}</p>
-            <p><strong>Role:</strong> ${profile.venueManager ? "Venue Manager" : "Regular User"}</p>
+            <p><strong>Role:</strong> ${
+              profile.venueManager ? "Venue Manager" : "Regular User"
+            }</p>
           </div>
         </div>
       </div>
@@ -91,7 +99,9 @@ function renderProfile(profile) {
         <form id="update-profile-form" class="space-y-6">
           <div>
             <label for="bio" class="block text-sm font-medium text-[var(--brand-purple)]">Bio:</label>
-            <textarea id="bio" name="bio" class="w-full p-5 border rounded-lg text-xl text-[var(--brand-purple)]" rows="4">${profile.bio || ""}</textarea>
+            <textarea id="bio" name="bio" class="w-full p-5 border rounded-lg text-xl text-[var(--brand-purple)]" rows="4">${
+              profile.bio || ""
+            }</textarea>
           </div>
           <div>
             <label for="avatarUrl" class="block text-sm font-medium text-[var(--brand-purple)]">Avatar URL:</label>
@@ -145,15 +155,23 @@ function renderProfile(profile) {
 
 function setupEventListeners(isVenueManager) {
   document.getElementById("logout-button")?.addEventListener("click", onLogout);
-  document.getElementById("edit-profile-button")?.addEventListener("click", () => {
-    document.getElementById("profile-update-form")?.classList.toggle("hidden");
-  });
-  document.getElementById("update-profile-form")?.addEventListener("submit", onUpdateProfile);
+  document
+    .getElementById("edit-profile-button")
+    ?.addEventListener("click", () => {
+      document
+        .getElementById("profile-update-form")
+        ?.classList.toggle("hidden");
+    });
+  document
+    .getElementById("update-profile-form")
+    ?.addEventListener("submit", onUpdateProfile);
 
   if (isVenueManager) {
-    document.getElementById("create-venue-button")?.addEventListener("click", () => {
-      window.location.href = "/venues/create/";
-    });
+    document
+      .getElementById("create-venue-button")
+      ?.addEventListener("click", () => {
+        window.location.href = "/venues/create/";
+      });
   }
 }
 
@@ -173,8 +191,12 @@ function displayVenues(venues = []) {
                      alt="${name || "Venue"}"
                      class="w-full h-48 object-cover">
                 <div class="p-4 text-center">
-                  <h3 class="text-xl font-semibold text-[var(--brand-beige)]">${name || "No name"}</h3>
-                  <p class="mt-2 text-[var(--brand-beige)] text-sm">${description || "No description available"}</p>
+                  <h3 class="text-xl font-semibold text-[var(--brand-beige)]">${
+                    name || "No name"
+                  }</h3>
+                  <p class="mt-2 text-[var(--brand-beige)] text-sm">${
+                    description || "No description available"
+                  }</p>
                   <p class="mt-2 text-[var(--brand-beige)] font-bold">$${price} per night</p>
                 </div>
               </div>`
@@ -186,24 +208,33 @@ function displayBookings(bookings = []) {
   const container = document.getElementById("bookings-container");
   if (!container) return;
 
-  container.innerHTML =
-    bookings.length === 0
-      ? "<p class='text-center'>No bookings found.</p>"
-      : bookings
-          .map(
-            ({ dateFrom, dateTo, guests, venue }) => `
-              <div class="bg-white border rounded-lg shadow-lg overflow-hidden p-4">
-                <img src="${venue?.media?.[0]?.url || "/images/venue-placeholder.jpg"}"
-                     alt="${venue?.name || "Venue"}"
-                     class="w-full h-40 object-cover rounded-lg mb-4">
-                <h3 class="text-lg font-semibold">${venue?.name || "No venue name"}</h3>
-                <p class="text-gray-600 text-sm">${venue?.description || "No description available"}</p>
-                <p class="text-gray-800 text-sm mt-2">Guests: ${guests}</p>
-                <p class="text-gray-800 text-sm">From: ${new Date(dateFrom).toLocaleDateString()}</p>
-                <p class="text-gray-800 text-sm">To: ${new Date(dateTo).toLocaleDateString()}</p>
-              </div>`
-          )
-          .join("");
+  if (bookings.length === 0) {
+    container.innerHTML = "<p class='text-center'>No bookings found.</p>";
+    return;
+  }
+
+  container.innerHTML = bookings
+    .map(({ id, dateFrom, dateTo, guests, venue }) => {
+      const img = venue?.media?.[0]?.url || "/images/venue-placeholder.jpg";
+      const name = venue?.name || "No venue name";
+      const desc = venue?.description || "No description available";
+      const href = `/bookings/?id=${encodeURIComponent(id)}`;
+
+      return `
+        <a href="${href}" class="block bg-white border rounded-lg shadow-lg overflow-hidden p-4 hover:shadow-xl transition">
+          <img src="${img}" alt="${name}" class="w-full h-40 object-cover rounded-lg mb-4">
+          <h3 class="text-lg font-semibold">${name}</h3>
+          <p class="text-gray-600 text-sm">${desc}</p>
+          <p class="text-gray-800 text-sm mt-2">Guests: ${guests}</p>
+          <p class="text-gray-800 text-sm">From: ${new Date(
+            dateFrom
+          ).toLocaleDateString()}</p>
+          <p class="text-gray-800 text-sm">To: ${new Date(
+            dateTo
+          ).toLocaleDateString()}</p>
+        </a>`;
+    })
+    .join("");
 }
 
 showProfile();
