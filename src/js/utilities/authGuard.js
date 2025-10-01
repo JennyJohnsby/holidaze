@@ -1,4 +1,4 @@
-import { displayBanner } from "../utilities/banners.js";
+import { displayBanner } from "../utilities/banners.js"
 
 export function authGuard({
   redirectIfAuthenticated = false,
@@ -9,52 +9,52 @@ export function authGuard({
   },
   bannerDelay = 2000,
 } = {}) {
-  let auth;
+  const token = localStorage.getItem("authToken")
+  let user = null
+
   try {
-    auth = JSON.parse(localStorage.getItem("auth")) || null;
+    user = JSON.parse(localStorage.getItem("currentUser")) || null
   } catch {
-    auth = null;
+    user = null
   }
 
-  const accessToken = auth?.accessToken || null;
-  const user = auth?.profile || {};
-  const currentPath = window.location.pathname;
+  const currentPath = window.location.pathname
 
-  
-  if (!accessToken && redirectIfNotAuthenticated) {
+  // 🚨 If NOT logged in and guard says redirect
+  if (!token && redirectIfNotAuthenticated) {
     const redirectUrl = currentPath.includes("/auth/register/")
       ? redirectUrlsIfNotAuthenticated.register
-      : redirectUrlsIfNotAuthenticated.default;
+      : redirectUrlsIfNotAuthenticated.default
 
     if (currentPath !== redirectUrl) {
-      displayBanner("You must be logged in to view this page.", "error");
+      displayBanner("You must be logged in to view this page.", "error")
       setTimeout(() => {
-        window.location.href = redirectUrl;
-      }, bannerDelay);
+        window.location.href = redirectUrl
+      }, bannerDelay)
     }
-    return;
+    return
   }
 
-  
-  if (accessToken && redirectIfAuthenticated) {
+  // ✅ If already logged in but visiting login/register
+  if (token && redirectIfAuthenticated) {
     if (currentPath === "/auth/login/" || currentPath === "/auth/register/") {
       displayBanner(
-        `You are already logged in as ${user.name || "user"}. <button id="logoutButton" class="banner__button">Logout</button>`,
+        `You are already logged in as ${user?.name || "user"}. <button id="logoutButton" class="banner__button">Logout</button>`,
         "warning",
-        0 
-      );
+        0 // persistent
+      )
 
-      
       document.body.addEventListener(
         "click",
         (event) => {
           if (event.target.id === "logoutButton") {
-            localStorage.removeItem("auth");
-            window.location.href = "/auth/login/";
+            localStorage.removeItem("authToken")
+            localStorage.removeItem("currentUser")
+            window.location.href = "/auth/login/"
           }
         },
         { once: true }
-      );
+      )
     }
   }
 }

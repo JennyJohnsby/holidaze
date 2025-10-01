@@ -1,34 +1,35 @@
-export async function readBooking(id) {
-  if (!id) {
-    throw new Error("Booking ID is required.");
-  }
+import { API_BOOKINGS, API_KEY } from "../constants";
 
-  const url = `https://v2.api.noroff.dev/holidaze/bookings/${id}`;
+/**
+ * Read a booking by ID
+ * @param {string} id - Booking ID
+ * @param {object} [options] - Optional query params
+ * @param {boolean} [options.includeVenue=false]
+ * @param {boolean} [options.includeCustomer=false]
+ */
+export async function readBooking(id, { includeVenue = false, includeCustomer = false } = {}) {
+  if (!id) return { data: null, error: "Booking ID is required", status: 400 };
 
   try {
-    const response = await fetch(url, {
+    const url = new URL(`${API_BOOKINGS}/${id}`);
+    if (includeVenue) url.searchParams.append("_venue", "true");
+    if (includeCustomer) url.searchParams.append("_customer", "true");
+
+    const response = await fetch(url.toString(), {
       headers: {
         "Content-Type": "application/json",
+        "X-Noroff-API-Key": API_KEY,
       },
     });
 
+    const result = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const errorDetails = await response.json().catch(() => ({}));
-      throw new Error(
-        errorDetails.message ||
-          `Failed to fetch booking (Status: ${response.status})`
-      );
+      return { data: null, error: result.errors?.[0]?.message || response.statusText, status: response.status };
     }
 
-    const result = await response.json();
-
-    if (!result.data) {
-      throw new Error("Booking data is missing in the response.");
-    }
-
-    return result.data;
-  } catch (error) {
-    console.error("Error fetching booking:", error);
-    throw error;
+    return { data: result.data, error: null, status: response.status };
+  } catch (err) {
+    console.error("[ReadBooking API]", err);
+    return { data: null, error: "Network error while fetching booking", status: 500 };
   }
 }

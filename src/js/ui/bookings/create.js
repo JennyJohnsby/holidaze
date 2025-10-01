@@ -1,27 +1,30 @@
-import { API_BOOKINGS } from "../constants.js";
+import { API_BOOKINGS } from "../constants.js"
 
 export async function createBooking(bookingData) {
-  const token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("authToken")
 
   if (!token) {
-    throw new Error("You must be logged in to make a booking.");
+    return { data: null, error: "You must be logged in to make a booking.", status: 401 }
   }
 
-  const response = await fetch(API_BOOKINGS, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(bookingData),
-  });
+  try {
+    const response = await fetch(API_BOOKINGS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(bookingData),
+    })
 
-  const result = await response.json();
+    const data = await response.json().catch(() => ({}))
 
-  if (!response.ok) {
-    const errorMsg = result.errors?.[0]?.message || "Booking failed.";
-    throw new Error(errorMsg);
+    if (!response.ok) {
+      return { data: null, error: data.errors?.[0]?.message || "Booking failed.", status: response.status }
+    }
+
+    return { data, error: null, status: response.status }
+  } catch (err) {
+    return { data: null, error: err.message, status: 500 }
   }
-
-  return result;
 }

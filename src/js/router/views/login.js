@@ -1,12 +1,13 @@
 import { onLogin } from "../../ui/auth/login.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("login-form");
+console.log("[Login View] Loaded");
 
-  if (form) {
-    form.addEventListener("submit", onLogin);
-    console.info("[Login View] Login form connected to onLogin");
-  } else {
-    console.error("[Login View] Could not find #login-form in the DOM");
-  }
-});
+const form = document.forms.login;
+if (form) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    onLogin(event);
+  });
+} else {
+  console.warn("[Login View] No form[name='login'] found in DOM.");
+}

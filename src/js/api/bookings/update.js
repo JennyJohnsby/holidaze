@@ -1,52 +1,34 @@
-export async function updateBooking(id, { dateFrom, dateTo, guests }) {
-  if (!id) {
-    throw new Error("Booking ID is required.");
-  }
+import { API_BOOKINGS, API_KEY } from "../constants";
 
-  const url = `https://v2.api.noroff.dev/holidaze/bookings/${id}`;
-
-  console.log("Updating Booking:", { id, dateFrom, dateTo, guests });
-
-  const accessToken = localStorage.getItem("accessToken") || localStorage.getItem("authToken");
-
-  if (!accessToken) {
-    console.error("No token found. Redirecting to login.");
-    setTimeout(() => {
-      window.location.href = "/login";
-    }, 2000);
-    throw new Error("No token found. Please log in.");
-  }
-
-  // Only include fields that are provided
-  const bookingData = {};
-  if (dateFrom) bookingData.dateFrom = new Date(dateFrom).toISOString();
-  if (dateTo) bookingData.dateTo = new Date(dateTo).toISOString();
-  if (guests !== undefined && !isNaN(guests)) bookingData.guests = Number(guests);
-
-  console.log("Final Booking Data to Send:", bookingData);
+/**
+ * Update an existing booking
+ * @param {string} id - Booking ID
+ * @param {object} updates - Fields to update
+ */
+export async function updateBooking(id, updates = {}) {
+  const token = localStorage.getItem("authToken");
+  if (!id) return { data: null, error: "Booking ID is required", status: 400 };
+  if (!token) return { data: null, error: "No token found. Please log in.", status: 401 };
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${API_BOOKINGS}/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-        "X-Noroff-API-Key": "95144b64-e941-4738-b289-cc867b27e27c",
+        Authorization: `Bearer ${token}`,
+        "X-Noroff-API-Key": API_KEY,
       },
-      body: JSON.stringify(bookingData),
+      body: JSON.stringify(updates),
     });
 
+    const result = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const errorDetails = await response.json().catch(() => ({}));
-      console.error("API Error:", errorDetails);
-      throw new Error(`Error: ${errorDetails.message || response.statusText}`);
+      return { data: null, error: result.errors?.[0]?.message || response.statusText, status: response.status };
     }
 
-    const updatedBooking = await response.json();
-    console.log("Updated Booking Response:", updatedBooking);
-    return updatedBooking;
-  } catch (error) {
-    console.error("Failed to update booking:", error);
-    throw error;
+    return { data: result.data, error: null, status: response.status };
+  } catch (err) {
+    console.error("[UpdateBooking API]", err);
+    return { data: null, error: "Network error while updating booking", status: 500 };
   }
 }

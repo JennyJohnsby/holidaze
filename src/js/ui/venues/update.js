@@ -1,67 +1,68 @@
-import { updateVenue } from "../../api/venues/update.js";
-import { displayBanner } from "../../utilities/banners.js";
+import { updateVenue } from "../../api/venues/update.js"
+import { displayBanner } from "../../utilities/banners.js"
 
 export async function onUpdateVenue(event) {
-  event.preventDefault();
+  event.preventDefault()
 
-  const form = event.target;
-  const formData = new FormData(form);
+  const form = event.target
+  const formData = new FormData(form)
 
-  const venueId = formData.get("id");
-  const name = formData.get("name")?.trim();
-  const description = formData.get("description")?.trim();
-  const price = formData.get("price") ? Number(formData.get("price")) : undefined;
-  const maxGuests = formData.get("maxGuests") ? Number(formData.get("maxGuests")) : undefined;
-  const rating = formData.get("rating") ? Number(formData.get("rating")) : undefined;
+  const venueId = formData.get("id")
+  if (!venueId) {
+    displayBanner("Venue ID is missing.", "error")
+    return
+  }
 
-  const mediaUrl = formData.get("mediaUrl")?.trim();
-  const mediaAlt = formData.get("mediaAlt")?.trim();
-  const media = mediaUrl ? [{ url: mediaUrl, alt: mediaAlt || "" }] : undefined;
+  const updatedVenue = {}
 
-  const meta = {
+  const name = formData.get("name")?.trim()
+  if (name) updatedVenue.name = name
+
+  const description = formData.get("description")?.trim()
+  if (description) updatedVenue.description = description
+
+  const price = formData.get("price")
+  if (price) updatedVenue.price = Number(price)
+
+  const maxGuests = formData.get("maxGuests")
+  if (maxGuests) updatedVenue.maxGuests = Number(maxGuests)
+
+  const rating = formData.get("rating")
+  if (rating) updatedVenue.rating = Number(rating)
+
+  const mediaUrl = formData.get("mediaUrl")?.trim()
+  const mediaAlt = formData.get("mediaAlt")?.trim()
+  if (mediaUrl) updatedVenue.media = [{ url: mediaUrl, alt: mediaAlt || "" }]
+
+  updatedVenue.meta = {
     wifi: formData.get("wifi") === "on",
     parking: formData.get("parking") === "on",
     breakfast: formData.get("breakfast") === "on",
     pets: formData.get("pets") === "on",
-  };
-
-  const location = {
-    address: formData.get("address")?.trim(),
-    city: formData.get("city")?.trim(),
-    zip: formData.get("zip")?.trim(),
-    country: formData.get("country")?.trim(),
-    continent: formData.get("continent")?.trim(),
-    lat: formData.get("lat") ? Number(formData.get("lat")) : undefined,
-    lng: formData.get("lng") ? Number(formData.get("lng")) : undefined,
-  };
-
-  const updatedVenue = {};
-  if (name) updatedVenue.name = name;
-  if (description) updatedVenue.description = description;
-  if (price !== undefined) updatedVenue.price = price;
-  if (maxGuests !== undefined) updatedVenue.maxGuests = maxGuests;
-  if (rating !== undefined) updatedVenue.rating = rating;
-  if (media) updatedVenue.media = media;
-  if (meta) updatedVenue.meta = meta;
-  if (location) updatedVenue.location = location;
-
-  try {
-    const response = await updateVenue(venueId, updatedVenue);
-    console.log("Venue updated successfully:", response);
-    displayBanner("Venue updated successfully!", "success");
-  } catch (error) {
-    console.error("Error updating venue:", error);
-
-    if (error.message.includes("400")) {
-      displayBanner("The information provided is incomplete or invalid. Please check and try again.", "error");
-    } else if (error.message.includes("401")) {
-      displayBanner("You must be logged in to make changes to this venue.", "error");
-    } else if (error.message.includes("404")) {
-      displayBanner("This venue does not exist or has been removed.", "error");
-    } else if (error.message.includes("500")) {
-      displayBanner("There was an issue with the server. Please try again later.", "error");
-    } else {
-      displayBanner("An unexpected error occurred. Please try again.", "error");
-    }
   }
+
+  updatedVenue.location = {
+    address: formData.get("address")?.trim() || null,
+    city: formData.get("city")?.trim() || null,
+    zip: formData.get("zip")?.trim() || null,
+    country: formData.get("country")?.trim() || null,
+    continent: formData.get("continent")?.trim() || null,
+    lat: formData.get("lat") ? Number(formData.get("lat")) : null,
+    lng: formData.get("lng") ? Number(formData.get("lng")) : null,
+  }
+
+  const { data, error, status } = await updateVenue(venueId, updatedVenue)
+
+  if (error || !data) {
+    console.error("[Venue Update] Failed:", error, status)
+    displayBanner(error || "Failed to update venue.", "error")
+    return
+  }
+
+  console.log("[Venue Update] Success:", data)
+  displayBanner("Venue updated successfully!", "success")
+
+  setTimeout(() => {
+    window.location.href = "/profile/"
+  }, 1500)
 }

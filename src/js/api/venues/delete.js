@@ -1,109 +1,31 @@
-import { API_KEY } from "../constants";
-import { displayBanner } from "../../utilities/banners";
-
-const deleteVenueFromAPI = async (id, accessToken) => {
-  const url = `https://v2.api.noroff.dev/holidaze/venues/${id}`;
-  const response = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "X-Noroff-API-Key": API_KEY,
-    },
-  });
-  return response;
-};
-
-const handleVenueAPIResponse = (response) => {
-  if (response.status === 404) {
-    displayBanner("Venue not found. It may have already been deleted.", "error");
-    return false;
-  }
-
-  if (response.status === 204) {
-    displayBanner("Venue deleted successfully!", "success");
-    return true;
-  }
-
-  displayBanner("Failed to delete venue. Please try again.", "error");
-  return false;
-};
-
-const removeVenueFromUI = (id) => {
-  const venueElement = document.getElementById(`venue-${id}`);
-  if (venueElement) {
-    venueElement.remove();
-  }
-};
-
-const redirectToVenuesPage = () => {
-  window.location.href = "/venues";
-};
-
-const showConfirmationModal = () => {
-  return new Promise((resolve) => {
-    const modal = document.getElementById("confirm-modal");
-    const confirmBtn = document.getElementById("confirm-delete");
-    const cancelBtn = document.getElementById("cancel-delete");
-
-    if (!modal || !confirmBtn || !cancelBtn) {
-      const fallback = window.confirm("Are you sure you want to delete this venue?");
-      resolve(fallback);
-      return;
-    }
-
-    const closeModal = () => modal.classList.add("hidden");
-
-    const confirmHandler = () => {
-      cleanup();
-      closeModal();
-      resolve(true);
-    };
-
-    const cancelHandler = () => {
-      cleanup();
-      closeModal();
-      resolve(false);
-    };
-
-    const cleanup = () => {
-      confirmBtn.removeEventListener("click", confirmHandler);
-      cancelBtn.removeEventListener("click", cancelHandler);
-    };
-
-    confirmBtn.addEventListener("click", confirmHandler);
-    cancelBtn.addEventListener("click", cancelHandler);
-    modal.classList.remove("hidden");
-  });
-};
+import { API_VENUES, API_KEY } from "../constants";
 
 export async function deleteVenue(id) {
-  if (!id) {
-    displayBanner("Invalid venue ID. Please try again.", "error");
-    return;
-  }
-
-  const confirmed = await showConfirmationModal();
-  if (!confirmed) {
-    displayBanner("Venue deletion canceled.", "error");
-    return;
-  }
-
-  const user = JSON.parse(localStorage.getItem("user"));
-  const accessToken = user?.accessToken;
-
-  if (!accessToken) {
-    displayBanner("You're not logged in. Cannot delete venue.", "error");
-    return;
-  }
+  const token = localStorage.getItem("authToken");
+  if (!id) return { success: false, error: "Venue ID is required", status: 400 };
+  if (!token) return { success: false, error: "No token found. Please log in.", status: 401 };
 
   try {
-    const response = await deleteVenueFromAPI(id, accessToken);
+    const response = await fetch(`${API_VENUES}/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-Noroff-API-Key": API_KEY,
+      },
+    });
 
-    if (!handleVenueAPIResponse(response)) return;
+    if (response.status === 204) {
+      console.info("[DeleteVenue API] Venue deleted:", id);
+      return { success: true, error: null, status: 204 };
+    }
 
-    removeVenueFromUI(id);
-    redirectToVenuesPage();
-  } catch {
-    displayBanner("An error occurred while deleting the venue. Please try again.", "error");
+    const result = await response.json().catch(() => ({}));
+    const errorMessage = result.errors?.[0]?.message || response.statusText || "Failed to delete venue";
+
+    console.error("[DeleteVenue API] Error:", errorMessage);
+    return { success: false, error: errorMessage, status: response.status };
+  } catch (err) {
+    console.error("[DeleteVenue API] Network error:", err);
+    return { success: false, error: "Network error while deleting venue", status: 500 };
   }
 }

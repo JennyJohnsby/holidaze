@@ -1,6 +1,11 @@
-import { API_AUTH_LOGIN } from "../constants.js";
+import { API_AUTH_LOGIN } from "../constants";
 
-export async function loginUser({ email, password }) {
+/**
+ * Log in a user
+ * @param {object} credentials - { email, password }
+ * @returns {Promise<{ data: object|null, error: string|null, status: number }>}
+ */
+export async function login({ email, password }) {
   try {
     const response = await fetch(API_AUTH_LOGIN, {
       method: "POST",
@@ -10,30 +15,35 @@ export async function loginUser({ email, password }) {
       body: JSON.stringify({ email, password }),
     });
 
+    const result = await response.json().catch(() => ({}));
+
     if (!response.ok) {
-      let errorDetails;
-      try {
-        errorDetails = await response.json();
-      } catch {
-        throw new Error("Failed to log in user");
-      }
-      const message =
-        errorDetails.errors?.[0]?.message || "Failed to log in user";
-      throw new Error(message);
+      const errorMessage = result.errors?.[0]?.message || "Failed to log in user";
+      console.error("[Login API] Error:", errorMessage);
+      return { data: null, error: errorMessage, status: response.status };
     }
 
-    const result = await response.json();
+    const token = result.data?.accessToken;
+    if (!token) {
+      return { data: null, error: "Login successful, but no token was returned.", status: 500 };
+    }
 
-    const auth = {
-      accessToken: result.accessToken,
-      profile: result.data,
+    // Store token and user
+    localStorage.setItem("authToken", token);
+    const user = {
+      name: result.data.name,
+      email: result.data.email,
+      bio: result.data.bio,
+      avatar: result.data.avatar,
+      banner: result.data.banner,
     };
+    localStorage.setItem("currentUser", JSON.stringify(user));
 
-    localStorage.setItem("auth", JSON.stringify(auth));
+    console.info("[Login API] User logged in:", user);
 
-    return auth;
+    return { data: result.data, error: null, status: response.status };
   } catch (error) {
-    console.error("[Login API] Login failed:", error);
-    throw error;
+    console.error("[Login API] Network error:", error);
+    return { data: null, error: "Network error while logging in.", status: 500 };
   }
 }

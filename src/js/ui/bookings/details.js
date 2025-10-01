@@ -1,45 +1,47 @@
-import { authGuard } from "../../utilities/authGuard.js";
-import { readBooking } from "../../api/bookings/read.js";
+import { authGuard } from "../../utilities/authGuard.js"
+import { readBooking } from "../../api/bookings/read.js"
 
-authGuard();
+authGuard()
 
 function qs(sel) {
-  return document.querySelector(sel);
+  return document.querySelector(sel)
 }
 
 function formatDate(d) {
-  return new Date(d).toLocaleDateString();
+  return new Date(d).toLocaleDateString()
 }
 
 async function showBookingDetails() {
-  const container = qs("#booking-content");
-  if (!container) return;
+  const container = qs("#booking-content")
+  if (!container) return
 
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+  const params = new URLSearchParams(window.location.search)
+  const id = params.get("id")
 
   if (!id) {
-    container.innerHTML = `<p class="text-center">No booking ID provided.</p>`;
-    return;
+    container.innerHTML = `<p class="text-center">No booking ID provided.</p>`
+    return
   }
 
-  container.innerHTML = `<p class="text-center">Loading booking...</p>`;
+  container.innerHTML = `<p class="text-center">Loading booking...</p>`
 
-  try {
-    const booking = await readBooking(id);
-    renderBooking(container, booking);
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = `<p class="text-center">Unable to load this booking. ${err.message || ""}</p>`;
+  const { data, error } = await readBooking(id)
+
+  if (error || !data) {
+    console.error("[Booking Details] Failed:", error)
+    container.innerHTML = `<p class="text-center">Unable to load this booking. ${error || ""}</p>`
+    return
   }
+
+  renderBooking(container, data)
 }
 
 function renderBooking(container, booking) {
-  const { dateFrom, dateTo, guests, venue, customer } = booking;
+  const { dateFrom, dateTo, guests, venue, customer } = booking
 
-  const img = venue?.media?.[0]?.url || "/images/venue-placeholder.jpg";
-  const name = venue?.name || "No venue name";
-  const desc = venue?.description || "No description available";
+  const img = venue?.media?.[0]?.url || "/images/venue-placeholder.jpg"
+  const name = venue?.name || "No venue name"
+  const desc = venue?.description || "No description available"
 
   container.innerHTML = `
     <div class="space-y-6">
@@ -70,7 +72,7 @@ function renderBooking(container, booking) {
            class="px-5 py-3 rounded-lg bg-gray-200 text-[var(--brand-purple)] hover:bg-gray-300">Back to Profile</a>
       </div>
     </div>
-  `;
+  `
 }
 
-showBookingDetails();
+showBookingDetails()

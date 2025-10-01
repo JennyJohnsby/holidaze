@@ -1,5 +1,9 @@
 import { readBooking } from "../../api/bookings/read.js";
 import { deleteBooking } from "../../api/bookings/delete.js";
+import { displayBanner } from "../../utilities/banners.js";
+import { authGuard } from "../../utilities/authGuard.js";
+
+authGuard();
 
 async function fetchAndDisplayBooking() {
   const bookingId = new URLSearchParams(window.location.search).get("id");
@@ -8,11 +12,19 @@ async function fetchAndDisplayBooking() {
   if (!bookingContainer || !bookingId) return;
 
   try {
-    // Fetch booking with _venue and _customer included
-    const booking = await readBooking(bookingId, true, true);
-    renderSingleBooking(booking);
+    
+    const { data, error } = await readBooking(bookingId, {
+      includeVenue: true,
+      includeCustomer: true,
+    });
+
+    if (error || !data) {
+      throw new Error(error || "Failed to fetch booking.");
+    }
+
+    renderSingleBooking(data);
   } catch (err) {
-    console.error(err);
+    console.error("[Bookings View] Error fetching booking:", err);
     bookingContainer.innerHTML = `<p class="text-red-500 text-center">Failed to load the booking.</p>`;
   }
 }
@@ -65,8 +77,16 @@ function renderSingleBooking(booking) {
 
   const deleteButton = document.getElementById("delete-booking-button");
   if (deleteButton) {
-    deleteButton.addEventListener("click", () => {
-      deleteBooking(booking.id);
+    deleteButton.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to delete this booking?")) return;
+
+      const { success, error } = await deleteBooking(booking.id);
+      if (success) {
+        displayBanner("Booking deleted successfully!", "success");
+        setTimeout(() => (window.location.href = "/profile"), 2000);
+      } else {
+        displayBanner(error || "Failed to delete booking.", "error");
+      }
     });
   }
 }

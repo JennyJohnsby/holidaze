@@ -1,71 +1,44 @@
-export async function updateVenue(
-  id,
-  { name, description, media, price, maxGuests, rating, meta = {}, location = {} }
-) {
-  if (!id) {
-    throw new Error("Venue ID is required.");
-  }
+import { API_VENUES, API_KEY } from "../constants";
 
-  const url = `https://v2.api.noroff.dev/holidaze/venues/${id}`;
-  const accessToken =
-    localStorage.getItem("accessToken") ?? localStorage.getItem("authToken");
+export async function updateVenue(id, updates = {}) {
+  const token = localStorage.getItem("authToken");
+  if (!id) return { data: null, error: "Venue ID is required", status: 400 };
+  if (!token) return { data: null, error: "No token found. Please log in.", status: 401 };
 
-  if (!accessToken) {
-    setTimeout(() => {
-      window.location.href = "/auth/login/";
-    }, 2000);
-    throw new Error("No token found. Please log in.");
-  }
-
-  const venueData = {};
-
-  if (name) venueData.name = name.trim();
-  if (description) venueData.description = description.trim();
-  if (Array.isArray(media) && media.length > 0) venueData.media = media;
-  if (price !== undefined) venueData.price = Number(price);
-  if (maxGuests !== undefined) venueData.maxGuests = Number(maxGuests);
-  if (rating !== undefined) venueData.rating = Number(rating);
-
-  if (meta && typeof meta === "object") {
-    venueData.meta = {
-      wifi: meta.wifi ?? false,
-      parking: meta.parking ?? false,
-      breakfast: meta.breakfast ?? false,
-      pets: meta.pets ?? false,
-    };
-  }
-
-  if (location && typeof location === "object") {
-    venueData.location = {
-      address: location.address ?? null,
-      city: location.city ?? null,
-      zip: location.zip ?? null,
-      country: location.country ?? null,
-      continent: location.continent ?? null,
-      lat: location.lat ?? 0,
-      lng: location.lng ?? 0,
-    };
-  }
+  // Optional: sanitize updates
+  const payload = {
+    ...(updates.name && { name: updates.name }),
+    ...(updates.description && { description: updates.description }),
+    ...(typeof updates.price === "number" && { price: updates.price }),
+    ...(updates.maxGuests && { maxGuests: updates.maxGuests }),
+    ...(updates.media && { media: updates.media }),
+    ...(updates.meta && { meta: updates.meta }),
+    ...(updates.location && { location: updates.location }),
+  };
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(`${API_VENUES}/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-        "X-Noroff-API-Key": "95144b64-e941-4738-b289-cc867b27e27c",
+        Authorization: `Bearer ${token}`,
+        "X-Noroff-API-Key": API_KEY,
       },
-      body: JSON.stringify(venueData),
+      body: JSON.stringify(payload),
     });
 
+    const result = await response.json().catch(() => ({}));
+
     if (!response.ok) {
-      const errorDetails = await response.json();
-      throw new Error(`Error: ${errorDetails.message || response.statusText}`);
+      const errorMessage = result.errors?.[0]?.message || response.statusText;
+      console.error("[UpdateVenue API] Error:", errorMessage);
+      return { data: null, error: errorMessage, status: response.status };
     }
 
-    const updatedVenue = await response.json();
-    return updatedVenue;
-  } catch (error) {
-    throw error;
+    console.info("[UpdateVenue API] Venue updated:", result.data);
+    return { data: result.data, meta: result.meta, error: null, status: response.status };
+  } catch (err) {
+    console.error("[UpdateVenue API] Network error:", err);
+    return { data: null, error: "Network error while updating venue", status: 500 };
   }
 }

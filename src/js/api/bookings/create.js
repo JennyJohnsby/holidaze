@@ -1,31 +1,34 @@
-import { API_BOOKINGS, API_KEY } from "../constants.js";
+import { API_BOOKINGS, API_KEY } from "../constants";
 
-export async function createBooking({ dateFrom, dateTo, guests, venueId }) {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = user?.accessToken;
-
-  if (!token) throw new Error("You must be logged in to create a booking");
-
-  const response = await fetch(API_BOOKINGS, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "X-Noroff-API-Key": API_KEY,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      dateFrom,
-      dateTo,
-      guests,
-      venueId,
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.errors?.[0]?.message || `Booking failed (${response.status})`);
+/**
+ * Create a new booking
+ * @param {object} bookingData - { dateFrom, dateTo, guests, venueId }
+ */
+export async function createBooking(bookingData) {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return { data: null, error: "No token found. Please log in.", status: 401 };
   }
 
-  const { data } = await response.json();
-  return data;
+  try {
+    const response = await fetch(API_BOOKINGS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-Noroff-API-Key": API_KEY,
+      },
+      body: JSON.stringify(bookingData),
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      return { data: null, error: result.errors?.[0]?.message || response.statusText, status: response.status };
+    }
+
+    return { data: result.data, error: null, status: response.status };
+  } catch (err) {
+    console.error("[CreateBooking API]", err);
+    return { data: null, error: "Network error while creating booking", status: 500 };
+  }
 }

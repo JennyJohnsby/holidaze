@@ -14,17 +14,22 @@ export async function showProfile() {
   profileDiv.innerHTML = "<p class='text-center'>Loading profile...</p>";
 
   try {
-    const profile = await readProfile();
-    if (!profile) {
+    const { data: profile, error } = await readProfile();
+    if (error || !profile) {
+      console.error("[Profile View] Failed to load profile:", error);
       profileDiv.innerHTML =
         "<p class='text-center'>Unable to load your profile. Please log in again.</p>";
       return;
     }
 
-    localStorage.setItem("currentUser", JSON.stringify(profile));
+    // Keep localStorage.currentUser in sync with the latest profile
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+    currentUser.profile = profile;
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
     renderProfile(profile);
   } catch (error) {
-    console.error("[Profile View] Error fetching profile:", error);
+    console.error("[Profile View] Unexpected error:", error);
     profileDiv.innerHTML =
       "<p class='text-center'>Unable to load your profile. Please try again later.</p>";
   }
@@ -67,17 +72,15 @@ function renderProfile(profile) {
              class="w-40 h-40 object-cover rounded-full border-4 border-[var(--brand-purple)] shadow-md" />
 
         <div class="text-center md:text-left space-y-4">
-          <p class="text-xl font-semibold text-[var(--brand-purple)]">${
-            profile.email || "Not provided"
-          }</p>
-          <p class="text-[var(--brand-purple)]">${
-            profile.bio || "No bio available"
-          }</p>
+          <p class="text-xl font-semibold text-[var(--brand-purple)]">
+            ${profile.email || "Not provided"}
+          </p>
+          <p class="text-[var(--brand-purple)]">
+            ${profile.bio || "No bio available"}
+          </p>
           <div class="flex flex-wrap justify-center md:justify-start gap-6 text-sm text-[var(--brand-purple)]">
             <p><strong>Bookings:</strong> ${profile._count?.bookings ?? 0}</p>
-            <p><strong>Role:</strong> ${
-              profile.venueManager ? "Venue Manager" : "Regular User"
-            }</p>
+            <p><strong>Role:</strong> ${profile.venueManager ? "Venue Manager" : "Regular User"}</p>
           </div>
         </div>
       </div>
@@ -99,9 +102,7 @@ function renderProfile(profile) {
         <form id="update-profile-form" class="space-y-6">
           <div>
             <label for="bio" class="block text-sm font-medium text-[var(--brand-purple)]">Bio:</label>
-            <textarea id="bio" name="bio" class="w-full p-5 border rounded-lg text-xl text-[var(--brand-purple)]" rows="4">${
-              profile.bio || ""
-            }</textarea>
+            <textarea id="bio" name="bio" class="w-full p-5 border rounded-lg text-xl text-[var(--brand-purple)]" rows="4">${profile.bio || ""}</textarea>
           </div>
           <div>
             <label for="avatarUrl" class="block text-sm font-medium text-[var(--brand-purple)]">Avatar URL:</label>
@@ -142,15 +143,25 @@ function renderProfile(profile) {
   setupEventListeners(profile.venueManager);
 
   if (profile.venueManager) {
-    fetchUserVenues()
-      .then(({ data }) => displayVenues(data || []))
-      .catch((error) => {
-        console.error("Failed to load venues:", error);
-        displayBanner("Could not load your venues.", "error");
-      });
+    loadUserVenues();
   }
 
   displayBookings(profile.bookings || []);
+}
+
+async function loadUserVenues() {
+  try {
+    const { data: venues, error } = await fetchUserVenues();
+    if (error) {
+      console.error("[Profile View] Failed to load venues:", error);
+      displayBanner("Could not load your venues.", "error");
+    } else {
+      displayVenues(venues || []);
+    }
+  } catch (err) {
+    console.error("[Profile View] Unexpected error loading venues:", err);
+    displayBanner("Could not load your venues.", "error");
+  }
 }
 
 function setupEventListeners(isVenueManager) {
@@ -191,12 +202,8 @@ function displayVenues(venues = []) {
                      alt="${name || "Venue"}"
                      class="w-full h-48 object-cover">
                 <div class="p-4 text-center">
-                  <h3 class="text-xl font-semibold text-[var(--brand-beige)]">${
-                    name || "No name"
-                  }</h3>
-                  <p class="mt-2 text-[var(--brand-beige)] text-sm">${
-                    description || "No description available"
-                  }</p>
+                  <h3 class="text-xl font-semibold text-[var(--brand-beige)]">${name || "No name"}</h3>
+                  <p class="mt-2 text-[var(--brand-beige)] text-sm">${description || "No description available"}</p>
                   <p class="mt-2 text-[var(--brand-beige)] font-bold">$${price} per night</p>
                 </div>
               </div>`
@@ -226,12 +233,8 @@ function displayBookings(bookings = []) {
           <h3 class="text-lg font-semibold">${name}</h3>
           <p class="text-gray-600 text-sm">${desc}</p>
           <p class="text-gray-800 text-sm mt-2">Guests: ${guests}</p>
-          <p class="text-gray-800 text-sm">From: ${new Date(
-            dateFrom
-          ).toLocaleDateString()}</p>
-          <p class="text-gray-800 text-sm">To: ${new Date(
-            dateTo
-          ).toLocaleDateString()}</p>
+          <p class="text-gray-800 text-sm">From: ${new Date(dateFrom).toLocaleDateString()}</p>
+          <p class="text-gray-800 text-sm">To: ${new Date(dateTo).toLocaleDateString()}</p>
         </a>`;
     })
     .join("");

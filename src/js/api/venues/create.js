@@ -1,99 +1,48 @@
-import { API_CREATE_VENUES, API_KEY } from "../../api/constants.js";
+import { API_VENUES, API_KEY } from "../constants";
 
-export async function createVenue({
-  name,
-  description,
-  media = [],
-  price,
-  maxGuests,
-  rating = 0,
-  meta = {},
-  location = {},
-}) {
-  const url = API_CREATE_VENUES;
-
-  let accessToken;
-  try {
-    accessToken = localStorage.getItem("authToken");
-  } catch {
-    throw new Error("Unable to access token storage.");
+export async function createVenue(data) {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return { data: null, error: "No token found. Please log in.", status: 401 };
   }
 
-  if (!accessToken) {
-    throw new Error("No token found. Please log in.");
+  if (!data?.name || !data?.price) {
+    return { data: null, error: "Venue name and price are required.", status: 400 };
   }
 
-  if (!name) {
-    throw new Error("Venue name is required.");
-  }
-
-  if (!description) {
-    throw new Error("Venue description is required.");
-  }
-
-  if (price == null || isNaN(price)) {
-    throw new Error("A valid price is required.");
-  }
-
-  if (maxGuests == null || isNaN(maxGuests)) {
-    throw new Error("A valid maxGuests value is required.");
-  }
-
-  const safeMedia = Array.isArray(media)
-    ? media.filter((item) => item?.url)
-    : [];
-
-  const venueData = {
-    name,
-    description: description.trim(),
-    media: safeMedia,
-    price: Number(price),
-    maxGuests: Number(maxGuests),
-    rating: Number(rating) || 0,
-    meta: {
-      wifi: meta.wifi ?? false,
-      parking: meta.parking ?? false,
-      breakfast: meta.breakfast ?? false,
-      pets: meta.pets ?? false,
-    },
-    location: {
-      address: location.address ?? null,
-      city: location.city ?? null,
-      zip: location.zip ?? null,
-      country: location.country ?? null,
-      continent: location.continent ?? null,
-      lat: typeof location.lat === "number" ? location.lat : null,
-      lng: typeof location.lng === "number" ? location.lng : null,
-    },
+  const payload = {
+    name: data.name,
+    description: data.description || "",
+    price: Number(data.price) || 0,
+    maxGuests: data.maxGuests || 1,
+    media: data.media ?? [],
+    meta: data.meta ?? {},
+    location: data.location ?? {},
   };
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(API_VENUES, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
         "X-Noroff-API-Key": API_KEY,
       },
-      body: JSON.stringify(venueData),
+      body: JSON.stringify(payload),
     });
 
+    const result = await response.json().catch(() => ({}));
+
     if (!response.ok) {
-      const errorDetails = await response.json();
-      throw new Error(errorDetails.message || response.statusText);
+      const errorMessage = result.errors?.[0]?.message || response.statusText;
+      console.error("[CreateVenue API] Error:", errorMessage);
+      return { data: null, error: errorMessage, status: response.status };
     }
 
-    const result = await response.json();
-    return {
-      success: true,
-      data: result.data,
-      status: response.status,
-      message: "Venue created successfully.",
-    };
-  } catch (error) {
-    if (error.name === "TypeError") {
-      throw new Error("Network error. Please check your connection.");
-    }
-    throw new Error(error.message || "Failed to create venue.");
+    console.info("[CreateVenue API] Venue created:", result.data);
+    return { data: result.data, error: null, status: response.status };
+  } catch (err) {
+    console.error("[CreateVenue API] Network error:", err);
+    return { data: null, error: "Network error while creating venue", status: 500 };
   }
 }

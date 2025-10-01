@@ -1,82 +1,53 @@
-import { API_KEY } from "../constants.js";
+import { API_PROFILES, API_KEY } from "../constants";
 
-export async function updateProfile({ bio, avatar, banner, avatarFile }) {
-  const userInLocalStorage = JSON.parse(localStorage.getItem("currentUser"));
-  const username = userInLocalStorage ? userInLocalStorage.name : null;
+/**
+ * Update the logged-in user's profile
+ * @param {object} updates - Fields to update { bio, avatar, banner }
+ * @returns {Promise<{ data: object|null, error: string|null, status: number }>}
+ */
+export async function updateProfile({ bio, avatar, banner } = {}) {
+  const storedUser = JSON.parse(localStorage.getItem("currentUser"));
+  const username = storedUser?.name;
   const token = localStorage.getItem("authToken");
 
   if (!username || !token) {
-    throw new Error("No username or token found in localStorage.");
+    return { data: null, error: "No username or token found. Please log in.", status: 401 };
   }
 
-  const url = `https://v2.api.noroff.dev/holidaze/profiles/${username}`;
-
-  if (!bio && !avatar && !banner && !avatarFile) {
-    throw new Error(
-      "At least one of bio, avatar, banner, or avatarFile must be provided.",
-    );
+  if (!bio && !avatar?.url && !banner?.url) {
+    return { data: null, error: "At least one of bio, avatar, or banner must be provided.", status: 400 };
   }
 
-  let formData = new FormData();
-  if (avatarFile) {
-    if (!["image/jpeg", "image/png"].includes(avatarFile.type)) {
-      throw new Error("Invalid file type. Please upload a JPEG or PNG image.");
-    }
-    formData.append("avatar", avatarFile);
-  }
+  const url = `${API_PROFILES}/${username}`;
 
-  if (bio) {
-    formData.append("bio", bio);
-  }
-
-  if (avatar?.url) {
-    formData.append("avatarUrl", avatar.url);
-  }
-
-  if (banner?.url) {
-    formData.append("bannerUrl", banner.url);
-  }
+  const payload = {};
+  if (bio) payload.bio = bio;
+  if (avatar?.url) payload.avatar = { url: avatar.url, alt: avatar.alt ?? "" };
+  if (banner?.url) payload.banner = { url: banner.url, alt: banner.alt ?? "" };
 
   try {
-    let response;
-    if (avatarFile) {
-      response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "X-Noroff-API-Key": API_KEY,
-        },
-        body: formData,
-      });
-    } else {
-      response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "X-Noroff-API-Key": API_KEY,
-        },
-        body: JSON.stringify({
-          bio,
-          ...(avatar?.url ? { avatar } : {}),
-          ...(banner?.url ? { banner } : {}),
-        }),
-      });
-    }
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "X-Noroff-API-Key": API_KEY,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const errorDetails = await response.json();
-      throw new Error(`Error: ${errorDetails.message || response.statusText}`);
+      const errorMessage = result.errors?.[0]?.message || response.statusText;
+      console.error("[UpdateProfile API] Error:", errorMessage);
+      return { data: null, error: errorMessage, status: response.status };
     }
 
-    const updatedProfile = await response.json();
-    if (!updatedProfile) {
-      throw new Error("Profile update failed: No response data.");
-    }
-
-    return updatedProfile;
-  } catch (error) {
-    console.error("Failed to update profile:", error.message || error);
-    throw error;
+    console.info("[UpdateProfile API] Profile updated:", result.data);
+    return { data: result.data, error: null, status: response.status };
+  } catch (err) {
+    console.error("[UpdateProfile API] Network error:", err);
+    return { data: null, error: "Network error while updating profile.", status: 500 };
   }
 }

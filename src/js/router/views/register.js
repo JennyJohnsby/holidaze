@@ -1,12 +1,14 @@
 import { onRegister } from "../../ui/auth/register.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("register-form");
+console.log("[Register View] Loaded");
 
-  if (form) {
-    form.addEventListener("submit", onRegister);
-    console.info("[Register View] Register form connected to onRegister");
-  } else {
-    console.error("[Register View] Could not find #register-form in the DOM");
-  }
-});
+const form = document.getElementById("registerForm");
+
+if (form) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    onRegister(event);
+  });
+} else {
+  console.error("[Register View] Register form not found in the DOM.");
+}
