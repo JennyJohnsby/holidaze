@@ -45,14 +45,14 @@
             <li>
               <a
                 href="/"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
+                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
                 >Venues</a
               >
             </li>
             <li>
               <a
                 href="/profile/"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
+                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
                 >Profile</a
               >
             </li>
@@ -60,6 +60,7 @@
         </nav>
       </div>
     </header>
+
     <main class="max-w-4xl mx-auto p-8 mt-10">
       <h1
         class="text-3xl sm:text-4xl font-bold mb-4 text-[var(--brand-purple)] text-center"
@@ -69,7 +70,7 @@
 
       <form
         name="editVenue"
-        class="bg-gradient-to-br from-[var(--brand-purple)] to-[#3b1c52] p-8 rounded-2xl shadow-lg"
+        class="bg-gradient-to-br from-[var(--brand-purple)] to-[#3b1c52] p-8 rounded-2xl shadow-lg space-y-6"
       >
         <input type="hidden" name="id" />
 
@@ -117,7 +118,6 @@
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
             />
           </div>
-
           <div>
             <label
               for="mediaAlt"
@@ -148,7 +148,6 @@
               required
             />
           </div>
-
           <div>
             <label
               for="maxGuests"
@@ -163,7 +162,6 @@
               required
             />
           </div>
-
           <div>
             <label
               for="rating"
@@ -188,13 +186,13 @@
           </legend>
           <label class="block text-base font-medium text-[var(--brand-beige)]"
             ><input type="checkbox" name="wifi" /> WiFi</label
-          ><br />
+          >
           <label class="block text-base font-medium text-[var(--brand-beige)]"
             ><input type="checkbox" name="parking" /> Parking</label
-          ><br />
+          >
           <label class="block text-base font-medium text-[var(--brand-beige)]"
             ><input type="checkbox" name="breakfast" /> Breakfast</label
-          ><br />
+          >
           <label class="block text-base font-medium text-[var(--brand-beige)]"
             ><input type="checkbox" name="pets" /> Pets Allowed</label
           >
@@ -205,130 +203,60 @@
             Location
           </legend>
           <div class="grid md:grid-cols-2 gap-4">
-            <div>
-              <label
-                for="address"
-                class="block text-base font-medium text-[var(--brand-beige)]"
-                >Address</label
-              >
-              <input
-                type="text"
-                name="address"
-                id="address"
-                class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              />
-            </div>
-            <div>
-              <label
-                for="city"
-                class="block text-base font-medium text-[var(--brand-beige)]"
-                >City</label
-              >
-              <input
-                type="text"
-                name="city"
-                id="city"
-                class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              />
-            </div>
-            <div>
-              <label
-                for="zip"
-                class="block text-base font-medium text-[var(--brand-beige)]"
-                >Zip Code</label
-              >
-              <input
-                type="text"
-                name="zip"
-                id="zip"
-                class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              />
-            </div>
-            <div>
-              <label
-                for="country"
-                class="block text-base font-medium text-[var(--brand-beige)]"
-                >Country</label
-              >
-              <input
-                type="text"
-                name="country"
-                id="country"
-                class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              />
-            </div>
-            <div>
-              <label
-                for="continent"
-                class="block text-base font-medium text-[var(--brand-beige)]"
-                >Continent</label
-              >
-              <input
-                type="text"
-                name="continent"
-                id="continent"
-                class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-              />
-            </div>
+            <input
+              type="text"
+              name="address"
+              placeholder="Address"
+              class="w-full px-4 py-3 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            />
+            <input
+              type="text"
+              name="city"
+              placeholder="City"
+              class="w-full px-4 py-3 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            />
+            <input
+              type="text"
+              name="zip"
+              placeholder="Zip"
+              class="w-full px-4 py-3 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            />
+            <input
+              type="text"
+              name="country"
+              placeholder="Country"
+              class="w-full px-4 py-3 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            />
+            <input
+              type="text"
+              name="continent"
+              placeholder="Continent"
+              class="w-full px-4 py-3 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            />
+            <input
+              type="number"
+              name="lat"
+              placeholder="Latitude"
+              step="any"
+              class="w-full px-4 py-3 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            />
+            <input
+              type="number"
+              name="lng"
+              placeholder="Longitude"
+              step="any"
+              class="w-full px-4 py-3 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            />
           </div>
         </fieldset>
 
         <button
           type="submit"
-          class="bg-[var(--brand-beige)] hover:bg-[var(--brand-beige-hover)] text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40 p-4 m-4"
+          class="bg-[var(--brand-beige)] hover:bg-[var(--brand-beige-hover)] text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md w-full mt-4 transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40"
         >
           Save Changes
         </button>
       </form>
     </main>
-    <footer
-      class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 px-4 mt-16 text-[var(--brand-beige)] text-sm sm:text-base"
-    >
-      <p>&copy; 2025 Holidaze. All rights reserved.</p>
-      <span class="hidden md:block">|</span>
-      <p>Developed by Jenny Johnsby</p>
-      <span class="hidden md:block">|</span>
-      <nav aria-label="Social media">
-        <ul class="flex flex-wrap justify-center gap-4 sm:space-x-6">
-          <li>
-            <a
-              href="https://facebook.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Facebook</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://twitter.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Twitter</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://instagram.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Instagram</a
-            >
-          </li>
-        </ul>
-      </nav>
-      <span class="hidden md:block">|</span>
-      <address class="not-italic">
-        Contact us:
-        <a
-          href="mailto:support@holidaze.com"
-          class="hover:text-[var(--brand-beige-hover)]"
-        >
-          support@holidaze.com
-        </a>
-      </address>
-    </footer>
   </body>
 </html>

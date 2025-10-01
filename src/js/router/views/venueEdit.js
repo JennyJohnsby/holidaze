@@ -5,130 +5,72 @@ import { authGuard } from "../../utilities/authGuard.js";
 
 authGuard();
 
+const form = document.forms.editVenue;
 const url = new URL(window.location.href);
 const id = url.searchParams.get("id");
-
 if (!id) {
-  displayBanner("No venue ID found. Redirecting...", "error");
-  setTimeout(() => (window.location.href = "/"), 2000);
+  displayBanner("No venue ID found.", "error");
+  setTimeout(() => window.location.href = "/", 2000);
   throw new Error("No venue ID found.");
 }
 
-const form = document.forms.editVenue;
-if (!form) {
-  displayBanner("Error: Edit form not found.", "error");
-  throw new Error("Form not found.");
-}
-
-// Form fields
-const {
-  name, description, mediaUrl, mediaAlt,
-  price, maxGuests, rating,
-  wifi, parking, breakfast, pets,
-  address, city, zip, country, continent, lat, lng
-} = form.elements;
-
 async function prefillEditForm() {
   try {
-    const { data: venue, error } = await readVenue(id);
-    if (error || !venue) {
-      displayBanner("Failed to load venue details.", "error");
-      return;
-    }
+    const { data: venue } = await readVenue(id);
+    if (!venue) throw new Error("Venue not found");
 
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    const currentUserName = currentUser?.name?.trim().toLowerCase();
-    const venueOwnerName = venue?.owner?.name?.trim().toLowerCase();
-
-    if (!currentUser || currentUserName !== venueOwnerName) {
-      displayBanner("You're not authorized to edit this venue.", "error");
-      setTimeout(() => (window.location.href = "/"), 2000);
+    if (!currentUser || currentUser.id !== venue.ownerId) {
+      displayBanner("You are not authorized to edit this venue.", "error");
+      setTimeout(() => window.location.href = "/", 2000);
       return;
     }
 
-    // Prefill fields
-    name.value = venue.name || "";
-    description.value = venue.description || "";
-    price.value = venue.price ?? "";
-    maxGuests.value = venue.maxGuests ?? "";
-    rating.value = venue.rating ?? "";
-
-    wifi.checked = venue.meta?.wifi || false;
-    parking.checked = venue.meta?.parking || false;
-    breakfast.checked = venue.meta?.breakfast || false;
-    pets.checked = venue.meta?.pets || false;
-
-    address.value = venue.location?.address || "";
-    city.value = venue.location?.city || "";
-    zip.value = venue.location?.zip || "";
-    country.value = venue.location?.country || "";
-    continent.value = venue.location?.continent || "";
-    lat.value = venue.location?.lat ?? "";
-    lng.value = venue.location?.lng ?? "";
-
-    if (venue.media?.length > 0) {
-      mediaUrl.value = venue.media[0].url || "";
-      mediaAlt.value = venue.media[0].alt || "";
-    } else {
-      mediaUrl.value = "";
-      mediaAlt.value = "";
+    for (const field of form.elements) {
+      if (venue[field.name] !== undefined) field.value = venue[field.name];
+      else if (venue.location?.[field.name] !== undefined) field.value = venue.location[field.name];
+      else if (venue.meta?.[field.name] !== undefined && field.type === "checkbox") field.checked = venue.meta[field.name];
+      else if (field.name === "mediaUrl") field.value = venue.media?.[0]?.url || "";
+      else if (field.name === "mediaAlt") field.value = venue.media?.[0]?.alt || "";
     }
   } catch (err) {
-    console.error("[VenueEdit View] Error loading venue:", err);
+    console.error(err);
     displayBanner("Failed to load venue details.", "error");
   }
 }
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const authToken = localStorage.getItem("authToken");
-  if (!authToken) {
-    displayBanner("You must be logged in to update a venue.", "error");
-    setTimeout(() => (window.location.href = "/"), 2000);
-    return;
-  }
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
   const updatedVenue = {
-    name: name.value.trim(),
-    description: description.value.trim(),
-    price: Number(price.value) || 0,
-    maxGuests: Number(maxGuests.value) || 0,
-    rating: Number(rating.value) || 0,
-    media: mediaUrl.value
-      ? [{ url: mediaUrl.value.trim(), alt: mediaAlt.value.trim() }]
-      : [],
+    name: form.name.value.trim(),
+    description: form.description.value.trim(),
+    price: Number(form.price.value) || 0,
+    maxGuests: Number(form.maxGuests.value) || 0,
+    rating: Number(form.rating.value) || 0,
+    media: form.mediaUrl.value ? [{ url: form.mediaUrl.value, alt: form.mediaAlt.value }] : [],
     meta: {
-      wifi: wifi.checked,
-      parking: parking.checked,
-      breakfast: breakfast.checked,
-      pets: pets.checked,
+      wifi: form.wifi.checked,
+      parking: form.parking.checked,
+      breakfast: form.breakfast.checked,
+      pets: form.pets.checked
     },
     location: {
-      address: address.value.trim(),
-      city: city.value.trim(),
-      zip: zip.value.trim(),
-      country: country.value.trim(),
-      continent: continent.value.trim(),
-      lat: Number(lat.value) || 0,
-      lng: Number(lng.value) || 0,
-    },
+      address: form.address.value,
+      city: form.city.value,
+      zip: form.zip.value,
+      country: form.country.value,
+      continent: form.continent.value,
+      lat: Number(form.lat.value) || 0,
+      lng: Number(form.lng.value) || 0
+    }
   };
 
-  try {
-    const { error } = await updateVenue(id, updatedVenue);
-    if (error) {
-      console.error("[VenueEdit View] Failed update:", error);
-      displayBanner("Failed to update venue. Please check your input.", "error");
-      return;
-    }
+  const { error } = await updateVenue(id, updatedVenue);
+  if (error) return displayBanner("Failed to update venue.", "error");
 
-    displayBanner("Venue updated successfully!", "success");
-    setTimeout(() => (window.location.href = "/profile/"), 2000);
-  } catch (err) {
-    console.error("[VenueEdit View] Unexpected error:", err);
-    displayBanner("Failed to update venue. Please try again.", "error");
-  }
+  displayBanner("Venue updated successfully!", "success");
+  setTimeout(() => window.location.href = "/profile/", 2000);
 });
 
 prefillEditForm();
