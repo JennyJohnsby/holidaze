@@ -1,6 +1,6 @@
-import { login } from "../../api/auth/login.js";
+import { loginUser } from "../../api/auth/login.js";
 import { displayBanner } from "../../utilities/banners.js";
-import { authGuard } from "../../utilities/authGuard";
+import { authGuard } from "../../utilities/authGuard.js";
 
 authGuard({ redirectIfAuthenticated: true });
 
@@ -23,37 +23,25 @@ export async function onLogin(event) {
   if (!isValidInput(emailInput, "Please enter a valid email address.")) return;
   if (!isValidInput(passwordInput, "Password must be at least 8 characters.")) return;
 
-  const email = emailInput.value;
+  const email = emailInput.value.trim();
   const password = passwordInput.value;
 
   try {
-    const response = await login({ email, password });
+    const auth = await loginUser({ email, password });
 
-    const token = response.accessToken;
-    const user = {
-      name: response.name,
-      email: response.email,
-      bio: response.bio,
-      avatar: response.avatar,
-      banner: response.banner,
-    };
+    if (auth?.accessToken) {
+      localStorage.setItem("auth", JSON.stringify(auth));
 
-    if (token) {
-      const fullUser = {
-        ...user,
-        accessToken: token,
-      };
-      localStorage.setItem("user", JSON.stringify(fullUser));
-      localStorage.setItem("authToken", token);
-      displayBanner(`Welcome back, ${response.name}!`, "success");
+      displayBanner(`Welcome back, ${auth.profile.name}!`, "success");
+
       setTimeout(() => {
-        window.location.pathname = "/";
-      }, 3000);
+        window.location.pathname = `/profile/${auth.profile.name}`;
+      }, 1500);
     } else {
       throw new Error("Login successful, but no token was returned.");
     }
   } catch (error) {
-    console.error("Login failed:", error);
+    console.error("[Login UI] Login failed:", error);
     displayBanner(
       error.message || "Invalid login credentials. Please try again.",
       "error"

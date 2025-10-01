@@ -9,10 +9,18 @@ export function authGuard({
   },
   bannerDelay = 2000,
 } = {}) {
-  const user = JSON.parse(localStorage.getItem("user")) || {};
-  const accessToken = user?.accessToken;
+  let auth;
+  try {
+    auth = JSON.parse(localStorage.getItem("auth")) || null;
+  } catch {
+    auth = null;
+  }
+
+  const accessToken = auth?.accessToken || null;
+  const user = auth?.profile || {};
   const currentPath = window.location.pathname;
 
+  
   if (!accessToken && redirectIfNotAuthenticated) {
     const redirectUrl = currentPath.includes("/auth/register/")
       ? redirectUrlsIfNotAuthenticated.register
@@ -24,20 +32,29 @@ export function authGuard({
         window.location.href = redirectUrl;
       }, bannerDelay);
     }
-  } else if (accessToken && redirectIfAuthenticated) {
+    return;
+  }
+
+  
+  if (accessToken && redirectIfAuthenticated) {
     if (currentPath === "/auth/login/" || currentPath === "/auth/register/") {
       displayBanner(
         `You are already logged in as ${user.name || "user"}. <button id="logoutButton" class="banner__button">Logout</button>`,
         "warning",
-        0
+        0 
       );
 
-      document.addEventListener("click", (event) => {
-        if (event.target.id === "logoutButton") {
-          localStorage.removeItem("user");
-          window.location.href = "/auth/login/";
-        }
-      });
+      
+      document.body.addEventListener(
+        "click",
+        (event) => {
+          if (event.target.id === "logoutButton") {
+            localStorage.removeItem("auth");
+            window.location.href = "/auth/login/";
+          }
+        },
+        { once: true }
+      );
     }
   }
 }

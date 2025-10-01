@@ -1,10 +1,7 @@
-import { API_AUTH_LOGIN } from "../constants";
-import { authGuard } from "../../utilities/authGuard.js";
+import { API_AUTH_LOGIN } from "../constants.js";
 
-export async function login({ email, password }) {
+export async function loginUser({ email, password }) {
   try {
-    authGuard(true);
-
     const response = await fetch(API_AUTH_LOGIN, {
       method: "POST",
       headers: {
@@ -14,27 +11,29 @@ export async function login({ email, password }) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      const errorMessage = errorData.errors?.[0]?.message || "Failed to log in user";
-      throw new Error(errorMessage);
+      let errorDetails;
+      try {
+        errorDetails = await response.json();
+      } catch {
+        throw new Error("Failed to log in user");
+      }
+      const message =
+        errorDetails.errors?.[0]?.message || "Failed to log in user";
+      throw new Error(message);
     }
 
     const result = await response.json();
 
-    const user = {
-      name: result.data.name,
-      email: result.data.email,
-      bio: result.data.bio,
-      avatar: result.data.avatar,
-      banner: result.data.banner,
-      accessToken: result.data.accessToken,
+    const auth = {
+      accessToken: result.accessToken,
+      profile: result.data,
     };
 
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("auth", JSON.stringify(auth));
 
-    return user;
+    return auth;
   } catch (error) {
-    console.error("Login failed:", error.message);
+    console.error("[Login API] Login failed:", error);
     throw error;
   }
 }

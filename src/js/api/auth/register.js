@@ -13,15 +13,18 @@ export async function registerUser(data) {
     });
 
     if (!response.ok) {
-      const errorDetails = await response.json();
-      console.error("Server error details:", errorDetails);
-
+      let errorDetails;
+      try {
+        errorDetails = await response.json();
+      } catch {
+        throw new Error("Failed to register user");
+      }
       const message =
         errorDetails.errors?.[0]?.message || "Failed to register user";
       throw new Error(message);
     }
 
-    return await response.json();
+    return await response.json(); 
   } catch (error) {
     console.error("Registration error:", error);
     throw error;
@@ -29,13 +32,13 @@ export async function registerUser(data) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  authGuard(true);
+  authGuard({ redirectIfAuthenticated: true });
 
   const registerForm = document.getElementById("register-form");
   if (registerForm) {
     registerForm.addEventListener("submit", onRegister);
-    console.log("Register form is now connected to onRegister");
+    console.info("[Register API] Register form is now connected to onRegister");
   } else {
-    console.error("Register form not found in the DOM");
+    console.error("[Register API] Register form not found in the DOM");
   }
 });
