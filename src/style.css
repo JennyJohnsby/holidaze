@@ -25,3 +25,12 @@ html {
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
+
+#galleryTrack img {
+  opacity: 0;
+  transition: opacity 0.5s ease-in;
+}
+
+#galleryTrack img[data-loaded="true"] {
+  opacity: 1;
+}

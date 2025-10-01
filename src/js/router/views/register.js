@@ -1,6 +1,6 @@
 import { onRegister } from "../../ui/auth/register.js";
 
-// Use the correct form ID ("register-form" in register.html)
+
 const form = document.getElementById("register-form");
 
 if (form) {

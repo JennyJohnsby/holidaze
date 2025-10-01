@@ -10,7 +10,6 @@ function debounce(fn, delay = 300) {
 }
 
 function renderStars(rating = 0) {
-  if (!rating) return "No rating"
   const fullStars = "★".repeat(Math.floor(rating))
   const emptyStars = "☆".repeat(5 - Math.floor(rating))
   return `<span class="text-yellow-400">${fullStars}${emptyStars}</span>`
@@ -136,12 +135,23 @@ function renderVenues(venues, reset = true) {
   }
 
   slice.forEach((venue) => {
-    const venueElement = document.createElement("div")
+    const venueElement = document.createElement("a")
+    venueElement.href = `/venues/?id=${encodeURIComponent(venue.id)}`
+    venueElement.setAttribute("aria-label", `View details for ${venue.name || "Unnamed Venue"}`)
     venueElement.classList.add(
       "venue", "bg-[var(--brand-purple)]", "rounded-2xl", "shadow-lg",
-      "overflow-hidden", "cursor-pointer", "transition", "hover:shadow-2xl",
-      "hover:scale-[1.02]", "duration-300", "flex", "flex-col"
+      "overflow-hidden", "transition", "hover:shadow-2xl",
+      "hover:scale-[1.02]", "duration-300", "flex", "flex-col",
+      "focus:outline-none", "focus:ring-2", "focus:ring-[var(--brand-beige)]"
     )
+
+  
+    const ratingHtml = venue.rating
+      ? `Rating: ${renderStars(venue.rating)} (${venue.rating})`
+      : `<span title="This venue has not been rated yet">
+          No rating ${renderStars(0)}
+          <span class="sr-only">(This venue has not been rated yet)</span>
+        </span>`
 
     venueElement.innerHTML = `
       <div class="relative h-56 overflow-hidden group">
@@ -165,7 +175,7 @@ function renderVenues(venues, reset = true) {
         </p>
         <div class="mt-auto">
           <p class="text-xs text-gray-300">Max guests: ${venue.maxGuests}</p>
-          <p class="text-xs text-gray-300 mb-2">Rating: ${renderStars(venue.rating)} (${venue.rating ?? "N/A"})</p>
+          <p class="text-xs text-gray-300 mb-2">${ratingHtml}</p>
           <div class="flex flex-wrap gap-2">
             ${venue.meta?.wifi ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">📶 WiFi</span>` : ""}
             ${venue.meta?.parking ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🚗 Parking</span>` : ""}
@@ -175,10 +185,6 @@ function renderVenues(venues, reset = true) {
         </div>
       </div>
     `
-
-    venueElement.addEventListener("click", () => {
-      window.location.href = `/venues/?id=${encodeURIComponent(venue.id)}`
-    })
 
     venueContainer.appendChild(venueElement)
   })

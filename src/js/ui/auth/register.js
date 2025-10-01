@@ -5,6 +5,7 @@ import { authGuard } from "../../utilities/authGuard.js";
 authGuard({ redirectIfAuthenticated: true });
 
 export async function onRegister(event) {
+  
   event.preventDefault();
 
   const form = event.target;

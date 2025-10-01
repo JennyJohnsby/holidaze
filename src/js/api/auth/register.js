@@ -31,7 +31,7 @@ export async function registerUser(data) {
 document.addEventListener("DOMContentLoaded", () => {
   authGuard(true);
 
-  const registerForm = document.getElementById("registerForm");
+  const registerForm = document.getElementById("register-form");
   if (registerForm) {
     registerForm.addEventListener("submit", onRegister);
     console.log("Register form is now connected to onRegister");
