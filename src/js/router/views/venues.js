@@ -10,11 +10,16 @@ async function fetchAndDisplayVenue() {
   if (!venueContainer || !venueId) return;
 
   try {
-    const { data: venue, error } = await readVenue(venueId);
+    const { data: venue, error } = await readVenue(venueId, {
+      includeOwner: true,
+      includeBookings: true,
+    });
+
     if (error || !venue) {
       displayBanner("Failed to load venue details.", "error");
       return;
     }
+
     renderSingleVenue(venue);
   } catch (err) {
     console.error("[Venues View] Error:", err);
@@ -26,10 +31,15 @@ function renderSingleVenue(venue) {
   const venueContainer = document.getElementById("venueDetailContainer");
   if (!venueContainer) return;
 
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  // Ensure we always have the right shape from storage
+  const storedUser = JSON.parse(localStorage.getItem("currentUser"));
+  const currentUser = storedUser?.data || storedUser;
+
   const authToken = localStorage.getItem("authToken");
   const isLoggedIn = !!authToken;
-  const isOwner = currentUser?.id === venue.ownerId;
+
+  // ✅ Only check username (Holidaze unique identifier)
+  const isOwner = currentUser?.name === venue.owner?.name;
 
   const createdDate = new Date(venue.created).toLocaleDateString();
   const updatedDate = new Date(venue.updated).toLocaleDateString();
@@ -39,7 +49,7 @@ function renderSingleVenue(venue) {
     <div class="max-w-5xl mx-auto bg-[var(--brand-purple)] rounded-2xl shadow-xl overflow-hidden mt-16">
       <div class="relative h-96">
         <img src="${venue.media?.[0]?.url || placeholderImage}" 
-             alt="${venue.media?.[0]?.alt || 'Venue image'}" 
+             alt="${venue.media?.[0]?.alt || "Venue image"}" 
              class="w-full h-full object-cover" 
              onerror="this.onerror=null;this.src='${placeholderImage}';" />
       </div>
@@ -82,18 +92,10 @@ function renderSingleVenue(venue) {
         <section>
           <h2 class="text-2xl font-bold mb-3">✨ Amenities</h2>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div class="flex items-center gap-2">
-              <span>${venue.meta?.wifi ? "✅" : "❌"}</span><span>Wifi</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span>${venue.meta?.parking ? "✅" : "❌"}</span><span>Parking</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span>${venue.meta?.breakfast ? "✅" : "❌"}</span><span>Breakfast</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span>${venue.meta?.pets ? "✅" : "❌"}</span><span>Pets</span>
-            </div>
+            <div class="flex items-center gap-2"><span>${venue.meta?.wifi ? "✅" : "❌"}</span><span>Wifi</span></div>
+            <div class="flex items-center gap-2"><span>${venue.meta?.parking ? "✅" : "❌"}</span><span>Parking</span></div>
+            <div class="flex items-center gap-2"><span>${venue.meta?.breakfast ? "✅" : "❌"}</span><span>Breakfast</span></div>
+            <div class="flex items-center gap-2"><span>${venue.meta?.pets ? "✅" : "❌"}</span><span>Pets</span></div>
           </div>
         </section>
 
@@ -102,25 +104,25 @@ function renderSingleVenue(venue) {
             isLoggedIn && isOwner
               ? `
                 <div class="flex gap-4">
-                  <a href="/venues/edit/?id=${venue.id}" class="bg-yellow-400 text-black px-4 py-2 rounded-xl font-semibold hover:bg-yellow-300">Edit Venue</a>
-                  <button id="delete-venue-button" class="bg-red-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-red-500">Delete Venue</button>
+                  <a href="/venues/edit/?id=${venue.id}" 
+                     class="bg-yellow-400 text-black px-4 py-2 rounded-xl font-semibold hover:bg-yellow-300">Edit Venue</a>
+                  <button id="delete-venue-button" 
+                          class="bg-red-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-red-500">Delete Venue</button>
                 </div>`
               : isLoggedIn
                 ? `
                   <form id="booking-form" class="bg-[var(--brand-beige)] p-6 rounded-xl space-y-4 text-[var(--brand-purple)]">
-                    <label class="block">
-                      Check-in:
+                    <label class="block">Check-in:
                       <input type="date" name="checkIn" required class="border rounded p-2 w-full">
                     </label>
-                    <label class="block">
-                      Check-out:
+                    <label class="block">Check-out:
                       <input type="date" name="checkOut" required class="border rounded p-2 w-full">
                     </label>
-                    <label class="block">
-                      Guests:
+                    <label class="block">Guests:
                       <input type="number" name="guests" min="1" max="${venue.maxGuests}" required class="border rounded p-2 w-full">
                     </label>
-                    <button type="submit" class="w-full bg-[var(--brand-purple)] text-[var(--brand-beige)] px-4 py-2 rounded-xl font-semibold hover:bg-[var(--brand-purple-hover)]">
+                    <button type="submit" 
+                            class="w-full bg-[var(--brand-purple)] text-[var(--brand-beige)] px-4 py-2 rounded-xl font-semibold hover:bg-[var(--brand-purple-hover)]">
                       Book Now
                     </button>
                   </form>`
@@ -131,6 +133,7 @@ function renderSingleVenue(venue) {
     </div>
   `;
 
+  // delete
   const deleteButton = document.getElementById("delete-venue-button");
   if (deleteButton) {
     deleteButton.addEventListener("click", async () => {
@@ -144,6 +147,7 @@ function renderSingleVenue(venue) {
     });
   }
 
+  // booking
   const bookingForm = document.getElementById("booking-form");
   if (bookingForm) {
     bookingForm.addEventListener("submit", async (e) => {
