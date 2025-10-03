@@ -1,30 +1,34 @@
-import { API_BOOKINGS } from "../constants.js"
+import { createBooking } from "../../api/bookings/create.js";
+import { displayBanner } from "../../utilities/banners.js";
 
-export async function createBooking(bookingData) {
-  const token = localStorage.getItem("authToken")
+export async function onCreateBooking(event, venueId) {
+  event.preventDefault();
 
-  if (!token) {
-    return { data: null, error: "You must be logged in to make a booking.", status: 401 }
+  const formData = new FormData(event.target);
+  const bookingData = {
+    dateFrom: new Date(formData.get("checkIn")).toISOString(),
+    dateTo: new Date(formData.get("checkOut")).toISOString(),
+    guests: parseInt(formData.get("guests"), 10),
+    venueId,
+  };
+
+  if (new Date(bookingData.dateTo) <= new Date(bookingData.dateFrom)) {
+    displayBanner("Check-out must be after check-in", "error");
+    return;
   }
 
-  try {
-    const response = await fetch(API_BOOKINGS, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(bookingData),
-    })
+  const { data, error } = await createBooking(bookingData);
+  if (error) {
+    displayBanner(`Booking failed: ${error}`, "error");
+    return;
+  }
 
-    const data = await response.json().catch(() => ({}))
-
-    if (!response.ok) {
-      return { data: null, error: data.errors?.[0]?.message || "Booking failed.", status: response.status }
+  displayBanner("Booking successful!", "success");
+  setTimeout(() => {
+    if (data?.id) {
+      window.location.href = `/bookings/?id=${data.id}`;
+    } else {
+      window.location.href = "/profile/";
     }
-
-    return { data, error: null, status: response.status }
-  } catch (err) {
-    return { data: null, error: err.message, status: 500 }
-  }
+  }, 1500);
 }

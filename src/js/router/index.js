@@ -39,19 +39,29 @@ export default async function router(
         module = await import("./views/profile.js");
         break;
 
+      case "/bookings/":
+        module = await import("./views/bookings.js");
+        break;
+
+      case "/bookings/edit/":
+        module = await import("./views/bookingEdit.js");
+        break;
+
+      case "/bookings/create/":
+        module = await import("./views/bookingCreate.js");
+        break;
+
       default:
         module = await import("./views/notFound.js");
         break;
     }
 
-    
     if (module && typeof module.default === "function") {
       module.default();
     }
   } catch (err) {
     console.error("[Router] Failed to load view:", err);
 
-    
     try {
       const module = await import("./views/notFound.js");
       if (module && typeof module.default === "function") {

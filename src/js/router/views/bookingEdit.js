@@ -5,81 +5,68 @@ import { authGuard } from "../../utilities/authGuard.js";
 
 authGuard();
 
+const form = document.forms.editBooking;
 const url = new URL(window.location.href);
 const id = url.searchParams.get("id");
 
 if (!id) {
-  displayBanner("No booking ID found. Redirecting...", "error");
+  displayBanner("No booking ID found.", "error");
   setTimeout(() => (window.location.href = "/"), 2000);
   throw new Error("No booking ID found.");
 }
 
-const form = document.forms.editBooking;
-if (!form) {
-  console.error("[BookingsEdit View] Edit booking form not found.");
-  displayBanner("Error: Form not found.", "error");
-  throw new Error("Form not found.");
-}
-
-
-const dateFromInput = form.elements["dateFrom"];
-const dateToInput = form.elements["dateTo"];
-const guestsInput = form.elements["guests"];
-
 async function prefillEditForm() {
   try {
-    const { data, error } = await readBooking(id);
+    const { data: booking } = await readBooking(id);
+    if (!booking) throw new Error("Booking not found");
 
-    if (error || !data) {
-      throw new Error(error || "Booking data not found.");
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser || currentUser.email !== booking.customer?.email) {
+      displayBanner("You are not authorized to edit this booking.", "error");
+      setTimeout(() => (window.location.href = "/"), 2000);
+      return;
     }
 
-    dateFromInput.value = data.dateFrom
-      ? new Date(data.dateFrom).toISOString().slice(0, 10)
-      : "";
-    dateToInput.value = data.dateTo
-      ? new Date(data.dateTo).toISOString().slice(0, 10)
-      : "";
-    guestsInput.value = data.guests ?? "";
+    for (const field of form.elements) {
+      if (field.name === "dateFrom" && booking.dateFrom) {
+        field.value = new Date(booking.dateFrom).toISOString().slice(0, 10);
+      } else if (field.name === "dateTo" && booking.dateTo) {
+        field.value = new Date(booking.dateTo).toISOString().slice(0, 10);
+      } else if (field.name === "guests") {
+        field.value = booking.guests ?? "";
+      }
+    }
   } catch (err) {
-    console.error("[BookingsEdit View] Error loading booking:", err);
+    console.error(err);
     displayBanner("Failed to load booking details.", "error");
   }
 }
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    displayBanner("You must be logged in to update a booking.", "error");
-    setTimeout(() => (window.location.href = "/"), 2000);
-    return;
-  }
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
   const updatedBooking = {
-    dateFrom: dateFromInput.value
-      ? new Date(dateFromInput.value).toISOString()
+    dateFrom: form.dateFrom.value
+      ? new Date(form.dateFrom.value).toISOString()
       : undefined,
-    dateTo: dateToInput.value
-      ? new Date(dateToInput.value).toISOString()
+    dateTo: form.dateTo.value
+      ? new Date(form.dateTo.value).toISOString()
       : undefined,
-    guests: Number(guestsInput.value) || undefined,
+    guests: Number(form.guests.value) || undefined,
   };
 
-  try {
-    const { error } = await updateBooking(id, updatedBooking);
-
-    if (error) {
-      throw new Error(error);
+  if (updatedBooking.dateFrom && updatedBooking.dateTo) {
+    if (new Date(updatedBooking.dateTo) <= new Date(updatedBooking.dateFrom)) {
+      displayBanner("End date must be after start date.", "error");
+      return;
     }
-
-    displayBanner("Booking updated successfully!", "success");
-    setTimeout(() => (window.location.href = "/profile"), 2000);
-  } catch (err) {
-    console.error("[BookingsEdit View] Error updating booking:", err);
-    displayBanner("Failed to update booking. Please check your input.", "error");
   }
+
+  const { error } = await updateBooking(id, updatedBooking);
+  if (error) return displayBanner("Failed to update booking.", "error");
+
+  displayBanner("Booking updated successfully!", "success");
+  setTimeout(() => (window.location.href = "/profile/"), 2000);
 });
 
 prefillEditForm();

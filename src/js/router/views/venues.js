@@ -1,7 +1,8 @@
 import { readVenue } from "../../api/venues/read.js";
 import { deleteVenue } from "../../api/venues/delete.js";
-import { createBooking } from "../../api/bookings/create.js";
 import { displayBanner } from "../../utilities/banners.js";
+import { onCreateBooking } from "../../ui/bookings/create.js";
+import flatpickr from "flatpickr";
 
 async function fetchAndDisplayVenue() {
   const venueId = new URLSearchParams(window.location.search).get("id");
@@ -31,14 +32,10 @@ function renderSingleVenue(venue) {
   const venueContainer = document.getElementById("venueDetailContainer");
   if (!venueContainer) return;
 
-  // Ensure we always have the right shape from storage
   const storedUser = JSON.parse(localStorage.getItem("currentUser"));
   const currentUser = storedUser?.data || storedUser;
-
   const authToken = localStorage.getItem("authToken");
   const isLoggedIn = !!authToken;
-
-  // ✅ Only check username (Holidaze unique identifier)
   const isOwner = currentUser?.name === venue.owner?.name;
 
   const createdDate = new Date(venue.created).toLocaleDateString();
@@ -113,10 +110,10 @@ function renderSingleVenue(venue) {
                 ? `
                   <form id="booking-form" class="bg-[var(--brand-beige)] p-6 rounded-xl space-y-4 text-[var(--brand-purple)]">
                     <label class="block">Check-in:
-                      <input type="date" name="checkIn" required class="border rounded p-2 w-full">
+                      <input type="text" id="checkIn" name="checkIn" required class="border rounded p-2 w-full">
                     </label>
                     <label class="block">Check-out:
-                      <input type="date" name="checkOut" required class="border rounded p-2 w-full">
+                      <input type="text" id="checkOut" name="checkOut" required class="border rounded p-2 w-full">
                     </label>
                     <label class="block">Guests:
                       <input type="number" name="guests" min="1" max="${venue.maxGuests}" required class="border rounded p-2 w-full">
@@ -133,7 +130,6 @@ function renderSingleVenue(venue) {
     </div>
   `;
 
-  // delete
   const deleteButton = document.getElementById("delete-venue-button");
   if (deleteButton) {
     deleteButton.addEventListener("click", async () => {
@@ -143,36 +139,32 @@ function renderSingleVenue(venue) {
         return;
       }
       displayBanner("Venue deleted successfully.", "success");
-      setTimeout(() => (window.location.href = "/profile/"), 1500);
+      setTimeout(() => {
+        window.location.href = "/profile/";
+      }, 1500);
     });
   }
 
-  // booking
   const bookingForm = document.getElementById("booking-form");
   if (bookingForm) {
-    bookingForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(bookingForm);
-      const bookingData = {
-        dateFrom: new Date(formData.get("checkIn")).toISOString(),
-        dateTo: new Date(formData.get("checkOut")).toISOString(),
-        guests: parseInt(formData.get("guests"), 10),
-        venueId: venue.id,
-      };
-      const { data, error } = await createBooking(bookingData);
-      if (error) {
-        displayBanner(`Booking failed: ${error}`, "error");
-        return;
-      }
-      displayBanner("Booking successful!", "success");
-      setTimeout(() => {
-        if (data?.id) {
-          window.location.href = `/bookings/?id=${data.id}`;
-        } else {
-          window.location.href = "/profile/";
-        }
-      }, 1500);
+    const disabledRanges = (venue.bookings || []).map((b) => ({
+      from: b.dateFrom,
+      to: b.dateTo,
+    }));
+
+    flatpickr("#checkIn", {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      disable: disabledRanges,
     });
+
+    flatpickr("#checkOut", {
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      disable: disabledRanges,
+    });
+
+    bookingForm.addEventListener("submit", (e) => onCreateBooking(e, venue.id));
   }
 }
 

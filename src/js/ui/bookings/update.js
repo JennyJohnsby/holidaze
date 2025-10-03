@@ -21,10 +21,10 @@ if (!form) {
   throw new Error("Form not found.")
 }
 
-// Form fields
 const dateFromInput = form.elements["dateFrom"]
 const dateToInput = form.elements["dateTo"]
 const guestsInput = form.elements["guests"]
+const submitBtn = form.querySelector("button[type='submit']")
 
 async function prefillEditForm() {
   const { data, error } = await readBooking(id)
@@ -50,22 +50,35 @@ form.addEventListener("submit", async (event) => {
     return
   }
 
+  if (new Date(dateToInput.value) <= new Date(dateFromInput.value)) {
+    displayBanner("End date must be after start date.", "error")
+    return
+  }
+
   const updatedBooking = {
     dateFrom: dateFromInput.value ? new Date(dateFromInput.value).toISOString() : undefined,
     dateTo: dateToInput.value ? new Date(dateToInput.value).toISOString() : undefined,
     guests: Number(guestsInput.value) || undefined,
   }
 
-  const { error } = await updateBooking(id, updatedBooking)
+  try {
+    submitBtn.disabled = true
+    submitBtn.textContent = "Updating..."
 
-  if (error) {
-    console.error("[Booking Update] Failed:", error)
-    displayBanner(error || "Failed to update booking. Please check your input.", "error")
-    return
+    const { error, status } = await updateBooking(id, updatedBooking)
+
+    if (error || status >= 400) {
+      throw new Error(error || `Update failed with status ${status}`)
+    }
+
+    displayBanner("Booking updated successfully!", "success")
+    setTimeout(() => (window.location.href = `/bookings/?id=${id}`), 1500)
+  } catch (err) {
+    console.error("[Booking Update] Error:", err)
+    displayBanner(err.message || "Failed to update booking.", "error")
+    submitBtn.disabled = false
+    submitBtn.textContent = "Update Booking"
   }
-
-  displayBanner("Booking updated successfully!", "success")
-  setTimeout(() => (window.location.href = "/profile/"), 2000)
 })
 
 prefillEditForm()

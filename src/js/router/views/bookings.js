@@ -1,93 +1,97 @@
 import { readBooking } from "../../api/bookings/read.js";
 import { deleteBooking } from "../../api/bookings/delete.js";
 import { displayBanner } from "../../utilities/banners.js";
-import { authGuard } from "../../utilities/authGuard.js";
-
-authGuard();
 
 async function fetchAndDisplayBooking() {
   const bookingId = new URLSearchParams(window.location.search).get("id");
   const bookingContainer = document.getElementById("bookingDetailContainer");
 
-  if (!bookingContainer || !bookingId) return;
+  if (!bookingContainer || !bookingId) {
+    displayBanner("No booking ID provided.", "error");
+    return;
+  }
 
   try {
-    
-    const { data, error } = await readBooking(bookingId, {
+    const { data: booking, error } = await readBooking(bookingId, {
       includeVenue: true,
       includeCustomer: true,
     });
 
-    if (error || !data) {
-      throw new Error(error || "Failed to fetch booking.");
+    if (error || !booking) {
+      displayBanner("Failed to load booking.", "error");
+      return;
     }
 
-    renderSingleBooking(data);
+    bookingContainer.innerHTML = `
+      <div class="max-w-3xl mx-auto bg-[var(--brand-purple)] rounded-2xl shadow-xl p-10 mt-12 text-[var(--brand-beige)]">
+        <h1 class="text-3xl font-extrabold mb-8 border-b border-[var(--brand-beige)] pb-4">Booking Details</h1>
+        
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-lg">
+          <div>
+            <dt class="font-semibold opacity-80">Venue</dt>
+            <dd class="mt-1">${booking.venue?.name || "Unknown"}</dd>
+          </div>
+          <div>
+            <dt class="font-semibold opacity-80">Guests</dt>
+            <dd class="mt-1">${booking.guests}</dd>
+          </div>
+          <div>
+            <dt class="font-semibold opacity-80">Check-in</dt>
+            <dd class="mt-1">${new Date(booking.dateFrom).toLocaleDateString()}</dd>
+          </div>
+          <div>
+            <dt class="font-semibold opacity-80">Check-out</dt>
+            <dd class="mt-1">${new Date(booking.dateTo).toLocaleDateString()}</dd>
+          </div>
+        </dl>
+
+        <div class="flex flex-wrap gap-4 mt-10">
+          <a href="/bookings/edit/?id=${booking.id}" 
+             class="px-6 py-2 rounded-full font-medium shadow-sm 
+                    bg-yellow-200 text-yellow-900 
+                    hover:bg-yellow-300 focus:outline-none 
+                    focus:ring-2 focus:ring-yellow-300 transition-all">
+            ✏️ Edit Booking
+          </a>
+          <button id="delete-booking-button" 
+                  class="px-6 py-2 rounded-full font-medium shadow-sm 
+                         bg-red-200 text-red-900 
+                         hover:bg-red-300 focus:outline-none 
+                         focus:ring-2 focus:ring-red-300 transition-all">
+            🗑 Delete Booking
+          </button>
+          <a href="/profile/" 
+             class="ml-auto px-6 py-2 rounded-full font-medium shadow-sm 
+                    bg-gray-200 text-gray-800 
+                    hover:bg-gray-300 focus:outline-none 
+                    focus:ring-2 focus:ring-gray-300 transition-all">
+            ← Back to Profile
+          </a>
+        </div>
+      </div>
+    `;
+
+    const deleteButton = document.getElementById("delete-booking-button");
+    if (deleteButton) {
+      deleteButton.addEventListener("click", async () => {
+        const confirmed = confirm("Are you sure you want to cancel this booking?");
+        if (!confirmed) return;
+
+        const { error: deleteError } = await deleteBooking(booking.id);
+        if (deleteError) {
+          displayBanner("Failed to delete booking.", "error");
+          return;
+        }
+
+        displayBanner("Booking deleted successfully.", "success");
+        setTimeout(() => {
+          window.location.href = "/profile/";
+        }, 1500);
+      });
+    }
   } catch (err) {
-    console.error("[Bookings View] Error fetching booking:", err);
-    bookingContainer.innerHTML = `<p class="text-red-500 text-center">Failed to load the booking.</p>`;
-  }
-}
-
-function renderSingleBooking(booking) {
-  const bookingContainer = document.getElementById("bookingDetailContainer");
-  if (!bookingContainer) return;
-
-  const venue = booking.venue;
-  const customer = booking.customer;
-
-  bookingContainer.innerHTML = `
-    <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-16 p-8 space-y-6">
-
-      <!-- Booking Info -->
-      <div>
-        <h1 class="text-3xl font-bold mb-2">Booking Details</h1>
-        <p><span class="font-semibold">From:</span> ${new Date(booking.dateFrom).toLocaleDateString()}</p>
-        <p><span class="font-semibold">To:</span> ${new Date(booking.dateTo).toLocaleDateString()}</p>
-        <p><span class="font-semibold">Guests:</span> ${booking.guests}</p>
-        <p><span class="font-semibold">Created:</span> ${new Date(booking.created).toLocaleDateString()}</p>
-        <p><span class="font-semibold">Last Updated:</span> ${new Date(booking.updated).toLocaleDateString()}</p>
-      </div>
-
-      <!-- Venue Info -->
-      ${venue ? `
-      <div>
-        <h2 class="text-2xl font-semibold mb-2">Venue Info</h2>
-        <p class="font-bold text-lg">${venue.name}</p>
-        <p>${venue.description}</p>
-        ${venue.media?.[0]?.url ? `<img src="${venue.media[0].url}" alt="${venue.media[0].alt || "Venue image"}" class="w-full h-64 object-cover rounded-lg mt-2" />` : ""}
-        <p><span class="font-semibold">Price:</span> $${venue.price}</p>
-        <p><span class="font-semibold">Max Guests:</span> ${venue.maxGuests}</p>
-      </div>` : ""}
-
-      <!-- Customer Info -->
-      ${customer ? `
-      <div>
-        <h2 class="text-2xl font-semibold mb-2">Customer Info</h2>
-        <p><span class="font-semibold">Name:</span> ${customer.name}</p>
-        <p><span class="font-semibold">Email:</span> ${customer.email}</p>
-      </div>` : ""}
-
-      <!-- Delete Booking -->
-      <div class="mt-6">
-        <button id="delete-booking-button" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Delete Booking</button>
-      </div>
-    </div>
-  `;
-
-  const deleteButton = document.getElementById("delete-booking-button");
-  if (deleteButton) {
-    deleteButton.addEventListener("click", async () => {
-      if (!confirm("Are you sure you want to delete this booking?")) return;
-
-      const { success, error } = await deleteBooking(booking.id);
-      if (success) {
-        displayBanner("Booking deleted successfully!", "success");
-        setTimeout(() => (window.location.href = "/profile"), 2000);
-      } else {
-        displayBanner(error || "Failed to delete booking.", "error");
-      }
-    });
+    console.error("[Bookings View] Error:", err);
+    displayBanner("Something went wrong while loading booking details.", "error");
   }
 }
 
