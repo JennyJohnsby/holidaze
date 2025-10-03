@@ -102,9 +102,19 @@ function renderSingleVenue(venue) {
               ? `
                 <div class="flex gap-4">
                   <a href="/venues/edit/?id=${venue.id}" 
-                     class="bg-yellow-400 text-black px-4 py-2 rounded-xl font-semibold hover:bg-yellow-300">Edit Venue</a>
+                     class="px-6 py-2 rounded-full font-medium shadow-sm 
+                            bg-yellow-200 text-yellow-900 
+                            hover:bg-yellow-300 focus:outline-none 
+                            focus:ring-2 focus:ring-yellow-300 transition-all">
+                    ✏️ Edit Venue
+                  </a>
                   <button id="delete-venue-button" 
-                          class="bg-red-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-red-500">Delete Venue</button>
+                          class="px-6 py-2 rounded-full font-medium shadow-sm 
+                                 bg-red-200 text-red-900 
+                                 hover:bg-red-300 focus:outline-none 
+                                 focus:ring-2 focus:ring-red-300 transition-all">
+                    🗑 Delete Venue
+                  </button>
                 </div>`
               : isLoggedIn
                 ? `
@@ -119,8 +129,11 @@ function renderSingleVenue(venue) {
                       <input type="number" name="guests" min="1" max="${venue.maxGuests}" required class="border rounded p-2 w-full">
                     </label>
                     <button type="submit" 
-                            class="w-full bg-[var(--brand-purple)] text-[var(--brand-beige)] px-4 py-2 rounded-xl font-semibold hover:bg-[var(--brand-purple-hover)]">
-                      Book Now
+                            class="w-full px-6 py-2 rounded-full font-medium shadow-sm 
+                                   bg-[var(--brand-purple)] text-[var(--brand-beige)] 
+                                   hover:opacity-90 focus:outline-none 
+                                   focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition-all">
+                      ✅ Book Now
                     </button>
                   </form>`
                 : `<p class="text-center mt-6">You must <a href="/auth/login/" class="underline font-semibold">log in</a> to book this venue.</p>`
@@ -133,6 +146,9 @@ function renderSingleVenue(venue) {
   const deleteButton = document.getElementById("delete-venue-button");
   if (deleteButton) {
     deleteButton.addEventListener("click", async () => {
+      const confirmed = confirm("Are you sure you want to delete this venue?");
+      if (!confirmed) return;
+
       const { error } = await deleteVenue(venue.id);
       if (error) {
         displayBanner("Failed to delete venue.", "error");

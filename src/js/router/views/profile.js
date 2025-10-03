@@ -22,7 +22,6 @@ export async function showProfile() {
       return;
     }
 
-    // Keep localStorage.currentUser in sync with the latest profile
     const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
     currentUser.profile = profile;
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -50,7 +49,10 @@ function renderProfile(profile) {
 
   const createVenueButton = profile.venueManager
     ? `<button id="create-venue-button"
-         class="bg-[var(--brand-purple)] text-[var(--brand-beige)] px-6 py-3 rounded-full font-semibold shadow hover:bg-[var(--brand-purple-hover)] transition">
+         class="px-6 py-2 rounded-full font-medium shadow-sm 
+                bg-green-200 text-green-900 
+                hover:bg-green-300 focus:outline-none 
+                focus:ring-2 focus:ring-green-300 transition-all">
          + Create Venue
        </button>`
     : "";
@@ -88,11 +90,17 @@ function renderProfile(profile) {
       <div class="flex flex-wrap justify-center gap-6 mt-10">
         ${createVenueButton}
         <button id="edit-profile-button"
-          class="bg-[var(--brand-purple)] text-[var(--brand-beige)] px-6 py-3 rounded-full font-semibold shadow hover:bg-[var(--brand-purple-hover)] transition">
+          class="px-6 py-2 rounded-full font-medium shadow-sm 
+                 bg-yellow-200 text-yellow-900 
+                 hover:bg-yellow-300 focus:outline-none 
+                 focus:ring-2 focus:ring-yellow-300 transition-all">
           ✎ Edit Profile
         </button>
         <button id="logout-button"
-          class="bg-[var(--brand-purple)] text-[var(--brand-beige)] px-6 py-3 rounded-full font-semibold shadow hover:bg-[var(--brand-purple-hover)] transition">
+          class="px-6 py-2 rounded-full font-medium shadow-sm 
+                 bg-red-200 text-red-900 
+                 hover:bg-red-300 focus:outline-none 
+                 focus:ring-2 focus:ring-red-300 transition-all">
           ⎋ Logout
         </button>
       </div>
@@ -125,7 +133,10 @@ function renderProfile(profile) {
               value="${profile.banner?.alt || ""}" />
           </div>
           <button type="submit"
-            class="w-full bg-[var(--brand-purple)] text-[var(--brand-beige)] px-6 py-3 rounded-full font-semibold shadow hover:bg-[var(--brand-purple-hover)] transition">
+            class="w-full px-6 py-2 rounded-full font-medium shadow-sm 
+                   bg-[var(--brand-purple)] text-[var(--brand-beige)] 
+                   hover:opacity-90 focus:outline-none 
+                   focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition-all">
             ✅ Update Profile
           </button>
         </form>

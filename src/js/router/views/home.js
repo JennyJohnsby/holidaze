@@ -87,7 +87,10 @@ export async function fetchAndDisplayVenues(
   const venueContainer = document.getElementById("venueContainer");
   if (!venueContainer) return;
 
-  venueContainer.innerHTML = `<div class="text-center py-10"><p>Loading venues...</p></div>`;
+  venueContainer.innerHTML = `
+    <div class="text-center py-10">
+      <p class="text-lg font-semibold text-[var(--brand-purple)]">Loading venues...</p>
+    </div>`;
 
   try {
     allVenues = [];
@@ -123,11 +126,13 @@ export async function fetchAndDisplayVenues(
     }
 
     if (allVenues.length === 0) {
-      venueContainer.innerHTML = "<p>No venues available.</p>";
+      venueContainer.innerHTML = `
+        <div class="text-center py-10">
+          <p class="text-lg font-medium text-red-600">No venues available.</p>
+        </div>`;
       return;
     }
 
-    // Sort alphabetically by name
     allVenues.sort((a, b) => a.name.localeCompare(b.name));
 
     renderVenues(getFilteredVenues(allVenues));
@@ -135,7 +140,10 @@ export async function fetchAndDisplayVenues(
     setupFilters();
   } catch (error) {
     console.error("[Home View] Error fetching venues:", error);
-    venueContainer.innerHTML = `<div class="text-center"><p>Failed to load venues. Please try again later.</p></div>`;
+    venueContainer.innerHTML = `
+      <div class="text-center py-10">
+        <p class="text-lg font-medium text-red-600">Failed to load venues. Please try again later.</p>
+      </div>`;
   }
 }
 
@@ -151,7 +159,8 @@ function renderVenues(venues, reset = true) {
   const slice = venues.slice(0, visibleCount);
 
   if (slice.length === 0) {
-    venueContainer.innerHTML = `<p class="text-center text-xl">No venues match your filters.</p>`;
+    venueContainer.innerHTML = `
+      <p class="text-center text-xl text-[var(--brand-purple)]">No venues match your filters.</p>`;
     if (loadMoreBtn) loadMoreBtn.classList.add("hidden");
     return;
   }
@@ -216,22 +225,22 @@ function renderVenues(venues, reset = true) {
           <div class="flex flex-wrap gap-2">
             ${
               venue.meta?.wifi
-                ? `<span aria-hidden="true" class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">📶 WiFi</span>`
+                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">📶 WiFi</span>`
                 : ""
             }
             ${
               venue.meta?.parking
-                ? `<span aria-hidden="true" class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🚗 Parking</span>`
+                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🚗 Parking</span>`
                 : ""
             }
             ${
               venue.meta?.breakfast
-                ? `<span aria-hidden="true" class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🥐 Breakfast</span>`
+                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🥐 Breakfast</span>`
                 : ""
             }
             ${
               venue.meta?.pets
-                ? `<span aria-hidden="true" class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🐾 Pets</span>`
+                ? `<span class="px-2 py-1 text-xs rounded-full bg-[var(--brand-beige-hover)] text-[var(--brand-purple)]">🐾 Pets</span>`
                 : ""
             }
           </div>
@@ -245,6 +254,10 @@ function renderVenues(venues, reset = true) {
   if (loadMoreBtn) {
     if (venues.length > visibleCount) {
       loadMoreBtn.classList.remove("hidden");
+      loadMoreBtn.className =
+        "mt-10 px-6 py-3 rounded-full font-medium shadow-sm mx-auto block " +
+        "bg-yellow-200 text-yellow-900 hover:bg-yellow-300 focus:outline-none " +
+        "focus:ring-2 focus:ring-yellow-300 transition-all";
     } else {
       loadMoreBtn.classList.add("hidden");
     }
