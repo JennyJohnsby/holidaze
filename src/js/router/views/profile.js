@@ -4,6 +4,7 @@ import { displayBanner } from "../../utilities/banners.js";
 import { readProfile } from "../../api/profile/read.js";
 import { onUpdateProfile } from "../../ui/profile/update.js";
 import { fetchUserVenues } from "../../api/profile/userVenues.js";
+import { fetchUserBookings } from "../../api/profile/userBookings.js";
 
 authGuard();
 
@@ -14,9 +15,10 @@ export async function showProfile() {
   profileDiv.innerHTML = "<p class='text-center'>Loading profile...</p>";
 
   try {
-    const { data: profile, error } = await readProfile();
+    const { data: profile, error } = await readProfile({
+      includeVenues: true,
+    });
     if (error || !profile) {
-      console.error("[Profile View] Failed to load profile:", error);
       profileDiv.innerHTML =
         "<p class='text-center'>Unable to load your profile. Please log in again.</p>";
       return;
@@ -27,8 +29,8 @@ export async function showProfile() {
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
     renderProfile(profile);
-  } catch (error) {
-    console.error("[Profile View] Unexpected error:", error);
+    loadUserBookings(profile.name);
+  } catch (err) {
     profileDiv.innerHTML =
       "<p class='text-center'>Unable to load your profile. Please try again later.</p>";
   }
@@ -156,22 +158,27 @@ function renderProfile(profile) {
   if (profile.venueManager) {
     loadUserVenues();
   }
-
-  displayBookings(profile.bookings || []);
 }
 
 async function loadUserVenues() {
   try {
     const { data: venues, error } = await fetchUserVenues();
     if (error) {
-      console.error("[Profile View] Failed to load venues:", error);
       displayBanner("Could not load your venues.", "error");
     } else {
       displayVenues(venues || []);
     }
-  } catch (err) {
-    console.error("[Profile View] Unexpected error loading venues:", err);
+  } catch {
     displayBanner("Could not load your venues.", "error");
+  }
+}
+
+async function loadUserBookings(username) {
+  const { data: bookings, error } = await fetchUserBookings(username, { includeVenue: true });
+  if (error) {
+    displayBanner("Could not load your bookings.", "error");
+  } else {
+    displayBookings(bookings || []);
   }
 }
 
@@ -207,26 +214,26 @@ function displayVenues(venues = []) {
       : venues
           .map(
             ({ id, name, description, media, price }) => `
-              <div class="bg-[var(--brand-purple)] border rounded-lg shadow-lg overflow-hidden hover:scale-105 cursor-pointer flex flex-col"
-                   onclick="window.location.href='/venues/?id=${id}'">
+              <div onclick="window.location.href='/venues/?id=${id}'" 
+                   class="bg-[var(--brand-purple)] border rounded-lg shadow-lg overflow-hidden hover:scale-105 cursor-pointer flex flex-col transition">
                 <img src="${media?.[0]?.url || "/images/venue-placeholder.jpg"}"
                      alt="${name || "Venue"}"
                      class="w-full h-48 object-cover">
-                <div class="p-4 text-center">
+                <div class="p-4 flex flex-col flex-grow justify-between text-center">
                   <h3 class="text-xl font-semibold text-[var(--brand-beige)]">${name || "No name"}</h3>
                   <p class="mt-2 text-[var(--brand-beige)] text-sm">${description || "No description available"}</p>
-                  <p class="mt-2 text-[var(--brand-beige)] font-bold">$${price} per night</p>
+                  <p class="mt-4 text-[var(--brand-beige)] font-bold">$${price} per night</p>
                 </div>
               </div>`
           )
           .join("");
 }
 
-function displayBookings(bookings = []) {
+function displayBookings(bookings) {
   const container = document.getElementById("bookings-container");
   if (!container) return;
 
-  if (bookings.length === 0) {
+  if (!Array.isArray(bookings) || bookings.length === 0) {
     container.innerHTML = "<p class='text-center'>No bookings found.</p>";
     return;
   }
@@ -236,17 +243,19 @@ function displayBookings(bookings = []) {
       const img = venue?.media?.[0]?.url || "/images/venue-placeholder.jpg";
       const name = venue?.name || "No venue name";
       const desc = venue?.description || "No description available";
-      const href = `/bookings/?id=${encodeURIComponent(id)}`;
 
       return `
-        <a href="${href}" class="block bg-white border rounded-lg shadow-lg overflow-hidden p-4 hover:shadow-xl transition">
-          <img src="${img}" alt="${name}" class="w-full h-40 object-cover rounded-lg mb-4">
-          <h3 class="text-lg font-semibold">${name}</h3>
-          <p class="text-gray-600 text-sm">${desc}</p>
-          <p class="text-gray-800 text-sm mt-2">Guests: ${guests}</p>
-          <p class="text-gray-800 text-sm">From: ${new Date(dateFrom).toLocaleDateString()}</p>
-          <p class="text-gray-800 text-sm">To: ${new Date(dateTo).toLocaleDateString()}</p>
-        </a>`;
+        <div onclick="window.location.href='/bookings/?id=${id}'" 
+             class="bg-[var(--brand-purple)] border rounded-lg shadow-lg overflow-hidden flex flex-col transition hover:scale-105 cursor-pointer">
+          <img src="${img}" alt="${name}" class="w-full h-48 object-cover">
+          <div class="p-4 flex flex-col flex-grow justify-between text-center">
+            <h3 class="text-xl font-semibold text-[var(--brand-beige)]">${name}</h3>
+            <p class="mt-2 text-[var(--brand-beige)] text-sm">${desc}</p>
+            <p class="mt-2 text-[var(--brand-beige)] text-sm">Guests: ${guests}</p>
+            <p class="text-[var(--brand-beige)] text-sm">From: ${new Date(dateFrom).toLocaleDateString()}</p>
+            <p class="text-[var(--brand-beige)] text-sm">To: ${new Date(dateTo).toLocaleDateString()}</p>
+          </div>
+        </div>`;
     })
     .join("");
 }
