@@ -21,32 +21,21 @@ export async function onRegister(event) {
 
   const avatarUrl = formData.get("avatarUrl")
   if (avatarUrl) {
-    userData.avatar = {
-      url: avatarUrl,
-      alt: formData.get("avatarAlt") || "",
-    }
+    userData.avatar = { url: avatarUrl, alt: formData.get("avatarAlt") || "" }
   }
 
   const bannerUrl = formData.get("bannerUrl")
   if (bannerUrl) {
-    userData.banner = {
-      url: bannerUrl,
-      alt: formData.get("bannerAlt") || "",
-    }
+    userData.banner = { url: bannerUrl, alt: formData.get("bannerAlt") || "" }
   }
 
   const { data, error } = await registerUser(userData)
-
   if (error || !data) {
     displayBanner(error || "An error occurred during registration.", "error")
     return
   }
 
-  const login = await loginUser({
-    email: userData.email,
-    password: userData.password,
-  })
-
+  const login = await loginUser({ email: userData.email, password: userData.password })
   if (login.error || !login.data) {
     displayBanner("✅ Account created, but login failed. Please log in manually.", "error")
     setTimeout(() => (window.location.pathname = "/auth/login/"), 2000)
@@ -54,14 +43,7 @@ export async function onRegister(event) {
   }
 
   localStorage.setItem("token", login.data.accessToken)
-  localStorage.setItem("profile", JSON.stringify({
-    name: login.data.name,
-    email: login.data.email,
-    bio: login.data.bio,
-    avatar: login.data.avatar,
-    banner: login.data.banner,
-    venueManager: login.data.venueManager,
-  }))
+  localStorage.setItem("profile", JSON.stringify(login.data))
 
   displayBanner("🎉 Registration successful! Redirecting to your profile…", "success")
 

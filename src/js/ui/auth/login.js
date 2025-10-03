@@ -36,9 +36,9 @@ export async function onLogin(event) {
   localStorage.setItem("token", data.accessToken)
   localStorage.setItem("profile", JSON.stringify(data))
 
-  displayBanner(`Welcome back, ${data.name}!`, "success")
+  displayBanner(`Welcome back, ${data.name || "user"}!`, "success")
 
   setTimeout(() => {
-    window.location.pathname = "/"
-  }, 1500)
+    window.location.href = "/profile/"
+  }, 1200)
 }
