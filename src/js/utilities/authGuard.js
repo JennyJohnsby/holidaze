@@ -9,18 +9,17 @@ export function authGuard({
   },
   bannerDelay = 2000,
 } = {}) {
-  const token = localStorage.getItem("authToken")
+  const token = localStorage.getItem("token")
   let user = null
 
   try {
-    user = JSON.parse(localStorage.getItem("currentUser")) || null
+    user = JSON.parse(localStorage.getItem("profile")) || null
   } catch {
     user = null
   }
 
   const currentPath = window.location.pathname
 
-  // 🚨 If NOT logged in and guard says redirect
   if (!token && redirectIfNotAuthenticated) {
     const redirectUrl = currentPath.includes("/auth/register/")
       ? redirectUrlsIfNotAuthenticated.register
@@ -35,21 +34,20 @@ export function authGuard({
     return
   }
 
-  // ✅ If already logged in but visiting login/register
   if (token && redirectIfAuthenticated) {
     if (currentPath === "/auth/login/" || currentPath === "/auth/register/") {
       displayBanner(
         `You are already logged in as ${user?.name || "user"}. <button id="logoutButton" class="banner__button">Logout</button>`,
         "warning",
-        0 // persistent
+        0
       )
 
       document.body.addEventListener(
         "click",
         (event) => {
           if (event.target.id === "logoutButton") {
-            localStorage.removeItem("authToken")
-            localStorage.removeItem("currentUser")
+            localStorage.removeItem("token")
+            localStorage.removeItem("profile")
             window.location.href = "/auth/login/"
           }
         },

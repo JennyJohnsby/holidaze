@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 export function onLogout() {
-  localStorage.removeItem("authToken")
-  localStorage.removeItem("currentUser")
+  localStorage.removeItem("token")
+  localStorage.removeItem("profile")
 
   displayBanner("You have been successfully logged out.", "success")
 

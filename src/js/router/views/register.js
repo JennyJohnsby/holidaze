@@ -2,7 +2,7 @@ import { onRegister } from "../../ui/auth/register.js";
 
 console.log("[Register View] Loaded");
 
-const form = document.getElementById("registerForm");
+const form = document.getElementById("register-form");
 
 if (form) {
   form.addEventListener("submit", (event) => {

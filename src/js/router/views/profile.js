@@ -1,44 +1,56 @@
-import { authGuard } from "../../utilities/authGuard.js";
-import { onLogout } from "../../ui/auth/logout.js";
-import { displayBanner } from "../../utilities/banners.js";
-import { readProfile } from "../../api/profile/read.js";
-import { onUpdateProfile } from "../../ui/profile/update.js";
-import { fetchUserVenues } from "../../api/profile/userVenues.js";
-import { fetchUserBookings } from "../../api/profile/userBookings.js";
+import { authGuard } from "../../utilities/authGuard.js"
+import { onLogout } from "../../ui/auth/logout.js"
+import { displayBanner } from "../../utilities/banners.js"
+import { readProfile } from "../../api/profile/read.js"
+import { onUpdateProfile } from "../../ui/profile/update.js"
+import { fetchUserVenues } from "../../api/profile/userVenues.js"
+import { fetchUserBookings } from "../../api/profile/userBookings.js"
 
-authGuard();
+authGuard()
+
+console.log("Token:", localStorage.getItem("token"))
+console.log("Profile:", localStorage.getItem("profile"))
 
 export async function showProfile() {
-  const profileDiv = document.getElementById("profile");
-  if (!profileDiv) return;
+  const profileDiv = document.getElementById("profile")
+  if (!profileDiv) return
 
-  profileDiv.innerHTML = "<p class='text-center'>Loading profile...</p>";
+  profileDiv.innerHTML = "<p class='text-center'>Loading profile...</p>"
 
   try {
-    const { data: profile, error } = await readProfile({
+    let profile = JSON.parse(localStorage.getItem("profile"))
+    const username = profile?.name
+
+    const { data, error } = await readProfile({
+      username,
       includeVenues: true,
-    });
-    if (error || !profile) {
-      profileDiv.innerHTML =
-        "<p class='text-center'>Unable to load your profile. Please log in again.</p>";
-      return;
+      includeBookings: true,
+      includeBookingVenue: true,
+    })
+
+    if (data) {
+      profile = data
+      localStorage.setItem("profile", JSON.stringify(profile))
     }
 
-    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-    currentUser.profile = profile;
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    if (!profile || error) {
+      profileDiv.innerHTML =
+        "<p class='text-center'>Unable to load your profile. Please log in again.</p>"
+      console.error("[Profile] API error:", error)
+      return
+    }
 
-    renderProfile(profile);
-    loadUserBookings(profile.name);
-  } catch (err) {
+    renderProfile(profile)
+    loadUserBookings(profile.name)
+  } catch {
     profileDiv.innerHTML =
-      "<p class='text-center'>Unable to load your profile. Please try again later.</p>";
+      "<p class='text-center'>Unable to load your profile. Please try again later.</p>"
   }
 }
 
 function renderProfile(profile) {
-  const profileDiv = document.getElementById("profile");
-  if (!profileDiv) return;
+  const profileDiv = document.getElementById("profile")
+  if (!profileDiv) return
 
   const venueSection = profile.venueManager
     ? `
@@ -47,7 +59,7 @@ function renderProfile(profile) {
         <div id="venues-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6 p-5 border rounded-lg text-[var(--brand-purple)]"></div>
       </div>
     `
-    : "";
+    : ""
 
   const createVenueButton = profile.venueManager
     ? `<button id="create-venue-button"
@@ -57,7 +69,7 @@ function renderProfile(profile) {
                 focus:ring-2 focus:ring-green-300 transition-all">
          + Create Venue
        </button>`
-    : "";
+    : ""
 
   profileDiv.innerHTML = `
     <div id="profile-view" class="max-w-7xl mx-auto bg-[var(--brand-beige)] p-10 shadow-2xl rounded-2xl mt-10">
@@ -151,62 +163,60 @@ function renderProfile(profile) {
         <div id="bookings-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6 p-5 border rounded-lg text-[var(--brand-purple)]"></div>
       </div>
     </div>
-  `;
+  `
 
-  setupEventListeners(profile.venueManager);
+  setupEventListeners(profile.venueManager)
 
   if (profile.venueManager) {
-    loadUserVenues();
+    loadUserVenues()
   }
 }
 
 async function loadUserVenues() {
   try {
-    const { data: venues, error } = await fetchUserVenues();
+    const { data: venues, error } = await fetchUserVenues()
     if (error) {
-      displayBanner("Could not load your venues.", "error");
+      displayBanner("Could not load your venues.", "error")
     } else {
-      displayVenues(venues || []);
+      displayVenues(venues || [])
     }
   } catch {
-    displayBanner("Could not load your venues.", "error");
+    displayBanner("Could not load your venues.", "error")
   }
 }
 
 async function loadUserBookings(username) {
-  const { data: bookings, error } = await fetchUserBookings(username, { includeVenue: true });
+  const { data: bookings, error } = await fetchUserBookings(username, { includeVenue: true })
   if (error) {
-    displayBanner("Could not load your bookings.", "error");
+    displayBanner("Could not load your bookings.", "error")
   } else {
-    displayBookings(bookings || []);
+    displayBookings(bookings || [])
   }
 }
 
 function setupEventListeners(isVenueManager) {
-  document.getElementById("logout-button")?.addEventListener("click", onLogout);
+  document.getElementById("logout-button")?.addEventListener("click", onLogout)
   document
     .getElementById("edit-profile-button")
     ?.addEventListener("click", () => {
-      document
-        .getElementById("profile-update-form")
-        ?.classList.toggle("hidden");
-    });
+      document.getElementById("profile-update-form")?.classList.toggle("hidden")
+    })
   document
     .getElementById("update-profile-form")
-    ?.addEventListener("submit", onUpdateProfile);
+    ?.addEventListener("submit", onUpdateProfile)
 
   if (isVenueManager) {
     document
       .getElementById("create-venue-button")
       ?.addEventListener("click", () => {
-        window.location.href = "/venues/create/";
-      });
+        window.location.href = "/venues/create/"
+      })
   }
 }
 
 function displayVenues(venues = []) {
-  const container = document.getElementById("venues-container");
-  if (!container) return;
+  const container = document.getElementById("venues-container")
+  if (!container) return
 
   container.innerHTML =
     venues.length === 0
@@ -226,23 +236,23 @@ function displayVenues(venues = []) {
                 </div>
               </div>`
           )
-          .join("");
+          .join("")
 }
 
 function displayBookings(bookings) {
-  const container = document.getElementById("bookings-container");
-  if (!container) return;
+  const container = document.getElementById("bookings-container")
+  if (!container) return
 
   if (!Array.isArray(bookings) || bookings.length === 0) {
-    container.innerHTML = "<p class='text-center'>No bookings found.</p>";
-    return;
+    container.innerHTML = "<p class='text-center'>No bookings found.</p>"
+    return
   }
 
   container.innerHTML = bookings
     .map(({ id, dateFrom, dateTo, guests, venue }) => {
-      const img = venue?.media?.[0]?.url || "/images/venue-placeholder.jpg";
-      const name = venue?.name || "No venue name";
-      const desc = venue?.description || "No description available";
+      const img = venue?.media?.[0]?.url || "/images/venue-placeholder.jpg"
+      const name = venue?.name || "No venue name"
+      const desc = venue?.description || "No description available"
 
       return `
         <div onclick="window.location.href='/bookings/?id=${id}'" 
@@ -255,9 +265,9 @@ function displayBookings(bookings) {
             <p class="text-[var(--brand-beige)] text-sm">From: ${new Date(dateFrom).toLocaleDateString()}</p>
             <p class="text-[var(--brand-beige)] text-sm">To: ${new Date(dateTo).toLocaleDateString()}</p>
           </div>
-        </div>`;
+        </div>`
     })
-    .join("");
+    .join("")
 }
 
-showProfile();
+showProfile()

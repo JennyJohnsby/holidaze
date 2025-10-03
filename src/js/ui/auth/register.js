@@ -1,4 +1,5 @@
 import { registerUser } from "../../api/auth/register.js"
+import { loginUser } from "../../api/auth/login.js"
 import { displayBanner } from "../../utilities/banners.js"
 import { authGuard } from "../../utilities/authGuard.js"
 
@@ -41,9 +42,30 @@ export async function onRegister(event) {
     return
   }
 
-  displayBanner("Registration successful! Redirecting…", "success")
+  const login = await loginUser({
+    email: userData.email,
+    password: userData.password,
+  })
+
+  if (login.error || !login.data) {
+    displayBanner("✅ Account created, but login failed. Please log in manually.", "error")
+    setTimeout(() => (window.location.pathname = "/auth/login/"), 2000)
+    return
+  }
+
+  localStorage.setItem("token", login.data.accessToken)
+  localStorage.setItem("profile", JSON.stringify({
+    name: login.data.name,
+    email: login.data.email,
+    bio: login.data.bio,
+    avatar: login.data.avatar,
+    banner: login.data.banner,
+    venueManager: login.data.venueManager,
+  }))
+
+  displayBanner("🎉 Registration successful! Redirecting to your profile…", "success")
 
   setTimeout(() => {
-    window.location.pathname = "/auth/login/"
+    window.location.pathname = "/profile/"
   }, 1500)
 }

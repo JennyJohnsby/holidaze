@@ -1,4 +1,4 @@
-import { login } from "../../api/auth/login.js"
+import { loginUser } from "../../api/auth/login.js"
 import { displayBanner } from "../../utilities/banners.js"
 import { authGuard } from "../../utilities/authGuard.js"
 
@@ -26,15 +26,15 @@ export async function onLogin(event) {
   const email = emailInput.value.trim()
   const password = passwordInput.value.trim()
 
-  const { data, error } = await login({ email, password })
+  const { data, error } = await loginUser({ email, password })
 
   if (error || !data) {
     displayBanner(error || "Invalid login credentials. Please try again.", "error")
     return
   }
 
-  localStorage.setItem("authToken", data.accessToken)
-  localStorage.setItem("currentUser", JSON.stringify(data))
+  localStorage.setItem("token", data.accessToken)
+  localStorage.setItem("profile", JSON.stringify(data))
 
   displayBanner(`Welcome back, ${data.name}!`, "success")
 
