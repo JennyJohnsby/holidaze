@@ -4,10 +4,7 @@ export default function renderLogin() {
   console.log("[Login View] Loaded");
 
   const app = document.querySelector("#app");
-  if (!app) {
-    console.error("[Login View] #app container not found.");
-    return;
-  }
+  if (!app) return;
 
   app.innerHTML = `
     <h1>Login</h1>
