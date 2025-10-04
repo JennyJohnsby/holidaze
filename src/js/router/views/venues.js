@@ -1,46 +1,42 @@
-import { readVenue } from "../../api/venues/read.js";
-import { deleteVenue } from "../../api/venues/delete.js";
-import { displayBanner } from "../../utilities/banners.js";
-import { onCreateBooking } from "../../ui/bookings/create.js";
-import flatpickr from "flatpickr";
+import { readVenue } from "../../api/venues/read.js"
+import { deleteVenue } from "../../api/venues/delete.js"
+import { displayBanner } from "../../utilities/banners.js"
+import { onCreateBooking } from "../../ui/bookings/create.js"
+import flatpickr from "flatpickr"
 
 async function fetchAndDisplayVenue() {
-  const venueId = new URLSearchParams(window.location.search).get("id");
-  const venueContainer = document.getElementById("venueDetailContainer");
-
-  if (!venueContainer || !venueId) return;
+  const venueId = new URLSearchParams(window.location.search).get("id")
+  const venueContainer = document.getElementById("venueDetailContainer")
+  if (!venueContainer || !venueId) return
 
   try {
     const { data: venue, error } = await readVenue(venueId, {
       includeOwner: true,
       includeBookings: true,
-    });
-
+    })
     if (error || !venue) {
-      displayBanner("Failed to load venue details.", "error");
-      return;
+      displayBanner("Failed to load venue details.", "error")
+      return
     }
-
-    renderSingleVenue(venue);
+    renderSingleVenue(venue)
   } catch (err) {
-    console.error("[Venues View] Error:", err);
-    displayBanner("Failed to load the venue.", "error");
+    console.error("[Venues View] Error:", err)
+    displayBanner("Failed to load the venue.", "error")
   }
 }
 
 function renderSingleVenue(venue) {
-  const venueContainer = document.getElementById("venueDetailContainer");
-  if (!venueContainer) return;
+  const venueContainer = document.getElementById("venueDetailContainer")
+  if (!venueContainer) return
 
-  const storedUser = JSON.parse(localStorage.getItem("currentUser"));
-  const currentUser = storedUser?.data || storedUser;
-  const authToken = localStorage.getItem("authToken");
-  const isLoggedIn = !!authToken;
-  const isOwner = currentUser?.name === venue.owner?.name;
+  const storedProfile = JSON.parse(localStorage.getItem("profile"))
+  const token = localStorage.getItem("token")
+  const isLoggedIn = !!token
+  const isOwner = storedProfile?.name === venue.owner?.name
 
-  const createdDate = new Date(venue.created).toLocaleDateString();
-  const updatedDate = new Date(venue.updated).toLocaleDateString();
-  const placeholderImage = "/assets/placeholder.jpg";
+  const createdDate = new Date(venue.created).toLocaleDateString()
+  const updatedDate = new Date(venue.updated).toLocaleDateString()
+  const placeholderImage = "/assets/placeholder.jpg"
 
   venueContainer.innerHTML = `
     <div class="max-w-5xl mx-auto bg-[var(--brand-purple)] rounded-2xl shadow-xl overflow-hidden mt-16">
@@ -55,7 +51,6 @@ function renderSingleVenue(venue) {
           <h1 class="text-4xl font-extrabold mb-4">${venue.name || "Unnamed Venue"}</h1>
           <p class="text-lg opacity-90">${venue.description || "No description available."}</p>
         </header>
-
         <section class="grid grid-cols-2 md:grid-cols-3 gap-6">
           <div class="bg-[var(--brand-beige)] text-[var(--brand-purple)] rounded-xl p-4 shadow-md text-center">
             <p class="text-sm uppercase font-semibold opacity-70">Price / Night</p>
@@ -78,14 +73,12 @@ function renderSingleVenue(venue) {
             <p class="text-xl font-bold mt-1">${updatedDate}</p>
           </div>
         </section>
-
         <section>
           <h2 class="text-2xl font-bold mb-3">📍 Location</h2>
           <p>${venue.location?.address || ""}</p>
           <p>${venue.location?.zip || ""} ${venue.location?.city || ""}</p>
           <p>${venue.location?.country || ""} ${venue.location?.continent || ""}</p>
         </section>
-
         <section>
           <h2 class="text-2xl font-bold mb-3">✨ Amenities</h2>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -95,7 +88,6 @@ function renderSingleVenue(venue) {
             <div class="flex items-center gap-2"><span>${venue.meta?.pets ? "✅" : "❌"}</span><span>Pets</span></div>
           </div>
         </section>
-
         <section>
           ${
             isLoggedIn && isOwner
@@ -141,47 +133,43 @@ function renderSingleVenue(venue) {
         </section>
       </div>
     </div>
-  `;
+  `
 
-  const deleteButton = document.getElementById("delete-venue-button");
+  const deleteButton = document.getElementById("delete-venue-button")
   if (deleteButton) {
     deleteButton.addEventListener("click", async () => {
-      const confirmed = confirm("Are you sure you want to delete this venue?");
-      if (!confirmed) return;
-
-      const { error } = await deleteVenue(venue.id);
+      const confirmed = confirm("Are you sure you want to delete this venue?")
+      if (!confirmed) return
+      const { error } = await deleteVenue(venue.id)
       if (error) {
-        displayBanner("Failed to delete venue.", "error");
-        return;
+        displayBanner("Failed to delete venue.", "error")
+        return
       }
-      displayBanner("Venue deleted successfully.", "success");
+      displayBanner("Venue deleted successfully.", "success")
       setTimeout(() => {
-        window.location.href = "/profile/";
-      }, 1500);
-    });
+        window.location.href = "/profile/"
+      }, 1500)
+    })
   }
 
-  const bookingForm = document.getElementById("booking-form");
+  const bookingForm = document.getElementById("booking-form")
   if (bookingForm) {
     const disabledRanges = (venue.bookings || []).map((b) => ({
       from: b.dateFrom,
       to: b.dateTo,
-    }));
-
+    }))
     flatpickr("#checkIn", {
       dateFormat: "Y-m-d",
       minDate: "today",
       disable: disabledRanges,
-    });
-
+    })
     flatpickr("#checkOut", {
       dateFormat: "Y-m-d",
       minDate: "today",
       disable: disabledRanges,
-    });
-
-    bookingForm.addEventListener("submit", (e) => onCreateBooking(e, venue.id));
+    })
+    bookingForm.addEventListener("submit", (e) => onCreateBooking(e, venue.id))
   }
 }
 
-fetchAndDisplayVenue();
+fetchAndDisplayVenue()
