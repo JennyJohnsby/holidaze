@@ -14,26 +14,40 @@ if (!id) {
   throw new Error("No booking ID found.")
 }
 
-const form = document.forms.editBooking
+const form = document.getElementById("editBookingForm")
 if (!form) {
-  console.error("Edit booking form not found.")
-  displayBanner("Error: Form not found.", "error")
+  console.error("[Booking Edit] Form not found in DOM.")
+  displayBanner("Error: Edit booking form not found.", "error")
   throw new Error("Form not found.")
 }
 
-const dateFromInput = form.elements["dateFrom"]
-const dateToInput = form.elements["dateTo"]
-const guestsInput = form.elements["guests"]
+const dateFromInput = form.querySelector("input[name='checkIn']")
+const dateToInput = form.querySelector("input[name='checkOut']")
+const guestsInput = form.querySelector("input[name='guests']")
 const submitBtn = form.querySelector("button[type='submit']")
 
+let venueBookings = []
+let bookingData = null
+
+function normalize(dateStr) {
+  return new Date(dateStr.split("T")[0])
+}
+
 async function prefillEditForm() {
-  const { data, error } = await readBooking(id)
+  const { data, error } = await readBooking(id, { 
+    includeVenue: true,
+    includeCustomer: true,
+    includeVenueBookings: true
+  })
 
   if (error || !data) {
-    console.error("[Booking Update] Failed to load:", error)
+    console.error("[Booking Edit] Failed to load:", error)
     displayBanner("Failed to load booking details.", "error")
     return
   }
+
+  bookingData = data
+  venueBookings = data.venue?.bookings || []
 
   dateFromInput.value = data.dateFrom ? new Date(data.dateFrom).toISOString().slice(0, 10) : ""
   dateToInput.value = data.dateTo ? new Date(data.dateTo).toISOString().slice(0, 10) : ""
@@ -51,7 +65,7 @@ form.addEventListener("submit", async (event) => {
   }
 
   if (new Date(dateToInput.value) <= new Date(dateFromInput.value)) {
-    displayBanner("End date must be after start date.", "error")
+    displayBanner("Check-out must be after check-in.", "error")
     return
   }
 
@@ -59,6 +73,20 @@ form.addEventListener("submit", async (event) => {
     dateFrom: dateFromInput.value ? new Date(dateFromInput.value).toISOString() : undefined,
     dateTo: dateToInput.value ? new Date(dateToInput.value).toISOString() : undefined,
     guests: Number(guestsInput.value) || undefined,
+  }
+
+  const conflict = venueBookings.some(b => {
+    if (b.id === bookingData.id) return false
+    const bookedFrom = normalize(b.dateFrom)
+    const bookedTo = normalize(b.dateTo)
+    const newFrom = normalize(updatedBooking.dateFrom)
+    const newTo = normalize(updatedBooking.dateTo)
+    return newFrom <= bookedTo && newTo >= bookedFrom
+  })
+
+  if (conflict) {
+    displayBanner("Selected dates conflict with an existing booking.", "error")
+    return
   }
 
   try {
@@ -74,10 +102,10 @@ form.addEventListener("submit", async (event) => {
     displayBanner("Booking updated successfully!", "success")
     setTimeout(() => (window.location.href = `/bookings/?id=${id}`), 1500)
   } catch (err) {
-    console.error("[Booking Update] Error:", err)
+    console.error("[Booking Edit] Error:", err)
     displayBanner(err.message || "Failed to update booking.", "error")
     submitBtn.disabled = false
-    submitBtn.textContent = "Update Booking"
+    submitBtn.textContent = "💾 Save Changes"
   }
 })
 
