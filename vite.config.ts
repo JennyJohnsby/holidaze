@@ -14,6 +14,9 @@ export default defineConfig({
         profile: resolve(__dirname, "./profile/index.html"),
         bookings: resolve(__dirname, "./bookings/index.html"),
         editBookings: resolve(__dirname, "./bookings/edit/index.html"),
+        venues: resolve(__dirname, "./venues/index.html"),
+        editVenues: resolve(__dirname, "./venues/edit/index.html"),
+        createVenues: resolve(__dirname, "./venues/create/index.html")
       },
     },
   },
