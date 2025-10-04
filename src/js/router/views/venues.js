@@ -168,7 +168,21 @@ function renderSingleVenue(venue) {
       minDate: "today",
       disable: disabledRanges,
     })
-    bookingForm.addEventListener("submit", (e) => onCreateBooking(e, venue.id))
+    bookingForm.addEventListener("submit", (e) => {
+      e.preventDefault()
+      const checkIn = new Date(document.getElementById("checkIn").value)
+      const checkOut = new Date(document.getElementById("checkOut").value)
+      const conflicts = (venue.bookings || []).some(b => {
+        const bookedFrom = new Date(b.dateFrom)
+        const bookedTo = new Date(b.dateTo)
+        return checkIn < bookedTo && checkOut > bookedFrom
+      })
+      if (conflicts) {
+        displayBanner("Selected dates are already booked. Please choose different dates.", "error")
+        return
+      }
+      onCreateBooking(e, venue.id)
+    })
   }
 }
 
