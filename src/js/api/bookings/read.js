@@ -11,7 +11,7 @@ export async function readBooking(
     if (includeVenue) url.searchParams.append("_venue", "true");
     if (includeCustomer) url.searchParams.append("_customer", "true");
 
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
 
     const response = await fetch(url.toString(), {
       headers: {

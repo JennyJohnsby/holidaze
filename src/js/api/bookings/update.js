@@ -1,7 +1,7 @@
 import { API_BOOKINGS, API_KEY } from "../constants"
 
 export async function updateBooking(id, updates = {}) {
-  const token = localStorage.getItem("authToken")
+  const token = localStorage.getItem("token")
   if (!id) return { data: null, error: "Booking ID is required", status: 400 }
   if (!token) return { data: null, error: "No token found. Please log in.", status: 401 }
 

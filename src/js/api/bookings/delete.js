@@ -1,7 +1,7 @@
 import { API_BOOKINGS, API_KEY } from "../constants"
 
 export async function deleteBooking(id) {
-  const token = localStorage.getItem("authToken")
+  const token = localStorage.getItem("token")
   if (!id) {
     return { success: false, error: "Booking ID is required", status: 400 }
   }

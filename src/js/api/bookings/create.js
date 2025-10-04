@@ -1,7 +1,8 @@
 import { API_BOOKINGS, API_KEY } from "../constants"
 
 export async function createBooking(data) {
-  const token = localStorage.getItem("authToken")
+  const token = localStorage.getItem("token")
+
   if (!token) {
     return {
       data: null,

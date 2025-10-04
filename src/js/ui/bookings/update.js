@@ -43,7 +43,7 @@ async function prefillEditForm() {
 form.addEventListener("submit", async (event) => {
   event.preventDefault()
 
-  const token = localStorage.getItem("authToken")
+  const token = localStorage.getItem("token")
   if (!token) {
     displayBanner("You must be logged in to update a booking.", "error")
     setTimeout(() => (window.location.href = "/auth/login/"), 2000)

@@ -1,11 +1,17 @@
 import { readBooking } from "../../api/bookings/read.js"
+import { deleteBooking } from "../../api/bookings/delete.js"
+import { displayBanner } from "../../utilities/banners.js"
 
 function qs(sel) {
   return document.querySelector(sel)
 }
 
 function formatDate(d) {
-  return new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "numeric" }).format(new Date(d))
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(d))
 }
 
 export async function renderBookingDetails() {
@@ -15,7 +21,9 @@ export async function renderBookingDetails() {
   const params = new URLSearchParams(window.location.search)
   let id = params.get("id")
   if (!id) {
-    try { id = sessionStorage.getItem("lastBookingId") || "" } catch {}
+    try {
+      id = sessionStorage.getItem("lastBookingId") || ""
+    } catch {}
   }
 
   if (!id) {
@@ -23,14 +31,21 @@ export async function renderBookingDetails() {
     return
   }
 
-  try { sessionStorage.removeItem("lastBookingId") } catch {}
+  try {
+    sessionStorage.removeItem("lastBookingId")
+  } catch {}
 
   container.innerHTML = `<p class="text-center" aria-live="polite">Loading booking...</p>`
 
-  const { data, error } = await readBooking(id, { includeVenue: true, includeCustomer: true })
+  const { data, error } = await readBooking(id, {
+    includeVenue: true,
+    includeCustomer: true,
+  })
 
   if (error || !data) {
-    container.innerHTML = `<p class="text-center text-red-500">Unable to load this booking. ${error || "Unknown error."}</p>`
+    container.innerHTML = `<p class="text-center text-red-500">Unable to load this booking. ${
+      error || "Unknown error."
+    }</p>`
     return
   }
 
@@ -60,9 +75,39 @@ export async function renderBookingDetails() {
         </div>
       </div>
       <div class="flex flex-wrap gap-4">
-        ${venue?.id ? `<a href="/venues/?id=${encodeURIComponent(venue.id)}" class="px-5 py-3 rounded-lg bg-[var(--brand-purple)] text-[var(--brand-beige)] hover:bg-[var(--brand-purple-hover)]">View Venue</a>` : ""}
+        ${
+          venue?.id
+            ? `<a href="/venues/?id=${encodeURIComponent(
+                venue.id
+              )}" class="px-5 py-3 rounded-lg bg-[var(--brand-purple)] text-[var(--brand-beige)] hover:bg-[var(--brand-purple-hover)]">View Venue</a>`
+            : ""
+        }
         <a href="/profile/" class="px-5 py-3 rounded-lg bg-gray-200 text-[var(--brand-purple)] hover:bg-gray-300">Back to Profile</a>
+        <button id="edit-booking" class="px-5 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Edit Booking</button>
+        <button id="cancel-booking" class="px-5 py-3 rounded-lg bg-red-600 text-white hover:bg-red-700">Cancel Booking</button>
       </div>
     </div>
   `
+
+  // Event listeners for edit / cancel
+  const cancelBtn = qs("#cancel-booking")
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", async () => {
+      if (!confirm("Are you sure you want to cancel this booking?")) return
+      const { error: deleteError } = await deleteBooking(id)
+      if (deleteError) {
+        displayBanner(`Failed to cancel booking: ${deleteError}`, "error")
+      } else {
+        displayBanner("Booking cancelled.", "success")
+        setTimeout(() => (window.location.href = "/profile/"), 1500)
+      }
+    })
+  }
+
+  const editBtn = qs("#edit-booking")
+  if (editBtn) {
+    editBtn.addEventListener("click", () => {
+      window.location.href = `/bookings/edit/?id=${encodeURIComponent(id)}`
+    })
+  }
 }
