@@ -19,10 +19,6 @@ function toYMD(dateStr) {
   return new Date(dateStr).toISOString().split("T")[0]
 }
 
-function normalize(dateStr) {
-  return new Date(dateStr.split("T")[0] + "T00:00:00Z")
-}
-
 async function prefillEditForm() {
   try {
     const { data: booking, error } = await readBooking(id, {
@@ -115,19 +111,13 @@ form.addEventListener("submit", async (e) => {
     return
   }
 
-  const today = normalize(new Date().toISOString())
-  if (normalize(updatedBooking.dateFrom) < today) {
-    displayBanner("Check-in cannot be in the past.", "error")
-    return
-  }
-
   const conflict = venueBookings.some(b => {
     if (b.id === bookingData.id) return false
-    const bookedFrom = normalize(b.dateFrom)
-    const bookedTo = normalize(b.dateTo)
-    const newFrom = normalize(updatedBooking.dateFrom)
-    const newTo = normalize(updatedBooking.dateTo)
-    return newFrom <= bookedTo && newTo >= bookedFrom
+    const bookedFrom = new Date(b.dateFrom)
+    const bookedTo = new Date(b.dateTo)
+    const newFrom = new Date(updatedBooking.dateFrom)
+    const newTo = new Date(updatedBooking.dateTo)
+    return newFrom < bookedTo && newTo > bookedFrom
   })
 
   if (conflict) {
