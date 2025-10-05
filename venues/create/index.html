@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=MuseoModerno:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@300;400;700;900&family=Cormorant+Garamond:wght@300;400;500;700&family=Montserrat+Alternates:wght@300;400;500;700;900&family=MuseoModerno:wght@300;400;700;900&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -24,89 +24,72 @@
     class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen"
   >
     <header
-      class="relative bg-cover bg-center bg-[url('/assets/sorasak-_UIN-pFfJ7c-unsplash-min.jpg')] h-50"
+      class="relative bg-cover bg-center bg-[url('/assets/sorasak-_UIN-pFfJ7c-unsplash-min.jpg')]"
     >
       <div
-        class="relative z-10 flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 py-4"
+        class="relative z-10 flex items-center justify-between px-4 sm:px-8 py-4"
       >
-        <a href="/" aria-label="Holidaze Home" class="mb-4 sm:mb-0">
+        <a href="/" aria-label="Holidaze Home">
           <img
             src="/assets/logo1.svg"
             alt="Holidaze Logo"
-            class="h-[100px] sm:h-[140px] md:h-[160px] w-auto"
+            class="h-14 sm:h-20 md:h-24 w-auto"
             width="160"
             height="160"
           />
         </a>
-        <nav>
-          <ul
-            class="flex flex-wrap gap-4 sm:gap-8 text-[var(--brand-purple)] font-medium text-base sm:text-lg md:text-xl"
+        <button
+          id="menuBtn"
+          class="sm:hidden p-3 rounded-full bg-[var(--brand-purple)] text-[var(--brand-beige)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-beige)] shadow-md"
+          aria-label="Toggle menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
           >
-            <li>
-              <a
-                href="/auth/login/"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
-                >Log In</a
-              >
-            </li>
-            <li>
-              <a
-                href="/auth/register/"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
-                >Register</a
-              >
-            </li>
-            <li>
-              <a
-                href="/profile/"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
-                >Profile</a
-              >
-            </li>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <nav id="navMenu" class="hidden sm:block">
+          <ul class="flex gap-4 sm:gap-6 font-medium text-base sm:text-lg md:text-xl">
+            <li><a href="/auth/login/" class="btn-nav">Log In</a></li>
+            <li><a href="/auth/register/" class="btn-nav">Register</a></li>
+            <li><a href="/profile/" class="btn-nav">Profile</a></li>
           </ul>
         </nav>
       </div>
+      <nav id="mobileNav" class="hidden sm:hidden px-4 pb-4">
+        <ul class="flex flex-col gap-2">
+          <li><a href="/auth/login/" class="btn-nav block text-center">Log In</a></li>
+          <li><a href="/auth/register/" class="btn-nav block text-center">Register</a></li>
+          <li><a href="/profile/" class="btn-nav block text-center">Profile</a></li>
+        </ul>
+      </nav>
     </header>
 
-    <main class="w-200 mx-auto mt-10 flex-grow px-4 sm:px-6">
-      <h1
-        class="text-3xl sm:text-4xl font-bold mb-4 text-[var(--brand-purple)] text-center"
-      >
+    <main class="w-full max-w-5xl mx-auto flex-grow px-4 sm:px-6 lg:px-8 py-12">
+      <h1 class="text-3xl sm:text-4xl font-bold mb-8 text-[var(--brand-purple)] text-center">
         Create a Venue
       </h1>
 
       <section
-        class="max-w-3xl mx-auto mb-10 bg-[var(--brand-beige-hover)] text-[var(--brand-purple)] p-6 rounded-lg shadow"
+        class="mb-10 bg-[var(--brand-beige-hover)] text-[var(--brand-purple)] p-6 rounded-lg shadow max-w-3xl mx-auto"
       >
-        <h2 class="text-2xl font-bold mb-4">
-          How to Create a Great Venue Listing
-        </h2>
+        <h2 class="text-2xl font-bold mb-4">How to Create a Great Venue Listing</h2>
         <p class="mb-4">
           Listing your venue on Holidaze is a great way to reach travelers from
           around the world. Please fill out the form below accurately to attract
           more bookings.
         </p>
         <ul class="list-disc list-inside space-y-2 mb-4">
-          <li>
-            <strong>Venue Name:</strong> Use a catchy, descriptive title that
-            reflects the experience.
-          </li>
-          <li>
-            <strong>Description:</strong> Include key features, atmosphere,
-            nearby attractions, and any unique offerings.
-          </li>
-          <li>
-            <strong>Photos:</strong> High-quality images help guests trust your
-            listing. Provide direct image URLs.
-          </li>
-          <li>
-            <strong>Location:</strong> Accurate address and coordinates are
-            essential for map integration and search filtering.
-          </li>
-          <li>
-            <strong>Amenities:</strong> Select all that apply — Wi-Fi,
-            breakfast, parking, pet friendly, etc.
-          </li>
+          <li><strong>Venue Name:</strong> Use a catchy, descriptive title that reflects the experience.</li>
+          <li><strong>Description:</strong> Include key features, atmosphere, nearby attractions, and any unique offerings.</li>
+          <li><strong>Photos:</strong> High-quality images help guests trust your listing. Provide direct image URLs.</li>
+          <li><strong>Location:</strong> Accurate address and coordinates are essential for map integration and search filtering.</li>
+          <li><strong>Amenities:</strong> Select all that apply — Wi-Fi, breakfast, parking, pet friendly, etc.</li>
         </ul>
         <h3 class="text-xl font-semibold mb-2">Host Responsibilities</h3>
         <p>
@@ -119,14 +102,10 @@
 
       <form
         id="createVenue"
-        class="bg-gradient-to-br from-[var(--brand-purple)] to-[#3b1c52] p-8 rounded-2xl shadow-lg"
+        class="bg-gradient-to-br from-[var(--brand-purple)] to-[#3b1c52] p-8 rounded-2xl shadow-lg space-y-6"
       >
         <div>
-          <label
-            for="name"
-            class="block text-base font-medium text-[var(--brand-beige)]"
-            >Venue Name</label
-          >
+          <label for="name" class="block text-base font-medium text-[var(--brand-beige)]">Venue Name</label>
           <input
             type="text"
             id="name"
@@ -134,64 +113,47 @@
             required
             autofocus
             placeholder="Enter a fitting header for your venue"
-             class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
           />
         </div>
+
         <div>
-          <label
-            for="description"
-            class="block text-base font-medium text-[var(--brand-beige)]"
-            >Description</label
-          >
+          <label for="description" class="block text-base font-medium text-[var(--brand-beige)]">Description</label>
           <textarea
             id="description"
             name="description"
-            required
-            autofocus
             rows="4"
+            required
             placeholder="Enter a description about your venue"
-             class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
           ></textarea>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label
-              for="price"
-              required
-              autofocus
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Price per night</label
-            >
+            <label for="price" class="block text-base font-medium text-[var(--brand-beige)]">Price per night</label>
             <input
               type="number"
               id="price"
               name="price"
               required
-               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
             />
           </div>
           <div>
-            <label
-              for="maxGuests"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Max Guests</label
-            >
+            <label for="maxGuests" class="block text-base font-medium text-[var(--brand-beige)]">Max Guests</label>
             <input
               type="number"
               id="maxGuests"
               name="maxGuests"
               required
-              autofocus
-               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
             />
           </div>
         </div>
+
         <div>
-          <label
-            for="rating"
-            class="block text-base font-medium text-[var(--brand-beige)]"
-            >Rating (optional)</label
-          >
+          <label for="rating" class="block text-base font-medium text-[var(--brand-beige)]">Rating (optional)</label>
           <input
             type="number"
             id="rating"
@@ -199,151 +161,90 @@
             min="0"
             max="5"
             step="0.1"
-             class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
           />
         </div>
+
         <div>
-          <label
-            for="mediaUrl"
-            class="block text-base font-medium text-[var(--brand-beige)]"
-            >Image URL</label
-          >
+          <label for="mediaUrl" class="block text-base font-medium text-[var(--brand-beige)]">Image URL</label>
           <input
             type="url"
             id="mediaUrl"
             name="mediaUrl"
             placeholder="https://example.com/image.jpg"
-             class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
           />
         </div>
+
         <div>
-          <label
-            for="mediaAlt"
-            class="block text-base font-medium text-[var(--brand-beige)]"
-            >Image Alt Text</label
-          >
+          <label for="mediaAlt" class="block text-base font-medium text-[var(--brand-beige)]">Image Alt Text</label>
           <input
             type="text"
             id="mediaAlt"
             name="mediaAlt"
             placeholder="Enter a fitting alt-text about the image"
-             class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
+            class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
           />
         </div>
-        <fieldset class="flex flex-col gap-6 rounded-lg p-6 border border-[var(--brand-beige)]">
-          <legend class="block text-base font-medium text-[var(--brand-beige)]">
-            Amenities
-          </legend>
-          <div class="flex flex-wrap gap-4 mt-2">
-            <label class="block text-base font-medium text-[var(--brand-beige)]"
-              ><input type="checkbox" name="wifi" /> Wi-Fi</label
-            >
-            <label class="block text-base font-medium text-[var(--brand-beige)]"
-              ><input type="checkbox" name="parking" /> Parking</label
-            >
-            <label class="block text-base font-medium text-[var(--brand-beige)]"
-              ><input type="checkbox" name="breakfast" /> Breakfast</label
-            >
-            <label class="block text-base font-medium text-[var(--brand-beige)]"
-              ><input type="checkbox" name="pets" /> Pets Allowed</label
-            >
+
+        <fieldset class="flex flex-col gap-4 rounded-lg p-6 border border-[var(--brand-beige)]">
+          <legend class="block text-base font-medium text-[var(--brand-beige)]">Amenities</legend>
+          <div class="flex flex-wrap gap-4">
+            <label class="block text-base text-[var(--brand-beige)]"><input type="checkbox" name="wifi" /> Wi-Fi</label>
+            <label class="block text-base text-[var(--brand-beige)]"><input type="checkbox" name="parking" /> Parking</label>
+            <label class="block text-base text-[var(--brand-beige)]"><input type="checkbox" name="breakfast" /> Breakfast</label>
+            <label class="block text-base text-[var(--brand-beige)]"><input type="checkbox" name="pets" /> Pets Allowed</label>
           </div>
         </fieldset>
-        <fieldset class="flex flex-col gap-6 rounded-lg p-6 border border-[var(--brand-beige)]">
-          <legend class="block text-base font-medium text-[var(--brand-beige)]">
-            Location
-          </legend>
-          <div class="grid grid-cols-2 gap-4 mt-2">
-            <input
-              type="text"
-              name="address"
-              placeholder="Address"
-              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-            />
-            <input
-              type="text"
-              name="city"
-              placeholder="City"
-               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-            />
-            <input
-              type="text"
-              name="zip"
-              placeholder="ZIP"
-               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-            />
-            <input
-              type="text"
-              name="country"
-              placeholder="Country"
-              class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-            />
-            <input
-              type="text"
-              name="continent"
-              placeholder="Continent"
-               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
-            />
+
+        <fieldset class="flex flex-col gap-4 rounded-lg p-6 border border-[var(--brand-beige)]">
+          <legend class="block text-base font-medium text-[var(--brand-beige)]">Location</legend>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <input type="text" name="address" placeholder="Address" class="input" />
+            <input type="text" name="city" placeholder="City" class="input" />
+            <input type="text" name="zip" placeholder="ZIP" class="input" />
+            <input type="text" name="country" placeholder="Country" class="input" />
+            <input type="text" name="continent" placeholder="Continent" class="input" />
           </div>
         </fieldset>
-        <div>
-          <button
-            type="submit"
-            class="bg-[var(--brand-beige)] hover:bg-[var(--brand-beige-hover)] text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40 p-4 m-4"
-          >
-            Create Venue
-          </button>
-        </div>
+
+        <button
+          type="submit"
+          class="inline-block px-6 py-3 mt-6 bg-[var(--brand-beige)] text-[var(--brand-purple)] font-semibold rounded-lg shadow-md hover:bg-[var(--brand-beige-hover)] transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40 w-full sm:w-auto mx-auto"
+        >
+          Create Venue
+        </button>
       </form>
     </main>
+
     <footer
-      class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 px-4 mt-16 text-[var(--brand-beige)] text-sm sm:text-base"
+      class="flex flex-col gap-3 text-center bg-[var(--brand-purple)] py-8 px-4 mt-16 text-[var(--brand-beige)] text-sm sm:text-base md:flex-row md:justify-center md:items-center md:gap-6"
     >
       <p>&copy; 2025 Holidaze. All rights reserved.</p>
-      <span class="hidden md:block">|</span>
+      <span class="hidden md:inline">|</span>
       <p>Developed by Jenny Johnsby</p>
-      <span class="hidden md:block">|</span>
+      <span class="hidden md:inline">|</span>
       <nav aria-label="Social media">
-        <ul class="flex flex-wrap justify-center gap-4 sm:space-x-6">
-          <li>
-            <a
-              href="https://facebook.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Facebook</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://twitter.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Twitter</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://instagram.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Instagram</a
-            >
-          </li>
+        <ul class="flex justify-center gap-4 md:gap-6">
+          <li><a href="https://facebook.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)] transition">Facebook</a></li>
+          <li><a href="https://twitter.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)] transition">Twitter</a></li>
+          <li><a href="https://instagram.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)] transition">Instagram</a></li>
         </ul>
       </nav>
-      <span class="hidden md:block">|</span>
+      <span class="hidden md:inline">|</span>
       <address class="not-italic">
-        Contact us:
-        <a
-          href="mailto:support@holidaze.com"
-          class="hover:text-[var(--brand-beige-hover)]"
-        >
-          support@holidaze.com
-        </a>
+        <a href="mailto:support@holidaze.com" class="hover:text-[var(--brand-beige-hover)] transition">support@holidaze.com</a>
       </address>
     </footer>
+
+    <script>
+      const menuBtn = document.getElementById("menuBtn");
+      const mobileNav = document.getElementById("mobileNav");
+      if (menuBtn && mobileNav) {
+        menuBtn.addEventListener("click", () => {
+          mobileNav.classList.toggle("hidden");
+        });
+      }
+    </script>
   </body>
 </html>
