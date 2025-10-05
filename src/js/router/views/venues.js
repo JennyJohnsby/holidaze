@@ -25,6 +25,13 @@ async function fetchAndDisplayVenue() {
   }
 }
 
+function setImageFallback(img, placeholder) {
+  img.onerror = () => {
+    img.onerror = null
+    img.src = placeholder
+  }
+}
+
 function renderSingleVenue(venue) {
   const venueContainer = document.getElementById("venueDetailContainer")
   if (!venueContainer) return
@@ -36,15 +43,15 @@ function renderSingleVenue(venue) {
 
   const createdDate = new Date(venue.created).toLocaleDateString()
   const updatedDate = new Date(venue.updated).toLocaleDateString()
-  const placeholderImage = "/assets/placeholder.jpg"
+  const placeholderImage =
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
 
   venueContainer.innerHTML = `
     <div class="max-w-5xl mx-auto bg-[var(--brand-purple)] rounded-2xl shadow-xl overflow-hidden mt-16">
       <div class="relative h-96">
         <img src="${venue.media?.[0]?.url || placeholderImage}" 
              alt="${venue.media?.[0]?.alt || "Venue image"}" 
-             class="w-full h-full object-cover" 
-             onerror="this.onerror=null;this.src='${placeholderImage}';" />
+             class="w-full h-full object-cover" />
       </div>
       <div class="p-10 space-y-10 text-[var(--brand-beige)]">
         <header>
@@ -134,6 +141,8 @@ function renderSingleVenue(venue) {
       </div>
     </div>
   `
+
+  venueContainer.querySelectorAll("img").forEach(img => setImageFallback(img, placeholderImage))
 
   const deleteButton = document.getElementById("delete-venue-button")
   if (deleteButton) {
