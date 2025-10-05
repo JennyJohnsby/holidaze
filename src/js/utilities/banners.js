@@ -39,10 +39,6 @@ function createBannerElement(message, type) {
   banner.setAttribute("role", "alert")
   banner.setAttribute("aria-live", "assertive")
 
-  const icon = document.createElement("span")
-  icon.className = "banner__icon"
-  icon.innerHTML = getIconForType(type)
-
   const content = document.createElement("span")
   content.className = "banner__message"
   content.textContent = capitalize(message)
@@ -56,21 +52,10 @@ function createBannerElement(message, type) {
     banner.addEventListener("animationend", () => banner.remove())
   })
 
-  banner.appendChild(icon)
   banner.appendChild(content)
   banner.appendChild(closeBtn)
 
   return banner
-}
-
-function getIconForType(type) {
-  const icons = {
-    success: "✔️",
-    error: "❌",
-    warning: "⚠️",
-    info: "ℹ️",
-  }
-  return icons[type] ?? "🔔"
 }
 
 function capitalize(text) {

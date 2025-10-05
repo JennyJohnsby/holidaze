@@ -48,13 +48,14 @@ function renderProfile(profile) {
        </div>`
     : ""
   const createVenueButton = profile.venueManager
-    ? `<button id="create-venue-button"
+    ? `<a href="/venues/create/"
+         id="create-venue-link"
          class="px-6 py-2 rounded-full font-medium shadow-sm 
                 bg-green-200 text-green-900 
                 hover:bg-green-300 focus:outline-none 
-                focus:ring-2 focus:ring-green-300 transition-all">
+                focus:ring-2 focus:ring-green-300 transition-all inline-block text-center">
          + Create Venue
-       </button>`
+       </a>`
     : ""
   profileDiv.innerHTML = `
     <div id="profile-view" class="max-w-7xl mx-auto bg-[var(--brand-beige)] p-10 shadow-2xl rounded-2xl mt-10">
@@ -157,17 +158,12 @@ async function loadUserVenues() {
   }
 }
 
-function setupEventListeners(isVenueManager) {
+function setupEventListeners() {
   document.getElementById("logout-button")?.addEventListener("click", onLogout)
   document.getElementById("edit-profile-button")?.addEventListener("click", () => {
     document.getElementById("profile-update-form")?.classList.toggle("hidden")
   })
   document.getElementById("update-profile-form")?.addEventListener("submit", onUpdateProfile)
-  if (isVenueManager) {
-    document.getElementById("create-venue-button")?.addEventListener("click", () => {
-      window.location.href = "/venues/create/"
-    })
-  }
 }
 
 function displayVenues(venues = []) {

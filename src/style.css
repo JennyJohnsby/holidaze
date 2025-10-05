@@ -115,3 +115,24 @@ html {
 .banner--closing {
   animation: slideUp 0.3s ease-in forwards;
 }
+.banner__message::before {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.banner--success .banner__message::before {
+  content: "✔️";
+}
+
+.banner--error .banner__message::before {
+  content: "❌";
+}
+
+.banner--warning .banner__message::before {
+  content: "⚠️";
+}
+
+.banner--info .banner__message::before {
+  content: "ℹ️";
+}

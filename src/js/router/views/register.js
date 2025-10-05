@@ -1,6 +1,6 @@
 import { onRegister } from "../../ui/auth/register.js";
 
-console.log("[Register View] Loaded");
+console.debug("[Register View] Loaded");
 
 const form = document.getElementById("register-form");
 

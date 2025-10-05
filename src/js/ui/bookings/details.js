@@ -87,7 +87,9 @@ export async function renderBookingDetails() {
             : ""
         }
         <a href="/profile/" class="px-5 py-3 rounded-lg bg-gray-200 text-[var(--brand-purple)] hover:bg-gray-300">Back to Profile</a>
-        <button id="edit-booking" class="px-5 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Edit Booking</button>
+        <a href="/bookings/edit/?id=${encodeURIComponent(
+          id
+        )}" class="px-5 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Edit Booking</a>
         <button id="cancel-booking" class="px-5 py-3 rounded-lg bg-red-600 text-white hover:bg-red-700">Cancel Booking</button>
       </div>
     </div>
@@ -104,13 +106,6 @@ export async function renderBookingDetails() {
         displayBanner("Booking cancelled.", "success")
         setTimeout(() => (window.location.href = "/profile/"), 1500)
       }
-    })
-  }
-
-  const editBtn = qs("#edit-booking")
-  if (editBtn) {
-    editBtn.addEventListener("click", () => {
-      window.location.href = `/bookings/edit/?id=${encodeURIComponent(id)}`
     })
   }
 }

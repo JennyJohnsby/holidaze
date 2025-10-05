@@ -3,7 +3,7 @@ import { authGuard } from "../../utilities/authGuard.js";
 
 authGuard();
 
-console.log("[VenueCreate View] Loaded");
+console.debug("[VenueCreate View] Loaded");
 
 const form = document.getElementById("createVenue");
 

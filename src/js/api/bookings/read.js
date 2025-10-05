@@ -2,7 +2,7 @@ import { API_BOOKINGS, API_KEY } from "../constants"
 
 export async function readBooking(
   id,
-  { includeVenue = true, includeCustomer = true, includeVenueBookings = false } = {}
+  { includeVenue = true, includeCustomer = true } = {}
 ) {
   if (!id) {
     return { data: null, error: "Booking ID is required", status: 400 }
@@ -12,7 +12,6 @@ export async function readBooking(
     const url = new URL(`${API_BOOKINGS}/${id}`)
     if (includeVenue) url.searchParams.append("_venue", "true")
     if (includeCustomer) url.searchParams.append("_customer", "true")
-    if (includeVenueBookings) url.searchParams.append("_bookings", "true")
 
     const token = localStorage.getItem("token")
 

@@ -1,6 +1,6 @@
 import { onLogin } from "../../ui/auth/login.js";
 
-console.log("[Login View] Loaded");
+console.debug("[Login View] Loaded");
 
 const form = document.forms.login;
 if (form) {

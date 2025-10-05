@@ -59,7 +59,7 @@ export async function onUpdateVenue(event) {
     return
   }
 
-  console.log("[Venue Update] Success:", data)
+  console.debug("[Venue Update] Success:", data)
   displayBanner("Venue updated successfully!", "success")
 
   setTimeout(() => {

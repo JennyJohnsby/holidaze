@@ -1,7 +1,7 @@
 export default async function router(
   pathname = window.location.pathname.split("?")[0]
 ) {
-  console.log("[Router] navigating to:", pathname);
+  console.debug("[Router] navigating to:", pathname);
 
   try {
     let module;

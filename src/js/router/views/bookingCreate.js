@@ -3,7 +3,7 @@ import { authGuard } from "../../utilities/authGuard.js";
 
 authGuard();
 
-console.log("[BookingCreate View] Loaded");
+console.debug("[BookingCreate View] Loaded");
 
 const form = document.getElementById("createBooking");
 
