@@ -24,55 +24,58 @@
     class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-base sm:text-lg flex flex-col min-h-screen"
   >
     <header
-      class="relative bg-cover bg-center bg-[url('/assets/ian-dooley-DuBNA1QMpPA-unsplash-min.jpg')] h-50"
+      class="relative bg-cover bg-center bg-[url('/assets/ian-dooley-DuBNA1QMpPA-unsplash-min.jpg')]"
     >
       <div
-        class="relative z-10 flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 py-4"
+        class="relative z-10 flex items-center justify-between px-4 sm:px-8 py-4"
       >
-        <a href="/" aria-label="Holidaze Home" class="mb-4 sm:mb-0">
+        <a href="/" aria-label="Holidaze Home">
           <img
             src="/assets/logo1.svg"
             alt="Holidaze Logo"
-            class="h-[100px] sm:h-[140px] md:h-[160px] w-auto"
+            class="h-14 sm:h-20 md:h-24 w-auto"
             width="160"
             height="160"
           />
         </a>
-        <nav>
-          <ul
-            class="flex flex-wrap gap-4 sm:gap-8 text-[var(--brand-purple)] font-medium text-base sm:text-lg md:text-xl"
+        <button
+          id="menuBtn"
+          class="sm:hidden p-3 rounded-full bg-[var(--brand-purple)] text-[var(--brand-beige)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-beige)] shadow-md"
+          aria-label="Toggle menu"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
           >
-            <li>
-              <a
-                href="/"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
-              >
-                Venues
-              </a>
-            </li>
-            <li>
-              <a
-                href="/auth/login/"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
-              >
-                Log In
-              </a>
-            </li>
-            <li>
-              <a
-                href="/profile/"
-                class="px-4 py-2 rounded-lg font-semibold bg-[var(--brand-beige)] text-[var(--brand-purple)] hover:bg-[var(--brand-purple)] hover:text-[var(--brand-beige)] hover:shadow-lg"
-              >
-                Profile
-              </a>
-            </li>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <nav id="navMenu" class="hidden sm:block">
+          <ul
+            class="flex gap-4 sm:gap-6 font-medium text-base sm:text-lg md:text-xl"
+          >
+            <li><a href="/" class="btn-nav">Venues</a></li>
+            <li><a href="/auth/login/" class="btn-nav">Log In</a></li>
+            <li><a href="/profile/" class="btn-nav">Profile</a></li>
           </ul>
         </nav>
       </div>
+      <nav id="mobileNav" class="hidden sm:hidden px-4 pb-4">
+        <ul class="flex flex-col gap-2">
+          <li><a href="/" class="btn-nav block text-center">Venues</a></li>
+          <li><a href="/auth/login/" class="btn-nav block text-center">Log In</a></li>
+          <li><a href="/profile/" class="btn-nav block text-center">Profile</a></li>
+        </ul>
+      </nav>
     </header>
 
-    <main class="w-200 mx-auto mt-10 flex-grow px-4 sm:px-6">
-      <h1 class="text-3xl sm:text-4xl font-bold mb-4 text-[var(--brand-purple)] text-center">Create an account</h1>
+    <main class="w-full max-w-2xl mx-auto mt-10 flex-grow px-4 sm:px-6">
+      <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-[var(--brand-purple)] text-center">
+        Create an account
+      </h1>
       <form
         name="register"
         id="register-form"
@@ -88,11 +91,7 @@
           </legend>
 
           <div>
-            <label
-              for="register-name"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Username</label
-            >
+            <label for="register-name" class="block text-base font-medium text-[var(--brand-beige)]">Username</label>
             <input
               type="text"
               name="name"
@@ -105,11 +104,7 @@
           </div>
 
           <div>
-            <label
-              for="register-email"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Email</label
-            >
+            <label for="register-email" class="block text-base font-medium text-[var(--brand-beige)]">Email</label>
             <input
               type="email"
               name="email"
@@ -122,11 +117,7 @@
           </div>
 
           <div>
-            <label
-              for="register-password"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Password</label
-            >
+            <label for="register-password" class="block text-base font-medium text-[var(--brand-beige)]">Password</label>
             <input
               type="password"
               name="password"
@@ -138,10 +129,7 @@
               class="w-full px-4 py-3 mt-1 border rounded-lg bg-[var(--brand-beige)] text-[var(--brand-purple)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple-hover)] transition"
               placeholder="Enter your password"
             />
-            <small
-              id="password-hint"
-              class="block mt-1 text-[var(--brand-beige)] text-xs"
-            >
+            <small id="password-hint" class="block mt-1 text-[var(--brand-beige)] text-xs">
               Must be at least 8 characters long.
             </small>
           </div>
@@ -157,11 +145,7 @@
           </legend>
 
           <div>
-            <label
-              for="register-bio"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Bio</label
-            >
+            <label for="register-bio" class="block text-base font-medium text-[var(--brand-beige)]">Bio</label>
             <textarea
               name="bio"
               id="register-bio"
@@ -181,11 +165,7 @@
           </legend>
 
           <div>
-            <label
-              for="register-avatarUrl"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Avatar URL</label
-            >
+            <label for="register-avatarUrl" class="block text-base font-medium text-[var(--brand-beige)]">Avatar URL</label>
             <input
               type="url"
               name="avatarUrl"
@@ -196,11 +176,7 @@
           </div>
 
           <div>
-            <label
-              for="register-avatarAlt"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Avatar Alt Text</label
-            >
+            <label for="register-avatarAlt" class="block text-base font-medium text-[var(--brand-beige)]">Avatar Alt Text</label>
             <input
               type="text"
               name="avatarAlt"
@@ -211,11 +187,7 @@
           </div>
 
           <div>
-            <label
-              for="register-bannerUrl"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Banner URL</label
-            >
+            <label for="register-bannerUrl" class="block text-base font-medium text-[var(--brand-beige)]">Banner URL</label>
             <input
               type="url"
               name="bannerUrl"
@@ -226,11 +198,7 @@
           </div>
 
           <div>
-            <label
-              for="register-bannerAlt"
-              class="block text-base font-medium text-[var(--brand-beige)]"
-              >Banner Alt Text</label
-            >
+            <label for="register-bannerAlt" class="block text-base font-medium text-[var(--brand-beige)]">Banner Alt Text</label>
             <input
               type="text"
               name="bannerAlt"
@@ -254,7 +222,7 @@
 
         <button
           type="submit"
-          class="w-full mt-6 bg-[var(--brand-beige)] hover:bg-[var(--brand-beige-hover)] text-[var(--brand-purple)] font-semibold py-3 rounded-lg shadow-md transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40"
+          class="inline-block px-6 py-3 mt-6 bg-[var(--brand-beige)] text-[var(--brand-purple)] font-semibold rounded-lg shadow-md hover:bg-[var(--brand-beige-hover)] transition focus:outline-none focus:ring-4 focus:ring-[var(--brand-purple-hover)]/40 w-full sm:w-auto mx-auto"
         >
           Create Account
         </button>
@@ -279,53 +247,33 @@
     </main>
 
     <footer
-      class="flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-[var(--brand-purple)] py-8 px-4 mt-16 text-[var(--brand-beige)] text-sm sm:text-base"
+      class="flex flex-col gap-3 text-center bg-[var(--brand-purple)] py-8 px-4 mt-16 text-[var(--brand-beige)] text-sm sm:text-base md:flex-row md:justify-center md:items-center md:gap-6"
     >
       <p>&copy; 2025 Holidaze. All rights reserved.</p>
-      <span class="hidden md:block">|</span>
+      <span class="hidden md:inline">|</span>
       <p>Developed by Jenny Johnsby</p>
-      <span class="hidden md:block">|</span>
+      <span class="hidden md:inline">|</span>
       <nav aria-label="Social media">
-        <ul class="flex flex-wrap justify-center gap-4 sm:space-x-6">
-          <li>
-            <a
-              href="https://facebook.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Facebook</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://twitter.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Twitter</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://instagram.com/holidaze"
-              target="_blank"
-              rel="noopener"
-              class="hover:text-[var(--brand-beige-hover)]"
-              >Instagram</a
-            >
-          </li>
+        <ul class="flex justify-center gap-4 md:gap-6">
+          <li><a href="https://facebook.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)] transition">Facebook</a></li>
+          <li><a href="https://twitter.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)] transition">Twitter</a></li>
+          <li><a href="https://instagram.com/holidaze" target="_blank" rel="noopener" class="hover:text-[var(--brand-beige-hover)] transition">Instagram</a></li>
         </ul>
       </nav>
-      <span class="hidden md:block">|</span>
+      <span class="hidden md:inline">|</span>
       <address class="not-italic">
-        Contact us:
-        <a
-          href="mailto:support@holidaze.com"
-          class="hover:text-[var(--brand-beige-hover)]"
-        >
-          support@holidaze.com
-        </a>
+        <a href="mailto:support@holidaze.com" class="hover:text-[var(--brand-beige-hover)] transition">support@holidaze.com</a>
       </address>
     </footer>
+
+    <script>
+      const menuBtn = document.getElementById("menuBtn");
+      const mobileNav = document.getElementById("mobileNav");
+      if (menuBtn && mobileNav) {
+        menuBtn.addEventListener("click", () => {
+          mobileNav.classList.toggle("hidden");
+        });
+      }
+    </script>
   </body>
 </html>
