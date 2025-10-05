@@ -20,7 +20,6 @@
       rel="stylesheet"
     />
   </head>
-
   <body
     class="bg-[var(--brand-beige)] text-[var(--brand-purple)] text-lg flex flex-col min-h-screen"
   >
@@ -70,12 +69,9 @@
         </ul>
       </nav>
     </header>
-
     <main class="w-full max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 flex-grow">
       <h1 class="text-3xl sm:text-4xl font-bold text-center mb-10">Explore Our Venues</h1>
-
       <div id="venueDetailContainer"></div>
-
       <section
         class="bg-[var(--brand-purple)] p-6 rounded-xl shadow-md mt-10 max-w-4xl mx-auto"
       >
@@ -92,7 +88,6 @@
         </ul>
       </section>
     </main>
-
     <footer
       class="flex flex-col gap-3 text-center bg-[var(--brand-purple)] py-8 px-4 mt-16 text-[var(--brand-beige)] text-sm sm:text-base md:flex-row md:justify-center md:items-center md:gap-6"
     >
@@ -112,10 +107,9 @@
         <a href="mailto:support@holidaze.com" class="hover:text-[var(--brand-beige-hover)] transition">support@holidaze.com</a>
       </address>
     </footer>
-
     <div
       id="confirm-modal"
-      class="fixed inset-0 z-50 hidden bg-black/60 flex items-center justify-center transition-opacity duration-300"
+      class="fixed inset-0 z-50 hidden bg-black/60 items-center justify-center transition-opacity duration-300"
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirmModalTitle"
@@ -146,14 +140,26 @@
         </div>
       </div>
     </div>
-
     <script>
       const menuBtn = document.getElementById("menuBtn");
       const mobileNav = document.getElementById("mobileNav");
+      const confirmModal = document.getElementById("confirm-modal");
+      const cancelDelete = document.getElementById("cancel-delete");
       if (menuBtn && mobileNav) {
         menuBtn.addEventListener("click", () => {
           mobileNav.classList.toggle("hidden");
         });
+      }
+      function openModal() {
+        confirmModal.classList.remove("hidden");
+        confirmModal.classList.add("flex");
+      }
+      function closeModal() {
+        confirmModal.classList.add("hidden");
+        confirmModal.classList.remove("flex");
+      }
+      if (cancelDelete) {
+        cancelDelete.addEventListener("click", closeModal);
       }
     </script>
   </body>

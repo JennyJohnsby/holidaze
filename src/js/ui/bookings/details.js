@@ -23,7 +23,9 @@ export async function renderBookingDetails() {
   if (!id) {
     try {
       id = sessionStorage.getItem("lastBookingId") || ""
-    } catch {}
+    } catch (err) {
+      console.warn("[Booking Details] Could not read from sessionStorage:", err)
+    }
   }
 
   if (!id) {
@@ -33,7 +35,9 @@ export async function renderBookingDetails() {
 
   try {
     sessionStorage.removeItem("lastBookingId")
-  } catch {}
+  } catch (err) {
+    console.warn("[Booking Details] Could not remove from sessionStorage:", err)
+  }
 
   container.innerHTML = `<p class="text-center" aria-live="polite">Loading booking...</p>`
 
@@ -89,7 +93,6 @@ export async function renderBookingDetails() {
     </div>
   `
 
-  // Event listeners for edit / cancel
   const cancelBtn = qs("#cancel-booking")
   if (cancelBtn) {
     cancelBtn.addEventListener("click", async () => {
