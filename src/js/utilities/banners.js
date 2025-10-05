@@ -8,7 +8,10 @@ export function displayBanner(message, type = "success", timeout) {
 
   if (timeout > 0) {
     setTimeout(() => {
-      if (banner.parentNode) banner.remove()
+      if (banner.parentNode) {
+        banner.classList.add("banner--closing")
+        banner.addEventListener("animationend", () => banner.remove())
+      }
     }, timeout)
   }
 }
@@ -17,7 +20,7 @@ function getTimeoutForType(type) {
   const timeoutMap = {
     success: 4000,
     error: 8000,
-    warning: 0, // stays until user closes
+    warning: 0,
     info: 5000,
   }
   return timeoutMap[type] ?? 4000
@@ -36,18 +39,40 @@ function createBannerElement(message, type) {
   banner.setAttribute("role", "alert")
   banner.setAttribute("aria-live", "assertive")
 
+  const icon = document.createElement("span")
+  icon.className = "banner__icon"
+  icon.innerHTML = getIconForType(type)
+
   const content = document.createElement("span")
   content.className = "banner__message"
-  content.innerHTML = message
+  content.textContent = capitalize(message)
 
   const closeBtn = document.createElement("button")
   closeBtn.className = "banner__close"
   closeBtn.setAttribute("aria-label", "Close notification")
   closeBtn.innerHTML = "&times;"
-  closeBtn.addEventListener("click", () => banner.remove())
+  closeBtn.addEventListener("click", () => {
+    banner.classList.add("banner--closing")
+    banner.addEventListener("animationend", () => banner.remove())
+  })
 
+  banner.appendChild(icon)
   banner.appendChild(content)
   banner.appendChild(closeBtn)
 
   return banner
+}
+
+function getIconForType(type) {
+  const icons = {
+    success: "✔️",
+    error: "❌",
+    warning: "⚠️",
+    info: "ℹ️",
+  }
+  return icons[type] ?? "🔔"
+}
+
+function capitalize(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1)
 }
